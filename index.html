@@ -1,7 +1,7 @@
 <script>
     // 드롭다운 메뉴와 이미지를 추가하는 함수
-    function addDropdownToCell(cellId, imageContainerId) {
-        const uniqueId = `${containerPrefix}_${Math.random().toString(36).substr(2, 9)}`; // 수정
+    function addDropdownToCell(cellId, imageContainerId, containerPrefix) {
+        const uniqueId = `${containerPrefix}_${Math.random().toString(36).substr(2, 9)}`;
 
         const cell = document.getElementById(cellId);
         // 드롭다운 메뉴 생성
@@ -51,15 +51,12 @@
             imageContainer.innerHTML = `<img src="${images[selectedValue]}" alt="Selected Image" style="max-width: 30%; height: auto; cursor: pointer;">`;
             
             const imgElement = imageContainer.querySelector("img");
-            imgElement.addEventListener("click", function() {
-                imageContainer.style.display = "none";
-
-                selectElement.style.display = "block";
-                selectElement.value = "";
+            imgElement.addEventListener("click", function () {
+                imageContainer.innerHTML = ""; // 이미지 제거
+                selectElement.style.display = "block"; // 드롭다운 다시 표시
+                selectElement.value = ""; // 선택값 초기화
             });
-            
-
-            imageContainer.style.display = "block";
+   
             selectElement.style.display = "none";
         }
     }
@@ -74,7 +71,8 @@
                     const cell = cells[j];
                     const cellId = `${containerPrefix}_row${i}_col${j}`;
                     cell.setAttribute("id", cellId); // 고유 ID 설정
-                    addDropdownToCell(cellId, `${containerPrefix}_image_row${i}_col${j}`);
+                    addDropdownToCell(cellId, `${containerPrefix}_image_row${i}_col${j}`, containerPrefix);
+
                 }
             }
         }
@@ -87,11 +85,12 @@
                 const tables = document.querySelectorAll(".dynamic-table");
                 tables.forEach((table) => {
                     if (!table.dataset.initialized) {
-                        table.dataset.initialized = "true"; // 중복 초기화 방지
-                        table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`; // 고유 ID 부여
-                        initializeDynamicTable(table);
+                        table.dataset.initialized = "true";
+                        table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+                        initializeTable(table.dataset.tableId, "imageContainer");
                     }
                 });
+
             }
         });
     });
