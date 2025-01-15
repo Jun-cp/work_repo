@@ -1,0 +1,1247 @@
+<p><strong>참고 : 편집자를 위한 가이드라인</strong></p><ac:structured-macro ac:name="expand" ac:schema-version="1" ac:macro-id="786d2aae-ed94-47fc-8baf-3fa9aa5b002a">
+    <ac:parameter ac:name="title">편집자를 위한 가이드라인</ac:parameter><ac:rich-text-body><p><strong>작성 권한</strong> :</p>
+        <ul>
+            <li><p>개인 페이지 : 개개인이 각자 작성</p>
+            </li>
+            <li><p><strong><span style="color: rgb(54,179,126);">팀 페이지 : 팀장님이 팀원 개개인 내용을 수합하여 작성 &larr; 주간보고는 각 팀이 팀 페이지를 열고, 이를 기준으로 시행</span></strong></p>
+            </li>
+            <li><p>담당 페이지 : 없음</p>
+            </li>
+            <li><p>Lead 페이지 : AI그룹시너지팀에서 수합 후 작성</p>
+            </li>
+        </ul><p>&nbsp;</p><p><strong>범례</strong> :</p>
+        <table data-table-width="760" data-layout="default" ac:local-id="c28a9f4c-7dab-4690-8a65-ff6c86f5c64f">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th data-highlight-colour="#deebff"><p style="text-align: center;"><strong>Category</strong></p>
+                    </th>
+                    <th data-highlight-colour="#deebff"><p style="text-align: center;"><strong>Choice Option</strong></p>
+                    </th>
+                    <th data-highlight-colour="#deebff"><p style="text-align: center;"><strong>Description</strong></p>
+                    </th>
+                    <th data-highlight-colour="#deebff"><p style="text-align: center;"><strong>Ref.</strong></p>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="0b8d4e14-b658-40ad-8871-2d31bc59024c">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>Lead 경영방향/목표</p>
+                    </td>
+                    <td><p>AX 전략방향 수립 및 국내외 협력기회 발굴</p>
+                    </td>
+                    <td><p>AX Delivery 전략(방향) 수립 / 사업 파트너 발굴 / AI 과업 포컬</p>
+                    </td>
+                    <td><p>과업이 정해진 회의체/TF 등의 Lead 대표 포컬 참여</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>AX 사업수주 지원, 컨설팅</p>
+                    </td>
+                    <td><p>B2B 전략고객 (30+a) 대상 수주 지원 활동 (사업발굴, 컨설팅, PoC, 사업 등)</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+                    </td>
+                    <td><p>E부문 채널의 제안/영업 활동 지원 (RFP/RFI 대응, 선제안, PoC 패키지, 레퍼런스 아키텍처 등)</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>B2C/B2E 내부 경험의 B2B 활용 연계 및 내외부 시너지 가교</p>
+                    </td>
+                    <td><p>B2C/B2E 에이전트 활용 사업화 / AI 사업 관련 그룹 유관 조직 의견 조율, 시너지 가교</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>Lead 내 담당 업무</p>
+                    </td>
+                    <td><p>Lead 내 담당 업무 / 중단기 수명 업무 등</p>
+                    </td>
+                    <td><p>정기 협의체 참여 등</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="c69cc636-2360-4d9c-a8ba-bb3145f93ff9">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>프로젝트/업무 명</p>
+                    </td>
+                    <td><p>선택지 미제공(수기 입력)</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="49a6a8b2-7d32-4d3b-970e-56cf94546b1d">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>개요</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                    <td><p>개략적인 업무 설명 및 기본 정보</p><p>※ 최종 목표(산출물) 명기</p><p>※ TF, 협의체 등의 참여는 종료(목표) 일정 명기</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="9a3039c9-8389-472b-9795-d928282ee2f6">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>로드맵</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                    <td><p>주요 단계 및 단계별 산출물(결과) - 일정</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="3a4fffe0-2d62-42ad-939c-de98034bdba9">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>진행 단계</p>
+                    </td>
+                    <td><p>(사업) 초기 검토</p>
+                    </td>
+                    <td><p>초도 미팅 / 고객 니즈 파악 / 구도 협의</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>(사업) 고객 제안안 작성</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>(사업) 고객 검토</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>(사업) PoC / 컨설팅 진행</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>(사업) 제안 참여</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>(사업) 수행 참여</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>초기 검토</p>
+                    </td>
+                    <td><p>진행 여부, R&amp;R 등의 검토 단계</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>진행/작성중</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="830b990e-c585-4979-92a0-f03986861cdf">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>진척률</p>
+                    </td>
+                    <td><p>10-90%의 퍼센트 수치</p>
+                    </td>
+                    <td><p>적의 작성</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="45df851d-70c4-4fd5-a0be-94a7bd565917">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td rowspan="3"><p>원활도</p>
+                    </td>
+                    <td><p><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020720.png"><ri:attachment ri:filename="4cc6eda8-2930-4e0c-9c74-fba485e1b34c" ri:version-at-save="1" /></ac:image> (Green)</p>
+                    </td>
+                    <td><p>이슈/지연 없이 원활한 진행중</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p><ac:image ac:original-height="35" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020933.png"><ri:attachment ri:filename="a866ea2e-0df4-4abc-a67c-aafb6d7f756e" ri:version-at-save="1" /></ac:image> (Yellow)</p>
+                    </td>
+                    <td><p>마이너 이슈 발생. 약간의 일정 지연. 내부적인 조치로 해결 가능한 이슈</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020950.png"><ri:attachment ri:filename="992f0566-168a-4911-bdca-d30ee14b9f36" ri:version-at-save="1" /></ac:image> (Red)</p>
+                    </td>
+                    <td><p>메이저 이슈 발생. 지속 진행 여부에 영향.<br />자체적인 해결이 어려운 이슈로 해결 방안 정립 필요</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="4e3d617d-4f14-471f-ad65-367a21f2b5df">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>주요 현황</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                    <td><p>1-2주 간 주요 진척 사항 및 계획</p><p>추가적인 산출물(있을 경우)</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="4f259dce-6dd6-40f0-a342-33254f6518dd">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>담당자</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                    <td><p>실무자명 및 담당 업무</p>
+                    </td>
+                    <td><p>　</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table data-table-width="760" data-layout="default" ac:local-id="5df77ed4-2c2c-412a-9ae5-0b8b72945e66">
+            <colgroup>
+                <col style="width: 84.0px;" />
+                <col style="width: 217.0px;" />
+                <col style="width: 247.0px;" />
+                <col style="width: 182.0px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td><p>컨플루언스</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                    <td><p>필요시, 업무별 컨플루언스 작성 후 링크</p><p>주요 산출 내역. 상세 이슈 내역 및 대응 방안. 히스토리 등 보고 필요 내용 별도 정리</p>
+                    </td>
+                    <td><p>&nbsp;</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table><p />
+    </ac:rich-text-body>
+</ac:structured-macro>
+<h1>250109 팀 진행현황</h1>
+<table data-table-width="1800" data-layout="align-start" ac:local-id="c4280ca8-9175-428e-a96f-4b70a4afcb47">
+    <colgroup>
+        <col style="width: 206.0px;" />
+        <col style="width: 215.0px;" />
+        <col style="width: 284.0px;" />
+        <col style="width: 272.0px;" />
+        <col style="width: 135.0px;" />
+        <col style="width: 123.0px;" />
+        <col style="width: 203.0px;" />
+        <col style="width: 390.0px;" />
+        <col style="width: 228.0px;" />
+        <col style="width: 291.0px;" />
+        <col style="width: 436.0px;" />
+        <col style="width: 148.0px;" />
+        <col style="width: 276.0px;" />
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>
+                <h3 style="text-align: center;"><strong>Lead 경영방향/목표</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>프로젝트/ 업무 명</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>개요</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>주요 로드맵</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>원활도</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진척률</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진행 단계</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>현 주요 사항</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>추진 결과 / 산출물</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>담당자 (업무)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>Issue / 대응 방안</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>컨플루언스</strong><br /><strong>(히스토리)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>상무님</strong><br /><strong>코멘터리</strong></h3>
+            </th>
+        </tr>
+        <tr>
+            <td><p>AX 전략방향 수립 및 국내외 협력기회 발굴</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020720.png"><ri:attachment ri:filename="0777791e-abc8-4a8f-8eed-881e058381ba" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">%</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>필요시 입력</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업수주 지원, 컨설팅</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="35" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020933.png"><ri:attachment ri:filename="f5fa33e0-f8cb-44c3-b696-a1f59ed57d9d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) 고객 제안안 작성</p>
+            </td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020950.png"><ri:attachment ri:filename="86a75835-eac9-4afd-929d-4e69fa0c860d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) 고객 검토</p>
+            </td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>B2C/B2E 내부 경험의 B2B 활용 연계 및 내외부 시너지 가교</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">&nbsp;</p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) PoC / 컨설팅 진행</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>Lead 내 담당 업무</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) 제안 참여</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p>(사업) 수행 참여</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p>초기 검토</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>진행/작성중</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+    </tbody>
+</table><p /><p /><p />
+<hr /><p />
+<h1>지난 진행현황 모음</h1><p />
+<h1>250102 팀 진행현황</h1>
+<table data-table-width="1800" data-layout="align-start" ac:local-id="3ab0a7e9-5183-4058-a6b6-d0924c36e9f3">
+    <colgroup>
+        <col style="width: 206.0px;" />
+        <col style="width: 215.0px;" />
+        <col style="width: 284.0px;" />
+        <col style="width: 287.0px;" />
+        <col style="width: 111.0px;" />
+        <col style="width: 100.0px;" />
+        <col style="width: 200.0px;" />
+        <col style="width: 432.0px;" />
+        <col style="width: 228.0px;" />
+        <col style="width: 291.0px;" />
+        <col style="width: 436.0px;" />
+        <col style="width: 148.0px;" />
+        <col style="width: 276.0px;" />
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>
+                <h3 style="text-align: center;"><strong>Lead 경영방향/목표</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>프로젝트/ 업무 명</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>개요</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>주요 로드맵</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>원활도</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진척률</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진행 단계</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>현 주요 사항</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>추진 결과 / 산출물</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>담당자 (업무)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>Issue / 대응 방안</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>컨플루언스</strong><br /><strong>(히스토리)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>상무님</strong><br /><strong>코멘터리</strong></h3>
+            </th>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>국회 빅데이터 플랫폼 구축</p>
+            </td>
+            <td><p>빅데이터 플랫폼/거버넌스/AI/인프라 등 구축에 50% 컨소 참여</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>(사업) 제안 참여</p>
+            </td>
+            <td><p>사업 공고 (12.18), 제안 참여 준비</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>필요시 입력</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>경기도청 생성형AI 데이터플랫폼</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020720.png"><ri:attachment ri:filename="0777791e-abc8-4a8f-8eed-881e058381ba" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">55%</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>KT AI서비스 소개중, '25년 2-3월중 사업 공고 예정</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>외교부 생성형 AI 도입</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="35" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020933.png"><ri:attachment ri:filename="f5fa33e0-f8cb-44c3-b696-a1f59ed57d9d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">65%</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>행안부 범정부 초거대 AI 구축</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">&nbsp;</p>
+            </td>
+            <td><p style="text-align: center;">&nbsp;</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>1월중.. 사업..</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>한미약품 제안</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020950.png"><ri:attachment ri:filename="86a75835-eac9-4afd-929d-4e69fa0c860d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">75% </p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>산림청 제안</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>(사업) PoC / 컨설팅 진행</p>
+            </td>
+            <td><p>PoC 완료</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 전략방향 수립 및 국내외 협력기회 발굴</p>
+            </td>
+            <td><p>B2B 사업협력체계 수립</p>
+            </td>
+            <td><p>AI B2B 사업추진 관련, E-기혁부문 협력방안 수립</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>진행/작성중</p>
+            </td>
+            <td><p>12.24 완료 예정</p>
+            </td>
+            <td><p>B2B 사업추진체계 프로세스 정립</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+    </tbody>
+</table>
+<h1>241226 팀 진행현황</h1>
+<table data-table-width="1800" data-layout="align-start" ac:local-id="fe43b64d-6395-4367-a29b-7aa7c3e3fbc2">
+    <colgroup>
+        <col style="width: 206.0px;" />
+        <col style="width: 215.0px;" />
+        <col style="width: 284.0px;" />
+        <col style="width: 287.0px;" />
+        <col style="width: 111.0px;" />
+        <col style="width: 100.0px;" />
+        <col style="width: 200.0px;" />
+        <col style="width: 432.0px;" />
+        <col style="width: 228.0px;" />
+        <col style="width: 291.0px;" />
+        <col style="width: 436.0px;" />
+        <col style="width: 148.0px;" />
+        <col style="width: 276.0px;" />
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>
+                <h3 style="text-align: center;"><strong>Lead 경영방향/목표</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>프로젝트/ 업무 명</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>개요</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>주요 로드맵</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>원활도</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진척률</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진행 단계</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>현 주요 사항</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>추진 결과 / 산출물</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>담당자 (업무)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>Issue / 대응 방안</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>컨플루언스</strong><br /><strong>(히스토리)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>상무님</strong><br /><strong>코멘터리</strong></h3>
+            </th>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>국회 빅데이터 플랫폼 구축</p>
+            </td>
+            <td><p>빅데이터 플랫폼/거버넌스/AI/인프라 등 구축에 50% 컨소 참여</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>(사업) 제안 참여</p>
+            </td>
+            <td><p>사업 공고 (12.18), 제안 참여 준비</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>필요시 입력</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>경기도청 생성형AI 데이터플랫폼</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020720.png"><ri:attachment ri:filename="0777791e-abc8-4a8f-8eed-881e058381ba" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">55%</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>KT AI서비스 소개중, '25년 2-3월중 사업 공고 예정</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>외교부 생성형 AI 도입</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="35" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020933.png"><ri:attachment ri:filename="f5fa33e0-f8cb-44c3-b696-a1f59ed57d9d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">65%</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>행안부 범정부 초거대 AI 구축</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">&nbsp;</p>
+            </td>
+            <td><p style="text-align: center;">&nbsp;</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>1월중.. 사업..</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>한미약품 제안</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020950.png"><ri:attachment ri:filename="86a75835-eac9-4afd-929d-4e69fa0c860d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">75% </p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p>산림청 제안</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>(사업) PoC / 컨설팅 진행</p>
+            </td>
+            <td><p>PoC 완료</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 전략방향 수립 및 국내외 협력기회 발굴</p>
+            </td>
+            <td><p>B2B 사업협력체계 수립</p>
+            </td>
+            <td><p>AI B2B 사업추진 관련, E-기혁부문 협력방안 수립</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>진행/작성중</p>
+            </td>
+            <td><p>12.24 완료 예정</p>
+            </td>
+            <td><p>B2B 사업추진체계 프로세스 정립</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+    </tbody>
+</table>
+<table border="1" style="width: 100.0%;text-align: center;">
+    <thead>
+        <tr>
+            <th>항목</th>
+            <th>이미지 선택</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>예제 항목 1</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>예제 항목 2</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>예제 항목 3</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    // 드롭다운 메뉴와 이미지를 추가하는 함수
+    function addDropdownToCell(cellId, imageContainerId) {
+        const cell = document.getElementById(cellId);
+        // 드롭다운 메뉴 생성
+        const select = document.createElement("select");
+        select.onchange = function () {
+            updateImage(this, imageContainerId);
+        };
+        // 드롭다운 옵션 추가
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "이미지 선택";
+        select.appendChild(defaultOption);
+        const options = [
+            { value: "img1", text: "이미지 1" },
+            { value: "img2", text: "이미지 2" },
+            { value: "img3", text: "이미지 3" },
+        ];
+        options.forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = option.value;
+            opt.textContent = option.text;
+            select.appendChild(opt);
+        });
+        // 이미지 표시 컨테이너 생성
+        const imageContainer = document.createElement("div");
+imageContainer.id = imageContainerId;
+        imageContainer.style.marginTop = "10px";
+        // 드롭다운과 이미지 컨테이너를 셀에 추가
+        cell.appendChild(select);
+        cell.appendChild(imageContainer);
+    }
+    // 선택된 이미지 업데이트 함수
+    function updateImage(selectElement, imageContainerId) {
+        const imageContainer = document.getElementById(imageContainerId);
+        const selectedValue = selectElement.value;
+        // 이미지 URL 매핑
+        const images = {
+            "img1": "t10",
+            "img2": "t2",
+            "img3": "t3c",
+        };
+        // 선택된 값에 따라 이미지 표시
+        imageContainer.innerHTML = selectedValue
+            ? `<img src="${images[selectedValue]}" alt="Selected Image" style="width: 50px; height: 50px;">`
+            : "";
+    }
+    // 드롭다운 메뉴 추가 실행
+    addDropdownToCell("cell1", "imageContainer1");
+    addDropdownToCell("cell2", "imageContainer2");
+    addDropdownToCell("cell3", "imageContainer3");
+</script>
