@@ -103,6 +103,7 @@
     document.querySelectorAll(".dynamic-table").forEach((table) => {
         table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
         initializeDynamicTable(table);
+        console.log(tableId)
     });
 
 </script>
@@ -119,7 +120,6 @@
         th, td {
             border: 1px solid black; /* 셀의 테두리를 검은 실선으로 설정 */
             padding: 8px; /* 셀 내부 여백 */
-            text-align: center; /* 중앙 정렬 */
         }
     </style>
     
