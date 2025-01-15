@@ -1,377 +1,158 @@
-<script>
-    // 드롭다운 메뉴와 이미지를 추가하는 함수
-    function addDropdownToCell(cellId, imageContainerId, containerPrefix) {
-        const uniqueId = `${containerPrefix}_${Math.random().toString(36).substr(2, 9)}`;
-
-        const cell = document.getElementById(cellId);
-        // 드롭다운 메뉴 생성
-        const select = document.createElement("select");
-        select.setAttribute("id", 'dropdown_${uniqueId}');
-        select.style.margin = "0 auto";
-        select.onchange = function () {
-            updateImage(this, imageContainerId);
-        };
-        // 드롭다운 옵션 추가
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "이미지 선택";
-        select.appendChild(defaultOption);
-        const options = [
-            { value: "img1", text: "Green" },
-            { value: "img2", text: "Yellow" },
-            { value: "img3", text: "Red" },
-        ];
-        options.forEach((option) => {
-            const opt = document.createElement("option");
-            opt.value = option.value;
-            opt.textContent = option.text;
-            select.appendChild(opt);
-        });
-        // 이미지 표시 컨테이너 생성
-        const imageContainer = document.createElement("div");
-        imageContainer.id = imageContainerId;
-        imageContainer.style.marginTop = "10px";
-        // 드롭다운과 이미지 컨테이너를 셀에 추가
-        cell.appendChild(select);
-        cell.appendChild(imageContainer);
-    }
-    // 선택된 이미지 업데이트 함수
-    function updateImage(selectElement, imageContainerId) {
-        const imageContainer = document.getElementById(imageContainerId);
-        const selectedValue = selectElement.value;
-        
-        // 이미지 URL 매핑
-        const images = {
-            "img1": "https://github.com/Jun-cp/work_repo/blob/main/traffic_green.jpg?raw=true",
-            "img2": "https://github.com/Jun-cp/work_repo/blob/main/traffic_yellow.jpg?raw=true",
-            "img3": "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
-        };
-        // 선택된 값에 따라 이미지 표시
-        if (selectedValue) {            
-            imageContainer.innerHTML = `<img src="${images[selectedValue]}" alt="Selected Image" style="max-width: 30%; height: auto; cursor: pointer;">`;
-            
-            const imgElement = imageContainer.querySelector("img");
-            imgElement.addEventListener("click", function () {
-                imageContainer.innerHTML = ""; // 이미지 제거
-                selectElement.style.display = "block"; // 드롭다운 다시 표시
-                selectElement.value = ""; // 선택값 초기화
-            });
-   
-            selectElement.style.display = "none";
-        }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>DropDown Table Demo</title>
+  <!-- 기본 스타일 -->
+  <style>
+    /* 표 전체 스타일 */
+    table {
+      width: 90%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      text-align: center; /* 헤더, 드롭다운, 이미지 등 수평 중앙정렬 */
     }
 
-    function initializeTable(tableId, containerPrefix) {
-        const table = document.getElementById(tableId);
-        const rows = table.getElementsByTagName("tr");
-        for (let i = 1; i < rows.length; i++) { // 첫 번째 행(헤더)은 제외
-            const cells = rows[i].getElementsByTagName("td");
-            for (let j = 0; j < cells.length; j++) {
-                if (j === 4) { // 5번째 열에 드롭다운 추가
-                    const cell = cells[j];
-                    const cellId = `${containerPrefix}_row${i}_col${j}`;
-                    cell.setAttribute("id", cellId); // 고유 ID 설정
-                    addDropdownToCell(cellId, `${containerPrefix}_image_row${i}_col${j}`, containerPrefix);
-
-                }
-            }
-        }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      vertical-align: middle; /* 수직도 중간정렬 */
     }
 
-    // DOM 변경 감지 및 동작
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === "childList") {
-                const tables = document.querySelectorAll(".dynamic-table");
-                tables.forEach((table) => {
-                    if (!table.dataset.initialized) {
-                        table.dataset.initialized = "true";
-                        table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
-                        initializeTable(table.dataset.tableId, "imageContainer");
-                    }
-                });
+    /* 3열에 있는 드롭다운/select, 이미지 모두 중앙에 보이도록 */
+    .dropdown-cell {
+      position: relative;
+      width: 150px; /* 예시로 열 폭을 어느 정도 고정 */
+    }
 
-            }
-        });
-    });
+    select.status-dropdown {
+      display: inline-block;
+      text-align: center;
+      width: 100px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
 
-    // DOM 변경 감지 시작
-    observer.observe(document.body, { childList: true, subtree: true });
+    /* 이미지를 표 크기를 넘어가지 않도록 제한 */
+    .status-image {
+      max-width: 100px;  
+      max-height: 50px; 
+      cursor: pointer;
+      display: block;
+      margin: 0 auto;  /* 중앙정렬 */
+    }
 
-    // 초기 테이블 초기화
-    document.querySelectorAll(".dynamic-table").forEach((table) => {
-        table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
-        initializeDynamicTable(table);
-        console.log(tableId)
-    });
+    /* 드롭다운과 이미지를 토글하기 위한 숨김 클래스 */
+    .hidden {
+      display: none;
+    }
 
-</script>
+    /* 테이블에서 텍스트를 수정 가능하게 함 */
+    /* (3열의 드롭다운/이미지는 제외) */
+    td[contenteditable="true"]:focus {
+      outline: 2px solid #007bff;
+    }
 
+    /* 편의상 첫 열, 둘째 열, 네 번째 열을 contenteditable로 지정 */
+    /* (실제 필요에 맞춰 조정 가능) */
+    td.editable {
+      contenteditable: true;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">(데모) 4열 테이블 + 3열 드롭다운</h2>
+  <p style="text-align: center;">원하는 셀 텍스트(1, 2, 4열)를 직접 편집할 수 있습니다. 3열의 드롭다운도 선택 가능합니다.</p>
 
-
-<h1>250109 팀 진행현황</h1>
-<table class="dynamic-table" data-table-width="2500" data-layout="align-start" ac:local-id="c4280ca8-9175-428e-a96f-4b70a4afcb47">
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse; /* 셀 간의 경계선을 하나로 합침 */
-        }
-        th, td {
-            border: 1px solid black; /* 셀의 테두리를 검은 실선으로 설정 */
-            padding: 8px; /* 셀 내부 여백 */
-        }
-    </style>
-    
-
-    <colgroup>
-        <col style="width: 206.0px;" />
-        <col style="width: 215.0px;" />
-        <col style="width: 284.0px;" />
-        <col style="width: 272.0px;" />
-        <col style="width: 135.0px;" />
-        <col style="width: 123.0px;" />
-        <col style="width: 203.0px;" />
-        <col style="width: 390.0px;" />
-        <col style="width: 228.0px;" />
-        <col style="width: 291.0px;" />
-        <col style="width: 436.0px;" />
-        <col style="width: 148.0px;" />
-        <col style="width: 276.0px;" />
-    </colgroup>
+  <!-- 예시 테이블 1 -->
+  <table class="myTable">
+    <thead>
+      <tr>
+        <th>Week</th>
+        <th>Some Info</th>
+        <th>Status</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
     <tbody>
-        <tr>
-            <th>
-                <h3 style="text-align: center;"><strong>Lead 경영방향/목표</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>프로젝트/ 업무 명</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>개요</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>주요 로드맵</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>원활도</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>진척률</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>진행 단계</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>현 주요 사항</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>추진 결과 / 산출물</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>담당자 (업무)</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>Issue / 대응 방안</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>컨플루언스</strong><br /><strong>(히스토리)</strong></h3>
-            </th>
-            <th>
-                <h3 style="text-align: center;"><strong>상무님</strong><br /><strong>코멘터리</strong></h3>
-            </th>
-        </tr>
-        <tr contenteditable = "true">
-            <td contenteditable="true"><p>AX 전략방향 수립 및 국내외 협력기회 발굴</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020720.png"><ri:attachment ri:filename="0777791e-abc8-4a8f-8eed-881e058381ba" ri:version-at-save="1" /></ac:image></p>
-            </td>
-            <td><p style="text-align: center;">%</p>
-            </td>
-            <td><p>(사업) 초기 검토</p>
-            </td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>필요시 입력</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p>AX 사업수주 지원, 컨설팅</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;"><ac:image ac:original-height="35" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020933.png"><ri:attachment ri:filename="f5fa33e0-f8cb-44c3-b696-a1f59ed57d9d" ri:version-at-save="1" /></ac:image></p>
-            </td>
-            <td><p style="text-align: center;" /></td>
-            <td><p>(사업) 고객 제안안 작성</p>
-            </td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020950.png"><ri:attachment ri:filename="86a75835-eac9-4afd-929d-4e69fa0c860d" ri:version-at-save="1" /></ac:image></p>
-            </td>
-            <td><p style="text-align: center;" /></td>
-            <td><p>(사업) 고객 검토</p>
-            </td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p>B2C/B2E 내부 경험의 B2B 활용 연계 및 내외부 시너지 가교</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;">&nbsp;</p>
-            </td>
-            <td><p style="text-align: center;" /></td>
-            <td><p>(사업) PoC / 컨설팅 진행</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p>Lead 내 담당 업무</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;" /></td>
-            <td><p style="text-align: center;" /></td>
-            <td><p>(사업) 제안 참여</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;">　</p>
-            </td>
-            <td><p style="text-align: center;">　</p>
-            </td>
-            <td><p>(사업) 수행 참여</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p style="text-align: center;">　</p>
-            </td>
-            <td><p style="text-align: center;">　</p>
-            </td>
-            <td><p>초기 검토</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p>　</p>
-            </td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p style="text-align: center;" /></td>
-            <td><p style="text-align: center;" /></td>
-            <td><p>진행/작성중</p>
-            </td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-        </tr>
-        <tr>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p style="text-align: center;" /></td>
-            <td><p style="text-align: center;" /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-            <td><p /></td>
-        </tr>
+      <tr>
+        <td class="editable">1주차</td>
+        <td class="editable">내용A</td>
+        <!-- 3열: 드롭다운/이미지가 들어가는 셀 -->
+        <td class="dropdown-cell">
+          <!-- 초기상태에서 드롭다운 visible -->
+          <select class="status-dropdown">
+            <option value="">Select</option>
+            <option value="red">Red</option>
+            <option value="yellow">Yellow</option>
+            <option value="green">Green</option>
+          </select>
+          <!-- 이미지는 기본적으로 숨김 -->
+          <img class="status-image hidden" src="" alt="status image" />
+        </td>
+        <td class="editable">코멘트 1</td>
+      </tr>
+      <tr>
+        <td class="editable">2주차</td>
+        <td class="editable">내용B</td>
+        <td class="dropdown-cell">
+          <select class="status-dropdown">
+            <option value="">Select</option>
+            <option value="red">Red</option>
+            <option value="yellow">Yellow</option>
+            <option value="green">Green</option>
+          </select>
+          <img class="status-image hidden" src="" alt="status image" />
+        </td>
+        <td class="editable">코멘트 2</td>
+      </tr>
     </tbody>
-</table>
+  </table>
 
-<script>
-    initializeTable("editableTable", "imageContainer")
-</script>
+  <!-- 예시 테이블 2 (복붙 시 독립적으로 동작) -->
+  <br><hr><br>
+  <table class="myTable">
+    <thead>
+      <tr>
+        <th>Week</th>
+        <th>Some Info</th>
+        <th>Status</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="editable">3주차</td>
+        <td class="editable">내용C</td>
+        <td class="dropdown-cell">
+          <select class="status-dropdown">
+            <option value="">Select</option>
+            <option value="red">Red</option>
+            <option value="yellow">Yellow</option>
+            <option value="green">Green</option>
+          </select>
+          <img class="status-image hidden" src="" alt="status image" />
+        </td>
+        <td class="editable">코멘트 3</td>
+      </tr>
+      <tr>
+        <td class="editable">4주차</td>
+        <td class="editable">내용D</td>
+        <td class="dropdown-cell">
+          <select class="status-dropdown">
+            <option value="">Select</option>
+            <option value="red">Red</option>
+            <option value="yellow">Yellow</option>
+            <option value="green">Green</option>
+          </select>
+          <img class="status-image hidden" src="" alt="status image" />
+        </td>
+        <td class="editable">코멘트 4</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <!-- 기능성 JS 로드 -->
+  <script src="script.js"></script>
+</body>
+</html>
