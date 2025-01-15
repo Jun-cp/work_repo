@@ -1,31 +1,11 @@
-<table id="existingTable" border="1" style="width: 100%; text-align: center;">
-  <thead>
-    <tr>
-      <th>항목</th>
-      <th>이미지 선택</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>예제 항목 1</td>
-      <td id="cell1"></td>
-    </tr>
-    <tr>
-      <td>예제 항목 2</td>
-      <td id="cell2"></td>
-    </tr>
-    <tr>
-      <td>예제 항목 3</td>
-      <td id="cell3"></td>
-    </tr>
-    </tbody>
-  </table>
 <script>
     // 드롭다운 메뉴와 이미지를 추가하는 함수
     function addDropdownToCell(cellId, imageContainerId) {
+        const uniqueId = '${containerPrefix}_${Math.random().toString(36).substr(2, 9)}';
         const cell = document.getElementById(cellId);
         // 드롭다운 메뉴 생성
         const select = document.createElement("select");
+        select.setAttribute("id", 'dropdown_${uniqueId}');
         select.style.margin = "0 auto";
         select.onchange = function () {
             updateImage(this, imageContainerId);
@@ -82,8 +62,273 @@
             selectElement.style.display = "none";
         }
     }
-    // 드롭다운 메뉴 추가 실행
-    addDropdownToCell("cell1", "imageContainer1");
-    addDropdownToCell("cell2", "imageContainer2");
-    addDropdownToCell("cell3", "imageContainer3");
+    function initializeTable(tableId, containerPrefix) {
+        const table = document=getElementById(tableId);
+        const rows = table.getElementsByTagName("tr");
+        for (let i=1; i<rows.length; i++) {
+            const cells = rows[i].getElementsByTagName("td");
+            for (let j=0; j<cells.length; j++) {
+                if (j===4) {   // 5열에 추가
+                    addDropdownToCell(cells[j], containerPrefix);
+                }
+            }
+        }
+    }
 </script>
+
+
+
+<h1>250109 팀 진행현황</h1>
+<table data-table-width="1800" data-layout="align-start" ac:local-id="c4280ca8-9175-428e-a96f-4b70a4afcb47">
+    <colgroup>
+        <col style="width: 206.0px;" />
+        <col style="width: 215.0px;" />
+        <col style="width: 284.0px;" />
+        <col style="width: 272.0px;" />
+        <col style="width: 135.0px;" />
+        <col style="width: 123.0px;" />
+        <col style="width: 203.0px;" />
+        <col style="width: 390.0px;" />
+        <col style="width: 228.0px;" />
+        <col style="width: 291.0px;" />
+        <col style="width: 436.0px;" />
+        <col style="width: 148.0px;" />
+        <col style="width: 276.0px;" />
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>
+                <h3 style="text-align: center;"><strong>Lead 경영방향/목표</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>프로젝트/ 업무 명</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>개요</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>주요 로드맵</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>원활도</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진척률</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>진행 단계</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>현 주요 사항</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>추진 결과 / 산출물</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>담당자 (업무)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>Issue / 대응 방안</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>컨플루언스</strong><br /><strong>(히스토리)</strong></h3>
+            </th>
+            <th>
+                <h3 style="text-align: center;"><strong>상무님</strong><br /><strong>코멘터리</strong></h3>
+            </th>
+        </tr>
+        <tr>
+            <td contenteditable="true"><p>AX 전략방향 수립 및 국내외 협력기회 발굴</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020720.png"><ri:attachment ri:filename="0777791e-abc8-4a8f-8eed-881e058381ba" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;">%</p>
+            </td>
+            <td><p>(사업) 초기 검토</p>
+            </td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>필요시 입력</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업수주 지원, 컨설팅</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="35" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020933.png"><ri:attachment ri:filename="f5fa33e0-f8cb-44c3-b696-a1f59ed57d9d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) 고객 제안안 작성</p>
+            </td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>AX 사업기회 확대를 위한 선제안 지원</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;"><ac:image ac:original-height="36" ac:original-width="98" ac:inline="true" ac:alt="image-20250103-020950.png"><ri:attachment ri:filename="86a75835-eac9-4afd-929d-4e69fa0c860d" ri:version-at-save="1" /></ac:image></p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) 고객 검토</p>
+            </td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>B2C/B2E 내부 경험의 B2B 활용 연계 및 내외부 시너지 가교</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">&nbsp;</p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) PoC / 컨설팅 진행</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p>Lead 내 담당 업무</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>(사업) 제안 참여</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p>(사업) 수행 참여</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p style="text-align: center;">　</p>
+            </td>
+            <td><p>초기 검토</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p>　</p>
+            </td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p>진행/작성중</p>
+            </td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+        <tr>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p style="text-align: center;" /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+            <td><p /></td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    initializeTable("editableTable", "imageContainer")
+</script>
+
