@@ -1,0 +1,75 @@
+<table id="existingTable" border="1" style="width: 100%; text-align: center;">
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>이미지 선택</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>예제 항목 1</td>
+      <td id="cell1"></td>
+    </tr>
+    <tr>
+      <td>예제 항목 2</td>
+      <td id="cell2"></td>
+    </tr>
+    <tr>
+      <td>예제 항목 3</td>
+      <td id="cell3"></td>
+    </tr>
+    </tbody>
+  </table>
+<script>
+    // 드롭다운 메뉴와 이미지를 추가하는 함수
+    function addDropdownToCell(cellId, imageContainerId) {
+        const cell = document.getElementById(cellId);
+        // 드롭다운 메뉴 생성
+        const select = document.createElement("select");
+        select.onchange = function () {
+            updateImage(this, imageContainerId);
+        };
+        // 드롭다운 옵션 추가
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "이미지 선택";
+        select.appendChild(defaultOption);
+        const options = [
+            { value: "img1", text: "이미지 1" },
+            { value: "img2", text: "이미지 2" },
+            { value: "img3", text: "이미지 3" },
+        ];
+        options.forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = option.value;
+            opt.textContent = option.text;
+            select.appendChild(opt);
+        });
+        // 이미지 표시 컨테이너 생성
+        const imageContainer = document.createElement("div");
+imageContainer.id = imageContainerId;
+        imageContainer.style.marginTop = "10px";
+        // 드롭다운과 이미지 컨테이너를 셀에 추가
+        cell.appendChild(select);
+        cell.appendChild(imageContainer);
+    }
+    // 선택된 이미지 업데이트 함수
+    function updateImage(selectElement, imageContainerId) {
+        const imageContainer = document.getElementById(imageContainerId);
+        const selectedValue = selectElement.value;
+        // 이미지 URL 매핑
+        const images = {
+            "img1": "blob:https://ktspace.atlassian.net/bd102584-cd63-47ed-bb06-322cc1242ec9",
+            "img2": "blob:https://ktspace.atlassian.net/f08cb081-4d37-465d-a3c0-69b91de6d8f7",
+            "img3": "blob:https://ktspace.atlassian.net/702136ed-1f22-42ea-9ee8-ef726a321d49",
+        };
+        // 선택된 값에 따라 이미지 표시
+        imageContainer.innerHTML = selectedValue
+            ? `<img src="${images[selectedValue]}" alt="Selected Image" style="width: 50px; height: 50px;">`
+            : "";
+    }
+    // 드롭다운 메뉴 추가 실행
+    addDropdownToCell("cell1", "imageContainer1");
+    addDropdownToCell("cell2", "imageContainer2");
+    addDropdownToCell("cell3", "imageContainer3");
+</script>
