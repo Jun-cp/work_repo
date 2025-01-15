@@ -1,7 +1,8 @@
 <script>
     // 드롭다운 메뉴와 이미지를 추가하는 함수
     function addDropdownToCell(cellId, imageContainerId) {
-        const uniqueId = '${containerPrefix}_${Math.random().toString(36).substr(2, 9)}';
+        const uniqueId = `${containerPrefix}_${Math.random().toString(36).substr(2, 9)}`; // 수정
+
         const cell = document.getElementById(cellId);
         // 드롭다운 메뉴 생성
         const select = document.createElement("select");
@@ -63,12 +64,13 @@
         }
     }
     function initializeTable(tableId, containerPrefix) {
-        const table = document=getElementById(tableId);
+        const table = documentgetElementById(tableId);
         const rows = table.getElementsByTagName("tr");
         for (let i=1; i<rows.length; i++) {
             const cells = rows[i].getElementsByTagName("td");
             for (let j=0; j<cells.length; j++) {
                 if (j===4) {   // 5열에 추가
+                    cells[j].innerHTML = ""; // 기존 데이터 초기화
                     addDropdownToCell(cells[j], containerPrefix);
                 }
             }
@@ -80,6 +82,19 @@
 
 <h1>250109 팀 진행현황</h1>
 <table data-table-width="1800" data-layout="align-start" ac:local-id="c4280ca8-9175-428e-a96f-4b70a4afcb47">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse; /* 셀 간의 경계선을 하나로 합침 */
+        }
+        th, td {
+            border: 1px solid black; /* 셀의 테두리를 검은 실선으로 설정 */
+            padding: 8px; /* 셀 내부 여백 */
+            text-align: center; /* 중앙 정렬 */
+        }
+    </style>
+    
+
     <colgroup>
         <col style="width: 206.0px;" />
         <col style="width: 215.0px;" />
