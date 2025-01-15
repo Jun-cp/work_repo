@@ -26,6 +26,7 @@
         const cell = document.getElementById(cellId);
         // 드롭다운 메뉴 생성
         const select = document.createElement("select");
+        select.style.margin = "0 auto";
         select.onchange = function () {
             updateImage(this, imageContainerId);
         };
