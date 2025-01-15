@@ -57,6 +57,7 @@
     function updateImage(selectElement, imageContainerId) {
         const imageContainer = document.getElementById(imageContainerId);
         const selectedValue = selectElement.value;
+        
         // 이미지 URL 매핑
         const images = {
             "img1": "https://github.com/Jun-cp/work_repo/blob/main/traffic_green.jpg?raw=true",
@@ -64,11 +65,19 @@
             "img3": "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
         };
         // 선택된 값에 따라 이미지 표시
-        if (selectedValue) {
-            imageContainer.innerHTML = `<img src="${images[selectedValue]}" alt="Selected Image" style="max-width: 100%; height: auto;">`;
+        if (selectedValue) {            
+            imageContainer.innerHTML = `<img src="${images[selectedValue]}" alt="Selected Image" style="max-width: 30%; height: auto;">`;
+            
+            const imgElement = imageContainer.querySelector("img");
+            imgElement.addEventListener("click", function() {
+                imageContainer.style.display = "none";
+
+                selectElement.style.display = "block";
+                selectElement.value = "";
+            });
+            
 
             imageContainer.style.display = "block";
-
             selectElement.style.display = "none";
         }
     }
