@@ -8,24 +8,24 @@
     /* 표 전체 스타일 */
     table {
       width: 90%;
-      margin: 0 auto;
+      margin: 0 auto 20px auto;
       border-collapse: collapse;
       text-align: center; /* 헤더, 드롭다운, 이미지 등 수평 중앙정렬 */
     }
-
     th, td {
       border: 1px solid #ccc;
       padding: 8px;
-      vertical-align: middle; /* 수직도 중간정렬 */
+      vertical-align: middle;
     }
 
-    /* 3열에 있는 드롭다운/select, 이미지 모두 중앙에 보이도록 */
+    /* 드롭다운/이미지/텍스트를 토글할 셀 */
     .dropdown-cell {
       position: relative;
-      width: 150px; /* 예시로 열 폭을 어느 정도 고정 */
+      width: 150px; /* 열 폭 예시 */
     }
 
-    select.status-dropdown {
+    select.status-dropdown,
+    select.text-dropdown {
       display: inline-block;
       text-align: center;
       width: 100px;
@@ -35,34 +35,67 @@
 
     /* 이미지를 표 크기를 넘어가지 않도록 제한 */
     .status-image {
-      max-width: 100px;  
-      max-height: 50px; 
+      max-width: 100px;
+      max-height: 50px;
       cursor: pointer;
       display: block;
-      margin: 0 auto;  /* 중앙정렬 */
+      margin: 0 auto;
     }
 
-    /* 드롭다운과 이미지를 토글하기 위한 숨김 클래스 */
+    /* 텍스트 표시용 (A/B/C/D) */
+    .dropdown-text {
+      cursor: pointer;
+      display: inline-block;
+      font-weight: bold;
+      margin: 0 auto;
+    }
+
+    /* 토글 제어를 위해 쓰는 hidden 클래스 */
     .hidden {
-      display: none;
+      display: none !important;
     }
 
-    /* 테이블에서 텍스트를 수정 가능하게 함 */
-    /* (3열의 드롭다운/이미지는 제외) */
-    td[contenteditable="true"]:focus {
+    /* 편집 가능한 셀 (보안 텍스트라면 contenteditable 해제할 수도 있음) */
+    td.editable {
+      contenteditable: true;
+    }
+    td.editable:focus {
       outline: 2px solid #007bff;
     }
 
-    /* 편의상 첫 열, 둘째 열, 네 번째 열을 contenteditable로 지정 */
-    /* (실제 필요에 맞춰 조정 가능) */
-    td.editable {
-      contenteditable: true;
+    /* 새 표를 생성 시, 위쪽에 붙일 공간 */
+    .new-table-container {
+      width: 90%;
+      margin: 20px auto;
+    }
+
+    /* "편집 모드"에서만 보이는 버튼 컨테이너(기본은 숨김) */
+    .edit-only {
+      display: none; /* 기본은 숨김 */
+      text-align: center;
+      margin: 20px auto;
+    }
+    /* 버튼 스타일 예시 */
+    .edit-only button {
+      padding: 8px 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align: center;">(데모) 4열 테이블 + 3열 드롭다운</h2>
-  <p style="text-align: center;">원하는 셀 텍스트(1, 2, 4열)를 직접 편집할 수 있습니다. 3열의 드롭다운도 선택 가능합니다.</p>
+  <h2 style="text-align: center;">(데모) 4열 테이블 + 드롭다운(1열, 3열)</h2>
+  <p style="text-align: center;">
+    - 1열: A/B/C/D 택1 → 선택 시 드롭다운 숨기고 텍스트 표시  
+    - 3열: Red/Yellow/Green 택1 → 선택 시 드롭다운 숨기고 이미지 표시  
+  </p>
+
+  <!-- 편집 모드에서만 표시할 버튼 (URL 파라미터 ?editMode=true 일 때 보이도록) -->
+  <div class="edit-only">
+    <button id="createTableBtn">새로운 표 만들기</button>
+  </div>
+
+  <!-- 이 컨테이너 안에 "새 표"가 동적으로 추가될 예정 -->
+  <div class="new-table-container" id="newTableContainer"></div>
 
   <!-- 예시 테이블 1 -->
   <table class="myTable">
@@ -76,24 +109,42 @@
     </thead>
     <tbody>
       <tr>
-        <td class="editable">1주차</td>
-        <td class="editable">내용A</td>
-        <!-- 3열: 드롭다운/이미지가 들어가는 셀 -->
+        <!-- 1열에도 드롭다운 셀 -->
         <td class="dropdown-cell">
-          <!-- 초기상태에서 드롭다운 visible -->
+          <select class="text-dropdown">
+            <option value="">Select</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+          <!-- 선택 후 표시할 텍스트 -->
+          <span class="dropdown-text hidden"></span>
+        </td>
+        <td class="editable">내용A</td>
+        <!-- 3열: 이미지 드롭다운 -->
+        <td class="dropdown-cell">
           <select class="status-dropdown">
             <option value="">Select</option>
             <option value="red">Red</option>
             <option value="yellow">Yellow</option>
             <option value="green">Green</option>
           </select>
-          <!-- 이미지는 기본적으로 숨김 -->
           <img class="status-image hidden" src="" alt="status image" />
         </td>
-        <td class="editable">코멘트 1</td>
+        <td class="editable">코멘트1</td>
       </tr>
       <tr>
-        <td class="editable">2주차</td>
+        <td class="dropdown-cell">
+          <select class="text-dropdown">
+            <option value="">Select</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+          <span class="dropdown-text hidden"></span>
+        </td>
         <td class="editable">내용B</td>
         <td class="dropdown-cell">
           <select class="status-dropdown">
@@ -104,13 +155,12 @@
           </select>
           <img class="status-image hidden" src="" alt="status image" />
         </td>
-        <td class="editable">코멘트 2</td>
+        <td class="editable">코멘트2</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- 예시 테이블 2 (복붙 시 독립적으로 동작) -->
-  <br><hr><br>
+  <!-- 예시 테이블 2 -->
   <table class="myTable">
     <thead>
       <tr>
@@ -122,7 +172,16 @@
     </thead>
     <tbody>
       <tr>
-        <td class="editable">3주차</td>
+        <td class="dropdown-cell">
+          <select class="text-dropdown">
+            <option value="">Select</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+          <span class="dropdown-text hidden"></span>
+        </td>
         <td class="editable">내용C</td>
         <td class="dropdown-cell">
           <select class="status-dropdown">
@@ -133,10 +192,19 @@
           </select>
           <img class="status-image hidden" src="" alt="status image" />
         </td>
-        <td class="editable">코멘트 3</td>
+        <td class="editable">코멘트3</td>
       </tr>
       <tr>
-        <td class="editable">4주차</td>
+        <td class="dropdown-cell">
+          <select class="text-dropdown">
+            <option value="">Select</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+          <span class="dropdown-text hidden"></span>
+        </td>
         <td class="editable">내용D</td>
         <td class="dropdown-cell">
           <select class="status-dropdown">
@@ -147,7 +215,7 @@
           </select>
           <img class="status-image hidden" src="" alt="status image" />
         </td>
-        <td class="editable">코멘트 4</td>
+        <td class="editable">코멘트4</td>
       </tr>
     </tbody>
   </table>
