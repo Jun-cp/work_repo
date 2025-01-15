@@ -64,9 +64,13 @@
             "img3": "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
         };
         // 선택된 값에 따라 이미지 표시
-        imageContainer.innerHTML = selectedValue
-            ? `<img src="${images[selectedValue]}" alt="Selected Image" style="width: 50px; height: 50px;">`
-            : "";
+        if (selectedValue) {
+            imageContainer.innerHTML = `<img src="${images[selectedValue]}" alt="Selected Image" style="max-width: 100%; height: auto;">`;
+
+            imageContainer.style.display = "block";
+
+            selectElement.style.display = "none";
+        }
     }
     // 드롭다운 메뉴 추가 실행
     addDropdownToCell("cell1", "imageContainer1");
