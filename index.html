@@ -35,9 +35,9 @@
         defaultOption.textContent = "이미지 선택";
         select.appendChild(defaultOption);
         const options = [
-            { value: "img1", text: "이미지 1" },
-            { value: "img2", text: "이미지 2" },
-            { value: "img3", text: "이미지 3" },
+            { value: "img1", text: "Green" },
+            { value: "img2", text: "Yellow" },
+            { value: "img3", text: "Red" },
         ];
         options.forEach((option) => {
             const opt = document.createElement("option");
@@ -59,9 +59,9 @@
         const selectedValue = selectElement.value;
         // 이미지 URL 매핑
         const images = {
-            "img1": "blob:https://ktspace.atlassian.net/bd102584-cd63-47ed-bb06-322cc1242ec9",
-            "img2": "blob:https://ktspace.atlassian.net/f08cb081-4d37-465d-a3c0-69b91de6d8f7",
-            "img3": "blob:https://ktspace.atlassian.net/702136ed-1f22-42ea-9ee8-ef726a321d49",
+            "img1": "https://ktspace.atlassian.net/bd102584-cd63-47ed-bb06-322cc1242ec9",
+            "img2": "https://ktspace.atlassian.net/f08cb081-4d37-465d-a3c0-69b91de6d8f7",
+            "img3": "https://ktspace.atlassian.net/702136ed-1f22-42ea-9ee8-ef726a321d49",
         };
         // 선택된 값에 따라 이미지 표시
         imageContainer.innerHTML = selectedValue
