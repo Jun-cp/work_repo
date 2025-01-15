@@ -63,25 +63,54 @@
             selectElement.style.display = "none";
         }
     }
+
     function initializeTable(tableId, containerPrefix) {
-        const table = documentgetElementById(tableId);
+        const table = document.getElementById(tableId);
         const rows = table.getElementsByTagName("tr");
-        for (let i=1; i<rows.length; i++) {
+        for (let i = 1; i < rows.length; i++) { // 첫 번째 행(헤더)은 제외
             const cells = rows[i].getElementsByTagName("td");
-            for (let j=0; j<cells.length; j++) {
-                if (j===4) {   // 5열에 추가
-                    cells[j].innerHTML = ""; // 기존 데이터 초기화
-                    addDropdownToCell(cells[j], containerPrefix);
+            for (let j = 0; j < cells.length; j++) {
+                if (j === 4) { // 5번째 열에 드롭다운 추가
+                    const cell = cells[j];
+                    const cellId = `${containerPrefix}_row${i}_col${j}`;
+                    cell.setAttribute("id", cellId); // 고유 ID 설정
+                    addDropdownToCell(cellId, `${containerPrefix}_image_row${i}_col${j}`);
                 }
             }
         }
     }
+
+    // DOM 변경 감지 및 동작
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === "childList") {
+                const tables = document.querySelectorAll(".dynamic-table");
+                tables.forEach((table) => {
+                    if (!table.dataset.initialized) {
+                        table.dataset.initialized = "true"; // 중복 초기화 방지
+                        table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`; // 고유 ID 부여
+                        initializeDynamicTable(table);
+                    }
+                });
+            }
+        });
+    });
+
+    // DOM 변경 감지 시작
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // 초기 테이블 초기화
+    document.querySelectorAll(".dynamic-table").forEach((table) => {
+        table.dataset.tableId = `table_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+        initializeDynamicTable(table);
+    });
+
 </script>
 
 
 
 <h1>250109 팀 진행현황</h1>
-<table data-table-width="1800" data-layout="align-start" ac:local-id="c4280ca8-9175-428e-a96f-4b70a4afcb47">
+<table class="dynamic-table" data-table-width="2500" data-layout="align-start" ac:local-id="c4280ca8-9175-428e-a96f-4b70a4afcb47">
     <style>
         table {
             width: 100%;
