@@ -12,9 +12,9 @@ const AUTO_COMPLETE_LIST = [
   
   // 이미지용 (Red/Yellow/Green)
   const IMAGE_URLS = {
-    red: "https://via.placeholder.com/100x50/ff0000/ffffff?text=RED",
-    yellow: "https://via.placeholder.com/100x50/ffff00/000000?text=YELLOW",
-    green: "https://via.placeholder.com/100x50/00ff00/000000?text=GREEN"
+    red: "https://github.com/Jun-cp/work_repo/blob/b0bc940f6bde3019d0c749b102bfe568531c5231/traffic_red.jpg",
+    yellow: "https://github.com/Jun-cp/work_repo/blob/b0bc940f6bde3019d0c749b102bfe568531c5231/traffic_yellow.jpg",
+    green: "https://github.com/Jun-cp/work_repo/blob/b0bc940f6bde3019d0c749b102bfe568531c5231/traffic_green.jpg"
   };
   
   
