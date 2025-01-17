@@ -11,19 +11,35 @@
 // 2열 자동완성 후보
 const AUTO_COMPLETE_LIST = [
     "산림청 LLM PoC",
-    "샘플 텍스트1",
-    "샘플 텍스트2",
+    "국회 빅데이터 구축사업",
+    "Copilot Agent 개발",
+    "JTS LLM사업",
+    "우리은행 GenAI 사업",
+    "신한은행 GenAI 사업",
+    "GPUaaS",
+    "비씨카드",
+    "업무 관리 프로세스",
+    "고려대 산학 (MoM)",
+    "신한은행 AI Branch 컨설팅/PoC 지원",
+    "KPI 작성",
+    "Lead 행사 추진",
+    "구매/회계 업무"
+
     // ...
   ];
   
   
-  // 1열(A~D)에 따른 7열 옵션 매핑
+  // 0열(A~F)에 따른 1열 옵션 매핑
   // 예: A -> [A-1, A-2, A-3], C -> [C-1, C-2], ...
   const COL1_TO_COL7_OPTIONS = {
-    A: ["A-1", "A-2", "A-3"],
-    B: ["B-1"], // 필요시 확장
-    C: ["C-1", "C-2"],
-    D: ["D-1"]  // 필요시 확장
+    A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
+    B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"], // 필요시 확장
+    C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
+    D: ["Lead 내 담당 업무"],
+    E: ["컨설팅/제안 지원(핵심&전략고객)", "그룹AX협력과제 발굴/이행지원", "MS/AX유관조직 가교역할"],
+    F: ["AX컨설팅수행(핵심&전략고객)", "PoC기획/개발/프로토타이핑(핵심&전략고객)", "AIMSP협력모델 구축"], // 필요시 확장
+    G: ["AX컨설팅방법론 표준화/확산", "AI신기술분석/내부역량강화/기술지원", "Ref.아키텍처 발굴/확산"],
+    H: ["Lead 내 담당 업무"]  // 필요시 확장
   };
   
   
@@ -31,14 +47,14 @@ const AUTO_COMPLETE_LIST = [
    * 1. 드롭다운 생성 함수들
    ************************************************************/
   /**
-   * A-D 텍스트 드롭다운(1열)
+   * 0열 : 담당전략과제 : 드롭다운
    */
   function createADTextDropdown() {
     const container = document.createElement('div');
   
     const select = document.createElement('select');
     select.className = 'dropdown-select text-dropdown'; 
-    const opts = ['', 'A', 'B', 'C', 'D'];
+    const opts = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     opts.forEach(val => {
       const op = document.createElement('option');
       op.value = val;
