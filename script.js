@@ -66,15 +66,16 @@ const AUTO_COMPLETE_LIST = [
         {val:'H', text:'2_Lead내 담당 업무'},
         
       ];
-    opts.forEach(val => {
-      const op = document.createElement('option');
-      op.value = val;
-      op.textContent = val === '' ? 'Select' : val;
-      select.appendChild(op);
-    });
+      opts.forEach(o => {
+        const op = document.createElement('option');
+        op.value = o.val;
+        op.textContent = o.text;
+        select.appendChild(op);
+      });
   
-    const span = document.createElement('span');
-    span.className = 'dropdown-text hidden';
+      const span = document.createElement('span');
+      span.className = 'dropdown-text hidden';
+  
   
     container.appendChild(select);
     container.appendChild(span);
