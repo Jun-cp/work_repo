@@ -54,7 +54,18 @@ const AUTO_COMPLETE_LIST = [
   
     const select = document.createElement('select');
     select.className = 'dropdown-select text-dropdown'; 
-    const opts = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    const opts = [
+        {val:'', text:'(선택)'},
+        {val:'A', text:'1_AX사업 수주지원/컨설팅'},
+        {val:'B', text:'1_MS파트너십 기반 고객경험 혁신서비스 발굴'},
+        {val:'C', text:'1_AX사업 경쟁력강화를 위한 파트너 발굴'},
+        {val:'D', text:'1_Lead내 담당 업무'},
+        {val:'E', text:'2_AX사업 수주지원/컨설팅'},
+        {val:'F', text:'2_컨설팅/프로토타이핑수행을 위한 사업수주 지원'},
+        {val:'G', text:'2_표준화 오퍼링 제공으로 사업수주 지원'},
+        {val:'H', text:'2_Lead내 담당 업무'},
+        
+      ];
     opts.forEach(val => {
       const op = document.createElement('option');
       op.value = val;
@@ -152,7 +163,7 @@ const AUTO_COMPLETE_LIST = [
       });
     }
   
-    // 2) 이미지 드롭다운(5열)
+    // 2) 이미지 드롭다운(6열)
     const statusDropdown = td.querySelector('.status-dropdown');
     const statusImage = td.querySelector('.status-image');
     if (statusDropdown && statusImage) {
@@ -173,7 +184,7 @@ const AUTO_COMPLETE_LIST = [
       });
     }
   
-    // 3) 7열 드롭다운
+    // 3) 1열 연동 드롭다운
     const col7Dropdown = td.querySelector('.col7-dropdown');
     const col7Span = td.querySelector('.dropdown-text');
     if (col7Dropdown && col7Span) {
@@ -275,17 +286,17 @@ const AUTO_COMPLETE_LIST = [
           col1.appendChild(container);
         }
       }
-      // 5열( index=4 ) 이미지 드롭다운
+      // 7열( index=6 ) 이미지 드롭다운
       {
-        const col5 = tds[4];
+        const col5 = tds[6];
         if (col5.children.length === 0) {
           const { container } = createImageDropdown();
           col5.appendChild(container);
         }
       }
-      // 7열( index=6 ), 동적 텍스트 드롭다운
+      // 2열( index=1 ), 동적 텍스트 드롭다운
       {
-        const col7 = tds[6];
+        const col7 = tds[1];
         if (col7.children.length === 0) {
           const { container } = createCol7Dropdown();
           col7.appendChild(container);
@@ -345,12 +356,12 @@ const AUTO_COMPLETE_LIST = [
     tables.forEach(tbl => {
       initTable(tbl);
   
-      // 2열( index=1 ) 자동완성 기능
+      // 3열( index=2 ) 자동완성 기능
       const rows = tbl.querySelectorAll('tbody tr');
       rows.forEach(row => {
         const tds = row.querySelectorAll('td');
         if (tds.length >= 2) {
-          attachAutoCompleteForTd(tds[1]); // 2열
+          attachAutoCompleteForTd(tds[2]); // 3열
         }
       });
     });
