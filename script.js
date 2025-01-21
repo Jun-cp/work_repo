@@ -59,7 +59,11 @@ function createADTextDropdown() {
     { val:'',  text:'(선택)' },
     { val:'A', text:'1_AX사업...' },
     { val:'B', text:'1_MS파트너...' },
-    // ...
+    { val:'C', text:'1_c...' },
+    { val:'D', text:'1_d...' },
+    { val:'E', text:'2_1...' },
+    { val:'F', text:'2_2...' },
+    { val:'G', text:'2_3...' },
     { val:'H', text:'2_Lead내 담당...' }
   ];
   opts.forEach(o => {
