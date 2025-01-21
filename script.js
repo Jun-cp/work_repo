@@ -282,17 +282,17 @@ function createStrategyDropdown() {
   }
 
  /************************************************************
-   * 첨단 자동완성(3열, index=2) 적용 함수
+   * 5. 자동완성(2열)
    ************************************************************/
- function attachAutoComplete(td) {
+  function attachAutoCompleteToCell(td) {
     if (!td) return;
 
-    // hint 컨테이너
+    // hintBox
     const hintBox = document.createElement('div');
     hintBox.className = 'autocomplete-hint hidden';
     td.appendChild(hintBox);
 
-    // input 이벤트
+    // input 이벤트 (IME 한글 포함)
     td.addEventListener('input', () => {
       const text = td.textContent.trim();
       if (!text) {
@@ -300,53 +300,46 @@ function createStrategyDropdown() {
         hintBox.classList.add('hidden');
         return;
       }
-
-      // 소문자/대문자 구분 없이 검색 (한글 포함)
-      // -> item.toLowerCase().includes(text.toLowerCase())
       const lowerText = text.toLowerCase();
+      // 전부 필터
       const matches = AUTO_COMPLETE_LIST.filter(item => {
         return item.toLowerCase().includes(lowerText);
       });
-
       if (matches.length === 0) {
         hintBox.innerHTML = '';
         hintBox.classList.add('hidden');
         return;
       }
-
-      // hintBox 내부를 <div> 항목들로 구성
+      // 표시
       let html = '';
-      matches.forEach(match => {
-        html += `<div class="autocomplete-item">${match}</div>`;
+      matches.forEach((m) => {
+        html += `<div class="autocomplete-item">${m}</div>`;
       });
       hintBox.innerHTML = html;
       hintBox.classList.remove('hidden');
 
-      // 각 item 클릭 => td에 삽입
-      const items = hintBox.querySelectorAll('.autocomplete-item');
-      items.forEach(itemEl => {
-        itemEl.addEventListener('click', () => {
-          // 클릭한 항목의 텍스트
+      // 아이템 클릭 => td에 반영
+      const itemEls = hintBox.querySelectorAll('.autocomplete-item');
+      itemEls.forEach(itemEl => {
+        itemEl.addEventListener('mousedown', (e) => {
+          // mousedown에서 직접 처리 (blur가 바로 안일어나도록)
+          e.stopPropagation();
           const selectedText = itemEl.textContent;
-          // td에 반영
           td.textContent = selectedText;
-          // hint 숨김
-          hintBox.innerHTML = '';
           hintBox.classList.add('hidden');
         });
       });
     });
 
-    // 포커스 아웃 or 특정 키에서 hint 닫기
+    // blur 시 hint 닫기 (조금 지연해서 클릭 처리 가능)
     td.addEventListener('blur', () => {
-      // 약간의 지연 후 숨겨야, 클릭 이벤트가 가능
       setTimeout(() => {
         hintBox.classList.add('hidden');
       }, 150);
     });
 
+    // 특정 키(Esc 등) 처리
     td.addEventListener('keydown', (e) => {
-      // Esc 누르면 닫기 etc...
       if (e.key === 'Escape') {
         hintBox.classList.add('hidden');
       }
@@ -388,19 +381,23 @@ function createStrategyDropdown() {
     }
   }
 
-  /************************************************************
+   /************************************************************
    * 7. DOMContentLoaded
    ************************************************************/
-  document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
     const table = document.querySelector('.myTable');
-    if (!table) return;
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const tds = row.querySelectorAll('td');
-      if (tds.length > 2) {
-        attachAutoComplete(tds[2]); 
-      }
-    });
+    if (table) {
+      // 1) 기존 행 드롭다운 삽입
+      initTable(table);
+      // 2) 자동완성 -> 2열
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const tds = row.querySelectorAll('td');
+        if (tds[2]) {
+          attachAutoCompleteToCell(tds[2]);
+        }
+      });
+    }
 
     // (4) 버튼 안 뜬다면, 아래 요소가 HTML에 없는지 확인
     const addBtn = document.getElementById('addRowBtn');

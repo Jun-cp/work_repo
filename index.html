@@ -21,6 +21,24 @@
       background: #f8f8f8;
     }
 
+    /* 편집 가능한 셀 (3열 등) */
+    td.editable {
+      cursor: text;
+    }
+    td.editable:focus {
+      outline: 2px solid #007bff;
+    }
+
+    /* 이미지 드롭다운 (5열) */
+    .status-image {
+      display: block;
+      margin: 0 auto;      
+      height: 1.2em;  /* 텍스트 한 줄 높이 정도 */
+      width: auto;    /* 가로는 비율 맞춰 자동 */
+      object-fit: contain;
+      cursor: pointer;
+    }
+    
     /* 각 열의 폭을 지정 (index 0~12) */
     /* 150, 250, 200, 280, 280, 140, 140, 400, 200, 300, 440, 140, 280 px */
     colgroup col:nth-child(1) { width: 150px; }
@@ -42,41 +60,6 @@
       display: none !important;
     }
 
-    /* 자동완성 추천 박스 스타일 (2열) */
-    .autocomplete-hint {
-      position: absolute;
-      bottom: -20px; 
-      left: 0;
-      background: #ffe;
-      color: #555;
-      font-size: 0.9rem;
-      padding: 2px 4px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      pointer-events: none; /* 마우스 이벤트 안 받음 */
-    }
-    .autocomplete-hint.hidden {
-      display: none;
-    }
-
-    /* 편집 가능한 셀 (3열 등) */
-    td.editable {
-      cursor: text;
-    }
-    td.editable:focus {
-      outline: 2px solid #007bff;
-    }
-
-    /* 이미지 드롭다운 (5열) */
-    .status-image {
-      display: block;
-      margin: 0 auto;      
-      height: 1.2em;  /* 텍스트 한 줄 높이 정도 */
-      width: auto;    /* 가로는 비율 맞춰 자동 */
-      object-fit: contain;
-      cursor: pointer;
-    }
-
     select.dropdown-select {
       width: 100px;
       cursor: pointer;
@@ -86,6 +69,37 @@
       display: inline-block;
       font-weight: bold;
       margin: 0 auto;
+    }
+
+    /* 자동완성 힌트 박스 */
+    .autocomplete-hint {
+      position: absolute;
+      top: calc(100% + 2px); /* 셀 아래 약간 떨어져서 표시 */
+      left: 0;
+      background: rgba(255, 255, 204, 0.9); /* 옅은 노랑 배경 */
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: #333;
+      min-width: 100px;   /* 박스 최소너비 */
+      max-width: 400px;   /* 박스 최대너비 */
+      white-space: nowrap; /* 한 줄 표시 (자동으로 가로폭 늘어날 수 있음) */
+      z-index: 999;
+      pointer-events: auto; /* 클릭 가능 */
+    }
+
+    /* 목록 아이템 */
+    .autocomplete-item {
+      padding: 4px 6px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+    }
+    /* 마지막 아이템은 구분선 제거 (선택사항) */
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+    .autocomplete-item:hover {
+      background: #fffaaf; /* hover 시 강조 */
     }
 
     .button-area {
