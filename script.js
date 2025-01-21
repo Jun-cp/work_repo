@@ -284,88 +284,101 @@ function createStrategyDropdown() {
  /************************************************************
    * 5. 자동완성(2열)
    ************************************************************/
-  function attachAutoCompleteToCell(td) {
+ function attachAutoCompleteToCell(td) {
     if (!td) return;
-
-    let isComposing = false; // [추가] IME 조합 중인지 체크
-
-    // hintBox
+  
+    let isComposing = false; // IME 조합 여부 플래그
+  
+    // 힌트 박스
     const hintBox = document.createElement('div');
     hintBox.className = 'autocomplete-hint hidden';
     td.appendChild(hintBox);
-
+  
+    // 1) IME 조합 이벤트
     td.addEventListener('compositionstart', () => {
-    isComposing = true;
-  });
-  td.addEventListener('compositionend', () => {
-    isComposing = false;
-    updateHints(); // 조합 완료 시 최종 반영
-  });
-
-  // input 이벤트
-  td.addEventListener('input', () => {
-    // [변경] IME 조합 중이 아니라면 즉시 업데이트
-    if (!isComposing) {
-      updateHints();
-    }
-  });
-
-  // blur 시 힌트 닫기 (조금 지연해서 클릭 가능)
-  td.addEventListener('blur', () => {
-    setTimeout(() => {
-      hintBox.classList.add('hidden');
-    }, 150);
-  });
-
-  // 특정 키(Esc 등)로 힌트 닫기
-  td.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      hintBox.classList.add('hidden');
-    }
-  });
-
-  // ---------------------------------------------
-  // [추가] 실질적으로 목록을 갱신하는 함수로 분리
-  // ---------------------------------------------
-  function updateHints() {
-    const text = td.textContent.trim();
-    if (!text) {
-      // 값이 없으면 목록 숨김
-      hintBox.innerHTML = '';
-      hintBox.classList.add('hidden');
-      return;
-    }
-    const lowerText = text.toLowerCase();
-    const matches = AUTO_COMPLETE_LIST.filter(item => {
-      return item.toLowerCase().includes(lowerText);
+      isComposing = true;
     });
-    if (matches.length === 0) {
-      hintBox.innerHTML = '';
-      hintBox.classList.add('hidden');
-      return;
-    }
-
-    // 목록 표시
-    let html = '';
-    matches.forEach(m => {
-      html += `<div class="autocomplete-item">${m}</div>`;
+    td.addEventListener('compositionend', () => {
+      isComposing = false;
+      updateHints(); // 조합 완료 시 최종 반영
     });
-    hintBox.innerHTML = html;
-    hintBox.classList.remove('hidden');
-
-    // 아이템 클릭 시
-    const itemEls = hintBox.querySelectorAll('.autocomplete-item');
-    itemEls.forEach(itemEl => {
-      itemEl.addEventListener('mousedown', (e) => {
-        e.stopPropagation(); // blur 막기
-        // 선택된 텍스트 삽입
-        td.textContent = itemEl.textContent;
-        // 목록 숨김
+  
+    // 2) 일반 input 이벤트
+    td.addEventListener('input', () => {
+      if (!isComposing) {
+        updateHints();
+      }
+    });
+  
+    // 3) [신규/추가] 백스페이스 처리 (keyup 권장)
+    //    백스페이스 누른 직후에 textContent가 갱신되므로,
+    //    keyup 시점에 updateHints()를 다시 호출.
+    td.addEventListener('keyup', (e) => {
+      if (e.key === 'Backspace' && !isComposing) {
+        // 백스페이스 후 살짝 지연해서 updateHints
+        setTimeout(() => {
+          updateHints();
+        }, 0);
+      }
+    });
+  
+    // 4) blur 시 hint 닫기
+    td.addEventListener('blur', () => {
+      setTimeout(() => {
         hintBox.classList.add('hidden');
-      });
+      }, 150);
     });
+  
+    // 5) ESC 키로 hint 닫기
+    td.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hintBox.classList.add('hidden');
+      }
+    });
+  
+    // ---------------------------------------------
+    // 목록 업데이트 함수
+    // ---------------------------------------------
+    function updateHints() {
+      const text = td.textContent.trim();
+      if (!text) {
+        // 완전히 빈 셀 => hint 숨김
+        hintBox.innerHTML = '';
+        hintBox.classList.add('hidden');
+        return;
+      }
+      // 부분 검색(대소문자 구분 안 함)
+      const lowerText = text.toLowerCase();
+      const matches = AUTO_COMPLETE_LIST.filter(item =>
+        item.toLowerCase().includes(lowerText)
+      );
+  
+      if (matches.length === 0) {
+        hintBox.innerHTML = '';
+        hintBox.classList.add('hidden');
+        return;
+      }
+  
+      // 힌트 목록 구성
+      let html = '';
+      matches.forEach((m) => {
+        html += `<div class="autocomplete-item">${m}</div>`;
+      });
+      hintBox.innerHTML = html;
+      hintBox.classList.remove('hidden');
+  
+      // 아이템 클릭 시 => 해당 텍스트로 삽입
+      const itemEls = hintBox.querySelectorAll('.autocomplete-item');
+      itemEls.forEach(itemEl => {
+        itemEl.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          td.textContent = itemEl.textContent;
+          hintBox.classList.add('hidden');
+        });
+      });
+    }
   }
-}
+  
   /************************************************************
    * 6. 새 행 추가 (버튼)
    ************************************************************/
