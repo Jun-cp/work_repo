@@ -1,5 +1,5 @@
   // 이미지용 (Red/Yellow/Green)
-  const IMAGE_URLS = {
+const IMAGE_URLS = {
     red: "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
     yellow: "https://github.com/Jun-cp/work_repo/blob/main/traffic_yellow.jpg?raw=true",
     green: "https://github.com/Jun-cp/work_repo/blob/main/traffic_green.jpg?raw=true"
@@ -31,7 +31,7 @@ const AUTO_COMPLETE_LIST = [
   
   // 0열(A~F)에 따른 1열 옵션 매핑
   // 예: A -> [A-1, A-2, A-3], C -> [C-1, C-2], ...
-  const STRATEGY_TO_DETAIL_OPTIONS = {
+const STRATEGY_TO_DETAIL_OPTIONS = {
     A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
     B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"], // 필요시 확장
     C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
@@ -42,12 +42,11 @@ const AUTO_COMPLETE_LIST = [
     H: ["Lead 내 담당 업무"]  // 필요시 확장
   };
   
-  
- /************************************************************
+  /************************************************************
    * 1. 드롭다운 생성 함수
    ************************************************************/
   /** (0열) 전략과제 드롭다운 */
-  function createStrategyDropdown() {
+function createStrategyDropdown() {
     const container = document.createElement('div');
     const select = document.createElement('select');
     select.className = 'dropdown-select strategy-dropdown';
@@ -325,7 +324,7 @@ const AUTO_COMPLETE_LIST = [
 
     // 새 tr 생성(여기선 8칸 예시)
     const tr = document.createElement('tr');
-    for (let i=0; i<13; i++) {
+    for (let i=0; i<8; i++) {
       const td = document.createElement('td');
       // 0열(전략), 1열(세부항목), 6열(신호등)에만 드롭다운. 
       // 2열(자동완성) 포함 나머지는 editable
@@ -375,6 +374,3 @@ const AUTO_COMPLETE_LIST = [
       console.log("addRowBtn 버튼이 HTML에 없습니다. 버튼이 안 보일 수 있습니다.");
     }
   });
-  </script>
-</body>
-</html>
