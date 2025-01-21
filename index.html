@@ -14,6 +14,7 @@
     th, td {
       border: 1px solid #ccc;
       vertical-align: middle;
+      padding: 4px;
       position: relative; /* 자동완성 제안 박스 등 배치를 위해 */
     }
     th {
@@ -68,12 +69,14 @@
 
     /* 이미지 드롭다운 (5열) */
     .status-image {
-      max-width: 100px;
-      max-height: 50px;
-      cursor: pointer;
       display: block;
-      margin: 0 auto;
+      margin: 0 auto;      
+      height: 1.2em;  /* 텍스트 한 줄 높이 정도 */
+      width: auto;    /* 가로는 비율 맞춰 자동 */
+      object-fit: contain;
+      cursor: pointer;
     }
+
     select.dropdown-select {
       width: 100px;
       cursor: pointer;
@@ -84,10 +87,23 @@
       font-weight: bold;
       margin: 0 auto;
     }
+
+    .button-area {
+      text-align: center;
+      margin: 20px;
+    }
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h2 style="text-align:left;">250124 팀 진행현황</h2>
+
+  <div class="button-area">
+    <button id="addRowBtn">행 추가</button>
+  </div>
 
   <!-- 샘플 테이블 하나 -->
   <table class="myTable">

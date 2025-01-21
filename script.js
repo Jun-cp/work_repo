@@ -43,292 +43,338 @@ const AUTO_COMPLETE_LIST = [
   };
   
   
-  /************************************************************
-   * 1. 드롭다운 생성 함수들
+ /************************************************************
+   * 1. 드롭다운 생성 함수
    ************************************************************/
-function createADTextDropdown() {
-  // 0열에서 쓸 '전략과제' 드롭다운
-  const container = document.createElement('div');
-  const select = document.createElement('select');
-  select.className = 'dropdown-select text-dropdown';
+  /** (0열) 전략과제 드롭다운 */
+  function createStrategyDropdown() {
+    const container = document.createElement('div');
+    const select = document.createElement('select');
+    select.className = 'dropdown-select strategy-dropdown';
 
-  // 예: A~H
-  const opts = [
-    { val:'',  text:'(선택)' },
-    { val:'A', text:'1_AX사업...' },
-    { val:'B', text:'1_MS파트너...' },
-    { val:'C', text:'1_c...' },
-    { val:'D', text:'1_d...' },
-    { val:'E', text:'2_1...' },
-    { val:'F', text:'2_2...' },
-    { val:'G', text:'2_3...' },
-    { val:'H', text:'2_Lead내 담당...' }
-  ];
-  opts.forEach(o => {
-    const op = document.createElement('option');
-    op.value = o.val;
-    op.textContent = o.text;
-    select.appendChild(op);
-  });
-
-  const span = document.createElement('span');
-  span.className = 'dropdown-text hidden';
-
-  container.appendChild(select);
-  container.appendChild(span);
-  return { container };
-}
-
-function createImageDropdown() {
-  // 신호등
-  const container = document.createElement('div');
-  const select = document.createElement('select');
-  select.className = 'dropdown-select status-dropdown';
-
-  const opts = [
-    { val:'', text:'Select' },
-    { val:'red',    text:'Red' },
-    { val:'yellow', text:'Yellow' },
-    { val:'green',  text:'Green' }
-  ];
-  opts.forEach(o => {
-    const op = document.createElement('option');
-    op.value = o.val;
-    op.textContent = o.text;
-    select.appendChild(op);
-  });
-
-  const img = document.createElement('img');
-  img.className = 'status-image hidden';
-  container.appendChild(select);
-  container.appendChild(img);
-
-  return { container };
-}
-
-function createCol7Dropdown() {
-  // 7열에서 쓸 '세부항목' 드롭다운
-  const container = document.createElement('div');
-
-  const select = document.createElement('select');
-  select.className = 'dropdown-select col7-dropdown hidden';
-
-  const span = document.createElement('span');
-  span.className = 'dropdown-text hidden';
-
-  container.appendChild(select);
-  container.appendChild(span);
-  return { container };
-}
-
-/************************************************************
- * 2. 드롭다운 이벤트
- ************************************************************/
-function initDropDownEvents(td) {
-  // 0열 드롭다운
-  const textDropdown = td.querySelector('.text-dropdown');
-  const textSpan = td.querySelector('.dropdown-text');
-  if (textDropdown && textSpan) {
-    textDropdown.addEventListener('change', () => {
-      const val = textDropdown.value;
-      const displayText = textDropdown.options[textDropdown.selectedIndex].textContent;
-
-      if (val) {
-        textSpan.textContent = displayText;
-        textDropdown.classList.add('hidden');
-        textSpan.classList.remove('hidden');
-      } else {
-        textSpan.textContent = '';
-      }
-      // 7열 연동
-      handleCol0Change(td, val);
+    const opts = [
+      { val:'', text:'(선택)' },
+      { val:'A', text:'1_AX사업...' },
+      { val:'B', text:'1_MS파트너...' },
+      { val:'C', text:'1_C...' },
+      { val:'D', text:'1_D...' },
+      { val:'E', text:'2_E...' },
+      { val:'F', text:'2_F...' },
+      { val:'G', text:'2_G...' },
+      { val:'H', text:'2_Lead...' }
+    ];
+    opts.forEach(o => {
+      const op = document.createElement('option');
+      op.value = o.val;
+      op.textContent = o.text;
+      select.appendChild(op);
     });
 
-    textSpan.addEventListener('click', () => {
-      textSpan.classList.add('hidden');
-      textDropdown.classList.remove('hidden');
-    });
+    const span = document.createElement('span');
+    span.className = 'dropdown-text hidden';
+
+    container.appendChild(select);
+    container.appendChild(span);
+    return { container };
   }
 
-  // 신호등 드롭다운
-  const statusDropdown = td.querySelector('.status-dropdown');
-  const statusImage = td.querySelector('.status-image');
-  if (statusDropdown && statusImage) {
-    statusDropdown.addEventListener('change', () => {
-      const selVal = statusDropdown.value;
-      if (IMAGE_URLS[selVal]) {
-        statusImage.src = IMAGE_URLS[selVal];
-        statusDropdown.classList.add('hidden');
-        statusImage.classList.remove('hidden');
-      } else {
+  /** (1열) 세부항목 드롭다운 */
+  function createDetailDropdown() {
+    const container = document.createElement('div');
+    const select = document.createElement('select');
+    // 처음엔 숨겨둬야 한다면 'hidden' 클래스를 추가해도 됨
+    select.className = 'dropdown-select detail-dropdown hidden';
+
+    const span = document.createElement('span');
+    span.className = 'dropdown-text hidden';
+
+    container.appendChild(select);
+    container.appendChild(span);
+    return { container };
+  }
+
+  /** (6열) 신호등(이미지) 드롭다운 */
+  function createTrafficDropdown() {
+    const container = document.createElement('div');
+    const select = document.createElement('select');
+    select.className = 'dropdown-select status-dropdown';
+
+    const opts = [
+      { val:'', text:'Select' },
+      { val:'red', text:'Red' },
+      { val:'yellow', text:'Yellow' },
+      { val:'green', text:'Green' }
+    ];
+    opts.forEach(o => {
+      const op = document.createElement('option');
+      op.value = o.val;
+      op.textContent = o.text;
+      select.appendChild(op);
+    });
+
+    const img = document.createElement('img');
+    img.className = 'status-image hidden';  // CSS로 높이 고정
+    container.appendChild(select);
+    container.appendChild(img);
+
+    return { container };
+  }
+
+  /************************************************************
+   * 2. 드롭다운 이벤트
+   ************************************************************/
+  /** 각 TD 내부(전략/세부/신호등) 컴포넌트 초기화 */
+  function initDropDownEvents(td) {
+    // (0열) 전략과제
+    const strategySelect = td.querySelector('.strategy-dropdown');
+    const strategySpan   = td.querySelector('.dropdown-text');
+    if (strategySelect && strategySpan) {
+      strategySelect.addEventListener('change', () => {
+        const val = strategySelect.value;
+        const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
+        if (val) {
+          strategySpan.textContent = displayText;
+          strategySelect.classList.add('hidden');
+          strategySpan.classList.remove('hidden');
+        } else {
+          strategySpan.textContent = '';
+        }
+        // 세부항목 연동
+        handleStrategyChange(td, val);
+      });
+      strategySpan.addEventListener('click', () => {
+        strategySpan.classList.add('hidden');
+        strategySelect.classList.remove('hidden');
+      });
+    }
+
+    // (1열) 세부항목
+    const detailSelect = td.querySelector('.detail-dropdown');
+    const detailSpan   = td.querySelector('.dropdown-text');
+    if (detailSelect && detailSpan) {
+      detailSelect.addEventListener('change', () => {
+        const val = detailSelect.value;
+        if (val) {
+          detailSpan.textContent = val;
+          detailSelect.classList.add('hidden');
+          detailSpan.classList.remove('hidden');
+        } else {
+          detailSpan.textContent = '';
+        }
+      });
+      detailSpan.addEventListener('click', () => {
+        detailSpan.classList.add('hidden');
+        detailSelect.classList.remove('hidden');
+      });
+    }
+
+    // (6열) 신호등
+    const statusSelect = td.querySelector('.status-dropdown');
+    const statusImage  = td.querySelector('.status-image');
+    if (statusSelect && statusImage) {
+      statusSelect.addEventListener('change', () => {
+        const colorVal = statusSelect.value;
+        if (IMAGE_URLS[colorVal]) {
+          statusImage.src = IMAGE_URLS[colorVal];
+          statusSelect.classList.add('hidden');
+          statusImage.classList.remove('hidden');
+        } else {
+          statusImage.classList.add('hidden');
+        }
+      });
+      statusImage.addEventListener('click', () => {
         statusImage.classList.add('hidden');
-      }
-    });
-    statusImage.addEventListener('click', () => {
-      statusImage.classList.add('hidden');
-      statusDropdown.classList.remove('hidden');
-    });
+        statusSelect.classList.remove('hidden');
+      });
+    }
   }
 
-  // 7열 드롭다운
-  const col7Dropdown = td.querySelector('.col7-dropdown');
-  const col7Span = td.querySelector('.dropdown-text');
-  if (col7Dropdown && col7Span) {
-    col7Dropdown.addEventListener('change', () => {
-      const val = col7Dropdown.value;
-      if (val) {
-        col7Span.textContent = val;
-        col7Dropdown.classList.add('hidden');
-        col7Span.classList.remove('hidden');
-      } else {
-        col7Span.textContent = '';
-      }
-    });
-    col7Span.addEventListener('click', () => {
-      col7Span.classList.add('hidden');
-      col7Dropdown.classList.remove('hidden');
-    });
-  }
-}
+  /************************************************************
+   * 3. (0열)전략과제 => (1열)세부항목 연동
+   ************************************************************/
+  function handleStrategyChange(strategyTd, strategyVal) {
+    // strategyTd는 (0열)TD
+    const row = strategyTd.closest('tr');
+    if (!row) return;
 
-/************************************************************
- * 3. 0열 -> 7열 연동
- ************************************************************/
-function handleCol0Change(col0Td, col0Val) {
-  // col0Td: 0열의 TD
-  const row = col0Td.closest('tr');
-  if (!row) return;
-
-  // 7열 = index 7
-  const tds = row.querySelectorAll('td');
-  if (tds.length < 8) return;
-  const col7Td = tds[7];
-
-  const col7Select = col7Td.querySelector('.col7-dropdown');
-  const col7Span   = col7Td.querySelector('.dropdown-text');
-  if (!col7Select || !col7Span) return;
-
-  if (!col0Val) {
-    // 선택 해제 -> 7열도 숨김/리셋
-    col7Select.innerHTML = '';
-    col7Select.classList.add('hidden');
-    col7Span.classList.add('hidden');
-    col7Span.textContent = '';
-    return;
-  }
-
-  // 새 옵션
-  const newOptions = COL0_TO_COL7_OPTIONS[col0Val] || [];
-  col7Select.innerHTML = '';
-  // 맨 앞에 Select
-  const blankOpt = document.createElement('option');
-  blankOpt.value = '';
-  blankOpt.textContent = 'Select';
-  col7Select.appendChild(blankOpt);
-
-  newOptions.forEach(val => {
-    const op = document.createElement('option');
-    op.value = val;
-    op.textContent = val;
-    col7Select.appendChild(op);
-  });
-
-  col7Select.value = '';
-  col7Select.classList.remove('hidden');
-  col7Span.classList.add('hidden');
-  col7Span.textContent = '';
-}
-
-/************************************************************
- * 4. 표 초기화
- ************************************************************/
-function initTable(table) {
-  if (!table) return;
-  const rows = table.querySelectorAll('tbody tr');
-  rows.forEach(row => {
     const tds = row.querySelectorAll('td');
-    // 원하는 열 개수보다 적으면 무시
-    if (tds.length < 8) return; // 예시로 최소 8칸
+    if (tds.length < 2) return; // 최소 2칸 (0,1)
 
-    // 0열 => createADTextDropdown
-    {
-      const col0 = tds[0];
-      if (col0.children.length === 0) {
-        const { container } = createADTextDropdown();
-        col0.appendChild(container);
-      }
-    }
+    // (1열) 세부항목 TD
+    const detailTd = tds[1];
+    const detailSelect = detailTd.querySelector('.detail-dropdown');
+    const detailSpan   = detailTd.querySelector('.dropdown-text');
+    if (!detailSelect || !detailSpan) return;
 
-    // 6열 => createImageDropdown (신호등)
-    {
-      const col6 = tds[6];
-      if (col6.children.length === 0) {
-        const { container } = createImageDropdown();
-        col6.appendChild(container);
-      }
-    }
-
-    // 7열 => createCol7Dropdown
-    {
-      const col7 = tds[7];
-      if (col7.children.length === 0) {
-        const { container } = createCol7Dropdown();
-        col7.appendChild(container);
-      }
-    }
-
-    // 각 td에 이벤트 부여
-    tds.forEach(td => initDropDownEvents(td));
-  });
-}
-
-/************************************************************
- * 5. 자동완성(1열 => index=1) 예시
- ************************************************************/
-function attachAutoCompleteForTd(td) {
-  if (!td) return;
-  const hintBox = document.createElement('div');
-  hintBox.className = 'autocomplete-hint hidden';
-  td.appendChild(hintBox);
-
-  td.addEventListener('input', () => {
-    const text = td.textContent.trim();
-    if (!text) {
-      hintBox.classList.add('hidden');
+    // 값이 없으면 => 1열 비우기+숨김
+    if (!strategyVal) {
+      detailSelect.innerHTML = '';
+      detailSelect.classList.add('hidden');
+      detailSpan.classList.add('hidden');
+      detailSpan.textContent = '';
       return;
     }
-    const found = AUTO_COMPLETE_LIST.find(item => item.includes(text));
-    if (found) {
-      hintBox.textContent = found;
-      hintBox.classList.remove('hidden');
-    } else {
-      hintBox.classList.add('hidden');
-    }
-  });
 
-  td.addEventListener('blur', () => hintBox.classList.add('hidden'));
-  td.addEventListener('keydown', (e) => {
-    if (['ArrowUp','ArrowDown','ArrowRight',' ','Enter'].includes(e.key)) {
-      hintBox.classList.add('hidden');
-    }
-  });
-}
+    // 새 옵션
+    detailSelect.innerHTML = '';
+    const blankOpt = document.createElement('option');
+    blankOpt.value = '';
+    blankOpt.textContent = 'Select';
+    detailSelect.appendChild(blankOpt);
 
-/************************************************************
- * 6. 행 초기화 + DOMContentLoaded
- ************************************************************/
-document.addEventListener('DOMContentLoaded', () => {
-  const table = document.querySelector('table.myTable');
-  if (table) {
-    initTable(table);
+    const newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
+    newOptions.forEach(val => {
+      const op = document.createElement('option');
+      op.value = val;
+      op.textContent = val;
+      detailSelect.appendChild(op);
+    });
 
-    // 예) 1열(index=1)만 자동완성 적용
+    detailSelect.value = '';
+    detailSelect.classList.remove('hidden');
+    detailSpan.classList.add('hidden');
+    detailSpan.textContent = '';
+  }
+
+  /************************************************************
+   * 4. 표 초기화
+   ************************************************************/
+  function initTable(table) {
+    if (!table) return;
     const rows = table.querySelectorAll('tbody tr');
     rows.forEach(row => {
       const tds = row.querySelectorAll('td');
-      if (tds.length > 1) {
-        attachAutoCompleteForTd(tds[1]);
+
+      // 0열 => 전략과제
+      if (tds[0]) {
+        const col0 = tds[0];
+        if (!col0.querySelector('.strategy-dropdown')) {
+          const { container } = createStrategyDropdown();
+          col0.appendChild(container);
+        }
+      }
+
+      // 1열 => 세부항목
+      if (tds[1]) {
+        const col1 = tds[1];
+        if (!col1.querySelector('.detail-dropdown')) {
+          const { container } = createDetailDropdown();
+          col1.appendChild(container);
+        }
+      }
+
+      // 2열 => 자동완성 (단순 contenteditable, 나중에 autoComplete 붙임)
+
+      // 6열 => 신호등
+      if (tds[6]) {
+        const col6 = tds[6];
+        if (!col6.querySelector('.status-dropdown')) {
+          const { container } = createTrafficDropdown();
+          col6.appendChild(container);
+        }
+      }
+
+      // 각 TD별로 드롭다운 이벤트 초기화
+      tds.forEach(td => initDropDownEvents(td));
+    });
+  }
+
+  /************************************************************
+   * 5. (3열 index=2) 자동완성
+   ************************************************************/
+  function attachAutoCompleteForCol2(td) {
+    if (!td) return;
+    td.classList.add('editable');
+
+    const hintBox = document.createElement('div');
+    hintBox.className = 'autocomplete-hint hidden';
+    td.appendChild(hintBox);
+
+    td.addEventListener('input', () => {
+      const text = td.textContent.trim();
+      if (!text) {
+        hintBox.classList.add('hidden');
+        return;
+      }
+      // 후보 중 text를 포함하는 항목 하나 찾음
+      const found = AUTO_COMPLETE_LIST.find(item => item.includes(text));
+      if (found) {
+        hintBox.textContent = found;
+        hintBox.classList.remove('hidden');
+      } else {
+        hintBox.classList.add('hidden');
+      }
+    });
+
+    td.addEventListener('blur', () => hintBox.classList.add('hidden'));
+    td.addEventListener('keydown', (e) => {
+      if (['ArrowUp','ArrowDown','ArrowRight',' ','Enter'].includes(e.key)) {
+        hintBox.classList.add('hidden');
       }
     });
   }
-});
+
+  /************************************************************
+   * 6. 새 행 추가 (버튼)
+   ************************************************************/
+  function addNewRow() {
+    const table = document.querySelector('.myTable');
+    if (!table) return;
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    // 새 tr 생성(여기선 8칸 예시)
+    const tr = document.createElement('tr');
+    for (let i=0; i<8; i++) {
+      const td = document.createElement('td');
+      // 0열(전략), 1열(세부항목), 6열(신호등)에만 드롭다운. 
+      // 2열(자동완성) 포함 나머지는 editable
+      if ([0,1,6].includes(i)) {
+        // 나중에 initTable()에서 드롭다운 삽입
+      } else {
+        td.classList.add('editable');
+        td.contentEditable = "true";
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+
+    // 새 행에도 initTable
+    initTable(table);
+
+    // 2열 => 자동완성
+    const tds = tr.querySelectorAll('td');
+    if (tds[2]) {
+      attachAutoCompleteForCol2(tds[2]);
+    }
+  }
+
+  /************************************************************
+   * 7. DOMContentLoaded
+   ************************************************************/
+  document.addEventListener('DOMContentLoaded', () => {
+    const table = document.querySelector('.myTable');
+    if (table) {
+      initTable(table);
+
+      // 자동완성 => 3열(index=2)에 적용
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const tds = row.querySelectorAll('td');
+        if (tds[2]) {
+          attachAutoCompleteForCol2(tds[2]);
+        }
+      });
+    }
+
+    // (4) 버튼 안 뜬다면, 아래 요소가 HTML에 없는지 확인
+    const addBtn = document.getElementById('addRowBtn');
+    if (addBtn) {
+      addBtn.addEventListener('click', addNewRow);
+    } else {
+      console.log("addRowBtn 버튼이 HTML에 없습니다. 버튼이 안 보일 수 있습니다.");
+    }
+  });
+  </script>
+</body>
+</html>
