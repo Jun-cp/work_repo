@@ -304,7 +304,7 @@ function createStrategyDropdown() {
     //        실시간으로 반영하고 싶다면 여기서 updateHints()를 호출
     td.addEventListener('compositionupdate', () => {
       // 만약 "한 글자씩 바로 표시"를 원한다면:
-      // updateHints(); 
+      updateHints(); 
       // (이 부분은 사용자 취향/UX에 따라 on/off 가능)
     });
   
