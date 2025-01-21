@@ -23,7 +23,10 @@ const AUTO_COMPLETE_LIST = [
     "신한은행 AI Branch 컨설팅/PoC 지원",
     "KPI 작성",
     "Lead 행사 추진",
-    "구매/회계 업무"
+    "구매/회계 업무",
+    "IBM Agent Consulting",
+    "agent agent",
+    "Agent test"
 
     // ...
   ];
@@ -278,36 +281,73 @@ function createStrategyDropdown() {
     });
   }
 
-  /************************************************************
-   * 5. (3열 index=2) 자동완성
+ /************************************************************
+   * 첨단 자동완성(3열, index=2) 적용 함수
    ************************************************************/
-  function attachAutoCompleteForCol2(td) {
+ function attachAutoComplete(td) {
     if (!td) return;
-    td.classList.add('editable');
 
+    // hint 컨테이너
     const hintBox = document.createElement('div');
     hintBox.className = 'autocomplete-hint hidden';
     td.appendChild(hintBox);
 
+    // input 이벤트
     td.addEventListener('input', () => {
       const text = td.textContent.trim();
       if (!text) {
+        hintBox.innerHTML = '';
         hintBox.classList.add('hidden');
         return;
       }
-      // 후보 중 text를 포함하는 항목 하나 찾음
-      const found = AUTO_COMPLETE_LIST.find(item => item.includes(text));
-      if (found) {
-        hintBox.textContent = found;
-        hintBox.classList.remove('hidden');
-      } else {
+
+      // 소문자/대문자 구분 없이 검색 (한글 포함)
+      // -> item.toLowerCase().includes(text.toLowerCase())
+      const lowerText = text.toLowerCase();
+      const matches = AUTO_COMPLETE_LIST.filter(item => {
+        return item.toLowerCase().includes(lowerText);
+      });
+
+      if (matches.length === 0) {
+        hintBox.innerHTML = '';
         hintBox.classList.add('hidden');
+        return;
       }
+
+      // hintBox 내부를 <div> 항목들로 구성
+      let html = '';
+      matches.forEach(match => {
+        html += `<div class="autocomplete-item">${match}</div>`;
+      });
+      hintBox.innerHTML = html;
+      hintBox.classList.remove('hidden');
+
+      // 각 item 클릭 => td에 삽입
+      const items = hintBox.querySelectorAll('.autocomplete-item');
+      items.forEach(itemEl => {
+        itemEl.addEventListener('click', () => {
+          // 클릭한 항목의 텍스트
+          const selectedText = itemEl.textContent;
+          // td에 반영
+          td.textContent = selectedText;
+          // hint 숨김
+          hintBox.innerHTML = '';
+          hintBox.classList.add('hidden');
+        });
+      });
     });
 
-    td.addEventListener('blur', () => hintBox.classList.add('hidden'));
+    // 포커스 아웃 or 특정 키에서 hint 닫기
+    td.addEventListener('blur', () => {
+      // 약간의 지연 후 숨겨야, 클릭 이벤트가 가능
+      setTimeout(() => {
+        hintBox.classList.add('hidden');
+      }, 150);
+    });
+
     td.addEventListener('keydown', (e) => {
-      if (['ArrowUp','ArrowDown','ArrowRight',' ','Enter'].includes(e.key)) {
+      // Esc 누르면 닫기 etc...
+      if (e.key === 'Escape') {
         hintBox.classList.add('hidden');
       }
     });
@@ -353,18 +393,14 @@ function createStrategyDropdown() {
    ************************************************************/
   document.addEventListener('DOMContentLoaded', () => {
     const table = document.querySelector('.myTable');
-    if (table) {
-      initTable(table);
-
-      // 자동완성 => 3열(index=2)에 적용
-      const rows = table.querySelectorAll('tbody tr');
-      rows.forEach(row => {
-        const tds = row.querySelectorAll('td');
-        if (tds[2]) {
-          attachAutoCompleteForCol2(tds[2]);
-        }
-      });
-    }
+    if (!table) return;
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const tds = row.querySelectorAll('td');
+      if (tds.length > 2) {
+        attachAutoComplete(tds[2]); 
+      }
+    });
 
     // (4) 버튼 안 뜬다면, 아래 요소가 HTML에 없는지 확인
     const addBtn = document.getElementById('addRowBtn');
