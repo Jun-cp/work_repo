@@ -287,65 +287,85 @@ function createStrategyDropdown() {
   function attachAutoCompleteToCell(td) {
     if (!td) return;
 
+    let isComposing = false; // [추가] IME 조합 중인지 체크
+
     // hintBox
     const hintBox = document.createElement('div');
     hintBox.className = 'autocomplete-hint hidden';
     td.appendChild(hintBox);
 
-    // input 이벤트 (IME 한글 포함)
-    td.addEventListener('input', () => {
-      const text = td.textContent.trim();
-      if (!text) {
-        hintBox.innerHTML = '';
-        hintBox.classList.add('hidden');
-        return;
-      }
-      const lowerText = text.toLowerCase();
-      // 전부 필터
-      const matches = AUTO_COMPLETE_LIST.filter(item => {
-        return item.toLowerCase().includes(lowerText);
-      });
-      if (matches.length === 0) {
-        hintBox.innerHTML = '';
-        hintBox.classList.add('hidden');
-        return;
-      }
-      // 표시
-      let html = '';
-      matches.forEach((m) => {
-        html += `<div class="autocomplete-item">${m}</div>`;
-      });
-      hintBox.innerHTML = html;
-      hintBox.classList.remove('hidden');
+    td.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+  td.addEventListener('compositionend', () => {
+    isComposing = false;
+    updateHints(); // 조합 완료 시 최종 반영
+  });
 
-      // 아이템 클릭 => td에 반영
-      const itemEls = hintBox.querySelectorAll('.autocomplete-item');
-      itemEls.forEach(itemEl => {
-        itemEl.addEventListener('mousedown', (e) => {
-          // mousedown에서 직접 처리 (blur가 바로 안일어나도록)
-          e.stopPropagation();
-          const selectedText = itemEl.textContent;
-          td.textContent = selectedText;
-          hintBox.classList.add('hidden');
-        });
-      });
+  // input 이벤트
+  td.addEventListener('input', () => {
+    // [변경] IME 조합 중이 아니라면 즉시 업데이트
+    if (!isComposing) {
+      updateHints();
+    }
+  });
+
+  // blur 시 힌트 닫기 (조금 지연해서 클릭 가능)
+  td.addEventListener('blur', () => {
+    setTimeout(() => {
+      hintBox.classList.add('hidden');
+    }, 150);
+  });
+
+  // 특정 키(Esc 등)로 힌트 닫기
+  td.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hintBox.classList.add('hidden');
+    }
+  });
+
+  // ---------------------------------------------
+  // [추가] 실질적으로 목록을 갱신하는 함수로 분리
+  // ---------------------------------------------
+  function updateHints() {
+    const text = td.textContent.trim();
+    if (!text) {
+      // 값이 없으면 목록 숨김
+      hintBox.innerHTML = '';
+      hintBox.classList.add('hidden');
+      return;
+    }
+    const lowerText = text.toLowerCase();
+    const matches = AUTO_COMPLETE_LIST.filter(item => {
+      return item.toLowerCase().includes(lowerText);
     });
+    if (matches.length === 0) {
+      hintBox.innerHTML = '';
+      hintBox.classList.add('hidden');
+      return;
+    }
 
-    // blur 시 hint 닫기 (조금 지연해서 클릭 처리 가능)
-    td.addEventListener('blur', () => {
-      setTimeout(() => {
-        hintBox.classList.add('hidden');
-      }, 150);
+    // 목록 표시
+    let html = '';
+    matches.forEach(m => {
+      html += `<div class="autocomplete-item">${m}</div>`;
     });
+    hintBox.innerHTML = html;
+    hintBox.classList.remove('hidden');
 
-    // 특정 키(Esc 등) 처리
-    td.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+    // 아이템 클릭 시
+    const itemEls = hintBox.querySelectorAll('.autocomplete-item');
+    itemEls.forEach(itemEl => {
+      itemEl.addEventListener('mousedown', (e) => {
+        e.stopPropagation(); // blur 막기
+        // 선택된 텍스트 삽입
+        td.textContent = itemEl.textContent;
+        // 목록 숨김
         hintBox.classList.add('hidden');
-      }
+      });
     });
   }
-
+}
   /************************************************************
    * 6. 새 행 추가 (버튼)
    ************************************************************/
