@@ -148,7 +148,7 @@ const AUTO_COMPLETE_LIST = [
       textDropdown.addEventListener('change', () => {
         const val = textDropdown.value;
         if (val) {
-          textSpan.textContent = val;
+          textSpan.textContent = displayText;
           textDropdown.classList.add('hidden');
           textSpan.classList.remove('hidden');
         } else {
@@ -347,24 +347,63 @@ const AUTO_COMPLETE_LIST = [
       hintBox.classList.add('hidden');
     }
   }
-  
-  
+  * 6. [방법 B] 새 행 추가 (버튼 클릭)
+   ************************************************************/
+  function addNewRow() {
+    const table = document.querySelector('.myTable');
+    if (!table) return;
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    // 새 tr 생성 (13열)
+    const tr = document.createElement('tr');
+    for (let i = 0; i < 13; i++) {
+      const td = document.createElement('td');
+      // 1열(0), 5열(4), 7열(6)은 드롭다운, 나머지는 editable
+      if (i === 0 || i === 4 || i === 6) {
+        // 아무것도 안 넣음(나중에 initTable()에서 dropDown 삽입)
+      } else {
+        td.classList.add('editable');
+        td.contentEditable = 'true';
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+
+    // 새로 추가된 행도 드롭다운/자동완성 초기화
+    initTable(table);
+
+    // 자동완성은 2열(index=1)에만
+    const tds = tr.querySelectorAll('td');
+    if (tds.length >= 2) {
+      attachAutoCompleteForTd(tds[1]);
+    }
+  }
+
   /************************************************************
-   * 6. 전체 초기화
+   * 7. DOMContentLoaded
    ************************************************************/
   document.addEventListener('DOMContentLoaded', () => {
+    // 표 초기화
     const tables = document.querySelectorAll('table.myTable');
     tables.forEach(tbl => {
       initTable(tbl);
-  
-      // 3열( index=2 ) 자동완성 기능
+      // 각 row마다 2열(index=1)에 autoComplete
       const rows = tbl.querySelectorAll('tbody tr');
       rows.forEach(row => {
         const tds = row.querySelectorAll('td');
-        if (tds.length >= 2) {
-          attachAutoCompleteForTd(tds[2]); // 3열
+        if (tds.length > 1) {
+          attachAutoCompleteForTd(tds[1]);
         }
       });
     });
+
+    // [방법 B] 버튼으로 새 행 추가
+    const addBtn = document.getElementById('addRowBtn');
+    if (addBtn) {
+      addBtn.addEventListener('click', addNewRow);
+    }
   });
-  
+  </script>
+</body>
+</html>
