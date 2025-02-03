@@ -4,7 +4,7 @@
 (function() {
   // 허용할 사이트의 전체 URL(정확히 일치해야 함)
   const allowedSites = [
-    "http://ktspace.atlassian.net/1",
+    "http://ktspace.atlassian.net/wiki/spaces/SBCAILead/pages/edit-v2/194315289",
     "http://ktspace.atlassian.net/2",
     "http://ktspace.atlassian.net/3"
   ];
