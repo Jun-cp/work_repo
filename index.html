@@ -4,43 +4,31 @@
   <meta charset="UTF-8">
   <title>팀 진행현황</title>
   <style>
-    /* 표 스타일 기본 */
+    /* (기존 CSS 동일) */
     table {
       border-collapse: collapse;
       margin: 20px auto;
       width: 98%;
-      text-align: center; /* 수평 중앙 정렬 */
+      text-align: center;
       table-layout: fixed;
     }
     th, td {
       border: 1px solid #ccc;
       vertical-align: middle;
       padding: 4px;
-      position: relative; /* 자동완성 제안 박스 등 배치를 위해 */
+      position: relative;
     }
-    th {
-      background: #f8f8f8;
-    }
-
-    /* 편집 가능한 셀 (3열 등) */
-    td.editable {
-      cursor: text;
-    }
-    td.editable:focus {
-      outline: 2px solid #007bff;
-    }
-
-    /* 이미지 드롭다운 (5열) */
+    th { background: #f8f8f8; }
+    td.editable { cursor: text; }
+    td.editable:focus { outline: 2px solid #007bff; }
     .status-image {
       display: block;
       margin: 0 auto;      
-      height: 1.2em;  /* 텍스트 한 줄 높이 정도 */
-      width: auto;    /* 가로는 비율 맞춰 자동 */
+      height: 1.2em;
+      width: auto;
       object-fit: contain;
       cursor: pointer;
     }
-    
-    /* 각 열의 폭 지정 */
     colgroup col:nth-child(1) { width: 150px; }
     colgroup col:nth-child(2) { width: 250px; }
     colgroup col:nth-child(3) { width: 200px; }
@@ -54,59 +42,30 @@
     colgroup col:nth-child(11) { width: 440px; }
     colgroup col:nth-child(12) { width: 140px; }
     colgroup col:nth-child(13) { width: 280px; }
-
-    /* 드롭다운/이미지/텍스트 토글 hidden 처리 */
-    .hidden {
-      display: none !important;
-    }
-
-    select.dropdown-select {
-      width: 100px;
-      cursor: pointer;
-    }
-    .dropdown-text {
-      cursor: pointer;
-      display: inline-block;
-      font-weight: bold;
-      margin: 0 auto;
-    }
-
-    .button-area {
-      text-align: center;
-      margin: 20px;
-    }
-    button {
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-
-    /* 날짜 선택 드롭다운 영역 (헤더) */
-    #dateSelectorContainer {
-      margin: 10px 20px;
-    }
+    .hidden { display: none !important; }
+    select.dropdown-select { width: 100px; cursor: pointer; }
+    .dropdown-text { cursor: pointer; display: inline-block; font-weight: bold; margin: 0 auto; }
+    .button-area { text-align: center; margin: 20px; }
+    button { padding: 6px 12px; cursor: pointer; }
+    #dateSelectorContainer { margin: 10px 20px; }
   </style>
 </head>
 <body>
-  <!-- 헤더: 날짜 드롭다운과 타이틀 -->
   <div id="headerArea">
     <h2 style="display:inline-block;">팀 진행현황</h2>
-    <!-- 날짜 드롭다운는 h2 왼쪽 혹은 오른쪽에 배치 가능 -->
     <div id="dateSelectorContainer" style="display:inline-block; margin-left:20px;"></div>
   </div>
 
-  <!-- Submit 버튼 영역 -->
   <div class="button-area">
     <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
 
-  <!-- iframe 영역: 만약 사용자가 A 주소에 들어왔을 때 서버에서 최신 데이터를 불러와 iframe으로 표를 보여줌 -->
   <div id="iframeContainer" style="margin:20px; text-align:center;">
-    <!-- iframe의 src는 서버측 /view?domain=A 처럼 호출될 예정 -->
     <iframe id="dataFrame" width="98%" height="400" frameborder="0"></iframe>
   </div>
 
-  <!-- 기존의 표 -->
+  <!-- 기존 표 -->
   <table class="myTable">
     <colgroup>
       <col><col><col><col><col><col><col><col><col><col><col><col><col>
@@ -130,34 +89,20 @@
     </thead>
     <tbody>
       <tr>
-        <!-- 0열 : 담당 전략과제 (드롭다운) -->
         <td></td>
-        <!-- 1열 : 세부과제 (드롭다운) -->
         <td></td>
-        <!-- 2열 : 업무명 -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 3열 : 개요 -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 4열 : 주요 로드맵 -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 5열 : 진척률 % -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 6열 : 원활도 (신호등 이미지 드롭다운) -->
         <td></td>
-        <!-- 7열 : 현 주요사항  -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 8열 : 추진 결과 / 산출물 -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 9열 : 담당자(업무) -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 10열 : Issue/대응 방안 -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 11열 : 컨플루언스 (히스토리) -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 12열 : 상무님 코멘터리 -->
         <td class="editable" contenteditable="true"></td>
       </tr>
-      <!-- 추가 row 가능 -->
     </tbody>
   </table>
 
