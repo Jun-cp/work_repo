@@ -5,7 +5,7 @@
   // 허용할 사이트의 전체 URL(정확히 일치해야 함)
   const allowedSites = [
     "https://ktspace.atlassian.net/wiki/spaces/SBCAILead/pages/edit-v2/194315289",
-    "https://ktspace.atlassian.net/wiki/spaces/SBCAILead/pages/edit-v2/194315289/1-1+AI+_test",
+    "https://ktspace.atlassian.net/wiki/spaces/SBCAILead/pages/194315289/1-1+AI+_test",
     "http://ktspace.atlassian.net/3"
   ];
   // 부모 문서의 URL(referrer) 확인 (iframe 내부에서는 document.referrer가 부모 URL을 담음)
