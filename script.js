@@ -11,6 +11,7 @@
   // 부모 문서의 URL(referrer) 확인 (iframe 내부에서는 document.referrer가 부모 URL을 담음)
   const ref = document.referrer;
   if (!allowedSites.includes(ref)) {
+    alert(ref)
     alert("허용되지 않은 사이트에서 접근하였습니다. 이 페이지에서는 작업을 수행할 수 없습니다.");
     // submit 버튼 비활성화
     const submitBtn = document.getElementById('submitBtn');
