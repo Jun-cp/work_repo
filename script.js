@@ -378,7 +378,7 @@ function initSubmitButton() {
     // 현재 내 맥북의 wifi 주소(b2:f6:ea:24:89:bb)는 MAC 주소이므로,
     // 실제 연결하려면 같은 네트워크 내의 IP (예: 192.168.1.100)와 포트(예: 3000)가 필요합니다.
     // 중간 AP의 주소나 포트포워딩 설정 등은 네트워크 환경에 따라 달라집니다.
-    const LOCAL_SERVER_URL = "http://YOUR_LOCAL_SERVER_IP:YOUR_PORT/submit"; // 수정 필요
+    const LOCAL_SERVER_URL = "http://jun_cp.inviteu.org/submit"; // 수정 필요
 
     fetch(LOCAL_SERVER_URL, {
       method: "POST",
@@ -392,7 +392,7 @@ function initSubmitButton() {
       alert("전송 성공: " + JSON.stringify(data));
       // 만약 A 주소에 들어왔을 경우, 최신 데이터를 iframe에 로드 (요건 4)
       // 예: 서버측 /view?domain=현재도메인
-      document.getElementById("dataFrame").src = "http://YOUR_LOCAL_SERVER_IP:YOUR_PORT/view?domain=" + domain;
+      document.getElementById("dataFrame").src = "http://jun_cp.inviteu.org//view?domain=" + domain;
     })
     .catch(err => {
       console.error("전송 오류:", err);
