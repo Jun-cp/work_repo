@@ -392,7 +392,7 @@ function initSubmitButton() {
       alert("전송 성공: " + JSON.stringify(data));
       // 만약 A 주소에 들어왔을 경우, 최신 데이터를 iframe에 로드 (요건 4)
       // 예: 서버측 /view?domain=현재도메인
-      document.getElementById("dataFrame").src = "http://jun_cp.inviteu.org//view?domain=" + domain;
+      document.getElementById("dataFrame").src = "http://jun_cp.inviteu.org/view?domain=" + domain;
     })
     .catch(err => {
       console.error("전송 오류:", err);
