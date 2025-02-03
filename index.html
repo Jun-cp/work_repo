@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <title>팀 진행현황</title>
   <style>
     /* 표 스타일 기본 */
     table {
@@ -39,8 +40,7 @@
       cursor: pointer;
     }
     
-    /* 각 열의 폭을 지정 (index 0~12) */
-    /* 150, 250, 200, 280, 280, 140, 140, 400, 200, 300, 440, 140, 280 px */
+    /* 각 열의 폭 지정 */
     colgroup col:nth-child(1) { width: 150px; }
     colgroup col:nth-child(2) { width: 250px; }
     colgroup col:nth-child(3) { width: 200px; }
@@ -71,37 +71,6 @@
       margin: 0 auto;
     }
 
-    /* 자동완성 힌트 박스 */
-    .autocomplete-hint {
-      position: absolute;
-      top: calc(100% + 2px); /* 셀 아래 약간 떨어져서 표시 */
-      left: 0;
-      background: rgba(255, 255, 204, 0.9); /* 옅은 노랑 배경 */
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      color: #333;
-      min-width: 100px;   /* 박스 최소너비 */
-      max-width: 400px;   /* 박스 최대너비 */
-      white-space: nowrap; /* 한 줄 표시 (자동으로 가로폭 늘어날 수 있음) */
-      z-index: 999;
-      pointer-events: auto; /* 클릭 가능 */
-    }
-
-    /* 목록 아이템 */
-    .autocomplete-item {
-      padding: 4px 6px;
-      border-bottom: 1px solid #ccc;
-      cursor: pointer;
-    }
-    /* 마지막 아이템은 구분선 제거 (선택사항) */
-    .autocomplete-item:last-child {
-      border-bottom: none;
-    }
-    .autocomplete-item:hover {
-      background: #fffaaf; /* hover 시 강조 */
-    }
-
     .button-area {
       text-align: center;
       margin: 20px;
@@ -110,16 +79,34 @@
       padding: 6px 12px;
       cursor: pointer;
     }
+
+    /* 날짜 선택 드롭다운 영역 (헤더) */
+    #dateSelectorContainer {
+      margin: 10px 20px;
+    }
   </style>
 </head>
 <body>
-  <h2 style="text-align:left;">250124 팀 진행현황</h2>
+  <!-- 헤더: 날짜 드롭다운과 타이틀 -->
+  <div id="headerArea">
+    <h2 style="display:inline-block;">팀 진행현황</h2>
+    <!-- 날짜 드롭다운는 h2 왼쪽 혹은 오른쪽에 배치 가능 -->
+    <div id="dateSelectorContainer" style="display:inline-block; margin-left:20px;"></div>
+  </div>
 
+  <!-- Submit 버튼 영역 -->
   <div class="button-area">
+    <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
 
-  <!-- 샘플 테이블 하나 -->
+  <!-- iframe 영역: 만약 사용자가 A 주소에 들어왔을 때 서버에서 최신 데이터를 불러와 iframe으로 표를 보여줌 -->
+  <div id="iframeContainer" style="margin:20px; text-align:center;">
+    <!-- iframe의 src는 서버측 /view?domain=A 처럼 호출될 예정 -->
+    <iframe id="dataFrame" width="98%" height="400" frameborder="0"></iframe>
+  </div>
+
+  <!-- 기존의 표 -->
   <table class="myTable">
     <colgroup>
       <col><col><col><col><col><col><col><col><col><col><col><col><col>
@@ -143,9 +130,9 @@
     </thead>
     <tbody>
       <tr>
-        <!-- 0열 : 담당 전략과제, 드롭다운 -->
+        <!-- 0열 : 담당 전략과제 (드롭다운) -->
         <td></td>
-        <!-- 1열 : 세부과제, 동적(0열 대응) 텍스트 드롭다운 -->
+        <!-- 1열 : 세부과제 (드롭다운) -->
         <td></td>
         <!-- 2열 : 업무명 -->
         <td class="editable" contenteditable="true"></td>
@@ -155,7 +142,7 @@
         <td class="editable" contenteditable="true"></td>
         <!-- 5열 : 진척률 % -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 6열 : 원활도, 이미지 드롭다운 from 4열 -->
+        <!-- 6열 : 원활도 (신호등 이미지 드롭다운) -->
         <td></td>
         <!-- 7열 : 현 주요사항  -->
         <td class="editable" contenteditable="true"></td>
@@ -165,12 +152,12 @@
         <td class="editable" contenteditable="true"></td>
         <!-- 10열 : Issue/대응 방안 -->
         <td class="editable" contenteditable="true"></td>
-        <!-- 11열 : 컨플(히스토리) -->
+        <!-- 11열 : 컨플루언스 (히스토리) -->
         <td class="editable" contenteditable="true"></td>
         <!-- 12열 : 상무님 코멘터리 -->
         <td class="editable" contenteditable="true"></td>
       </tr>
-      <!-- 더 많은 row 가능 -->
+      <!-- 추가 row 가능 -->
     </tbody>
   </table>
 
