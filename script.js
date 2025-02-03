@@ -47,6 +47,7 @@ const STRATEGY_TO_DETAIL_OPTIONS = {
  ************************************************************/
 window.addEventListener("message", function(event) {
   // 1) 보안 검사: atlassian.net 출처인지 (필요 시 도메인/서브도메인 정교하게 검사)
+  alert(event.origin)
   if (!event.origin.includes("atlassian.net")) {
     console.warn("허용되지 않은 origin:", event.origin);
     return;
