@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>팀 진행현황</title>
   <style>
-    /* (기존 CSS 동일) */
+    /* 표 스타일 기본 */
     table {
       border-collapse: collapse;
       margin: 20px auto;
@@ -18,9 +18,15 @@
       padding: 4px;
       position: relative;
     }
-    th { background: #f8f8f8; }
-    td.editable { cursor: text; }
-    td.editable:focus { outline: 2px solid #007bff; }
+    th {
+      background: #f8f8f8;
+    }
+    td.editable {
+      cursor: text;
+    }
+    td.editable:focus {
+      outline: 2px solid #007bff;
+    }
     .status-image {
       display: block;
       margin: 0 auto;      
@@ -29,6 +35,7 @@
       object-fit: contain;
       cursor: pointer;
     }
+    /* 각 열의 폭 지정 */
     colgroup col:nth-child(1) { width: 150px; }
     colgroup col:nth-child(2) { width: 250px; }
     colgroup col:nth-child(3) { width: 200px; }
@@ -42,30 +49,52 @@
     colgroup col:nth-child(11) { width: 440px; }
     colgroup col:nth-child(12) { width: 140px; }
     colgroup col:nth-child(13) { width: 280px; }
-    .hidden { display: none !important; }
-    select.dropdown-select { width: 100px; cursor: pointer; }
-    .dropdown-text { cursor: pointer; display: inline-block; font-weight: bold; margin: 0 auto; }
-    .button-area { text-align: center; margin: 20px; }
-    button { padding: 6px 12px; cursor: pointer; }
-    #dateSelectorContainer { margin: 10px 20px; }
+    .hidden {
+      display: none !important;
+    }
+    select.dropdown-select {
+      width: 100px;
+      cursor: pointer;
+    }
+    .dropdown-text {
+      cursor: pointer;
+      display: inline-block;
+      font-weight: bold;
+      margin: 0 auto;
+    }
+    .button-area {
+      text-align: center;
+      margin: 20px;
+    }
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    /* 날짜 선택 드롭다운 영역 */
+    #dateSelectorContainer {
+      margin: 10px 20px;
+    }
   </style>
 </head>
 <body>
+  <!-- 헤더: 날짜 드롭다운과 타이틀 -->
   <div id="headerArea">
     <h2 style="display:inline-block;">팀 진행현황</h2>
     <div id="dateSelectorContainer" style="display:inline-block; margin-left:20px;"></div>
   </div>
 
+  <!-- Submit 버튼 및 행 추가 버튼 -->
   <div class="button-area">
     <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
 
+  <!-- iframe 영역: 로컬 PC의 데이터를 불러와 보여줌 -->
   <div id="iframeContainer" style="margin:20px; text-align:center;">
     <iframe id="dataFrame" width="98%" height="400" frameborder="0"></iframe>
   </div>
 
-  <!-- 기존 표 -->
+  <!-- 기존의 표 -->
   <table class="myTable">
     <colgroup>
       <col><col><col><col><col><col><col><col><col><col><col><col><col>
@@ -103,6 +132,7 @@
         <td class="editable" contenteditable="true"></td>
         <td class="editable" contenteditable="true"></td>
       </tr>
+      <!-- 추가 행 가능 -->
     </tbody>
   </table>
 
