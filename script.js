@@ -1,17 +1,17 @@
 /************************************************************
  * 0. 전역 변수 / 상수
  ************************************************************/
-let folderName = "";
-let token = "";
-const LOCAL_SERVER_URL = "https://jun_cp.inviteu.org"; // 서버 주소
+var folderName = "";
+var token = "";
+var LOCAL_SERVER_URL = "https://jun_cp.inviteu.org"; // 서버 주소
 
-const IMAGE_URLS = {
+var IMAGE_URLS = {
   red: "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
   yellow: "https://github.com/Jun-cp/work_repo/blob/main/traffic_yellow.jpg?raw=true",
   green: "https://github.com/Jun-cp/work_repo/blob/main/traffic_green.jpg?raw=true"
 };
 
-const AUTO_COMPLETE_LIST = [
+var AUTO_COMPLETE_LIST = [
   "산림청 LLM PoC", "국회 빅데이터 구축사업", "Copilot Agent 개발", "JTS LLM사업",
   "우리은행 GenAI 사업", "신한은행 GenAI 사업", "GPUaaS", "비씨카드",
   "업무 관리 프로세스", "고려대 산학 (MoM)", "신한은행 AI Branch 컨설팅/PoC 지원",
@@ -19,7 +19,7 @@ const AUTO_COMPLETE_LIST = [
   "agent agent", "Agent test"
 ];
 
-const STRATEGY_TO_DETAIL_OPTIONS = {
+var STRATEGY_TO_DETAIL_OPTIONS = {
   A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
   B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"],
   C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
@@ -31,54 +31,53 @@ const STRATEGY_TO_DETAIL_OPTIONS = {
 };
 
 // index.html에 사용한 테이블 구조 (colgroup + thead)
-const TABLE_TEMPLATE = `
-<colgroup>
-  <col><col><col><col><col><col><col><col><col><col><col><col><col>
-</colgroup>
-<thead>
-  <tr>
-    <th>담당 전략과제</th>
-    <th>세부 과제</th>
-    <th>프로젝트/업무명</th>
-    <th>개요</th>
-    <th>주요 로드맵</th>
-    <th>진척률</th>
-    <th>원활도</th>
-    <th>현 주요 사항</th>
-    <th>추진 결과 / 산출물</th>
-    <th>담당자 (업무)</th>
-    <th>Issue / 대응 방안</th>
-    <th>컨플루언스 (히스토리)</th>
-    <th>(상무님 코멘터리)</th>
-  </tr>
-</thead>
-`;
+var TABLE_TEMPLATE =
+  "<colgroup>" +
+  "<col><col><col><col><col><col><col><col><col><col><col><col><col>" +
+  "</colgroup>" +
+  "<thead>" +
+  "<tr>" +
+    "<th>담당 전략과제</th>" +
+    "<th>세부 과제</th>" +
+    "<th>프로젝트/업무명</th>" +
+    "<th>개요</th>" +
+    "<th>주요 로드맵</th>" +
+    "<th>진척률</th>" +
+    "<th>원활도</th>" +
+    "<th>현 주요 사항</th>" +
+    "<th>추진 결과 / 산출물</th>" +
+    "<th>담당자 (업무)</th>" +
+    "<th>Issue / 대응 방안</th>" +
+    "<th>컨플루언스 (히스토리)</th>" +
+    "<th>(상무님 코멘터리)</th>" +
+  "</tr>" +
+  "</thead>";
 
 // 현재 편집 대상 날짜 (기본적으로 최신 목요일)
-let currentEditingDate = "";
+var currentEditingDate = "";
 // 서버에서 불러온 기록들을 저장할 전역 변수 (배열)
-let fetchedRecords = [];
+var fetchedRecords = [];
 
 /************************************************************
  * 날짜 관련 헬퍼 함수
  ************************************************************/
 function getUpcomingThursdayDate() {
-  const today = new Date();
-  let diff;
+  var today = new Date();
+  var diff;
   if (today.getDay() <= 4) {
     diff = 4 - today.getDay();
   } else {
     diff = 11 - today.getDay();
   }
-  const thursday = new Date(today);
+  var thursday = new Date(today);
   thursday.setDate(today.getDate() + diff);
   return thursday;
 }
 
 function formatDate(date) {
-  const yy = String(date.getFullYear()).slice(2);
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
+  var yy = String(date.getFullYear()).slice(2);
+  var mm = String(date.getMonth() + 1).padStart(2, "0");
+  var dd = String(date.getDate()).padStart(2, "0");
   return yy + mm + dd;
 }
 
@@ -87,10 +86,10 @@ function getUpcomingThursday() {
 }
 
 function getPreviousThursday(dateStr, weeksAgo) {
-  const year = 2000 + parseInt(dateStr.slice(0,2));
-  const month = parseInt(dateStr.slice(2,4)) - 1;
-  const day = parseInt(dateStr.slice(4,6));
-  const dateObj = new Date(year, month, day);
+  var year = 2000 + parseInt(dateStr.slice(0,2));
+  var month = parseInt(dateStr.slice(2,4)) - 1;
+  var day = parseInt(dateStr.slice(4,6));
+  var dateObj = new Date(year, month, day);
   dateObj.setDate(dateObj.getDate() - 7 * weeksAgo);
   return formatDate(dateObj);
 }
@@ -99,14 +98,14 @@ function getPreviousThursday(dateStr, weeksAgo) {
  * 1) 폴더 초기화 및 부모 도메인 검사
  ************************************************************/
 function initializeFolder() {
-  const ref = document.referrer;
-  if (!ref.includes("atlassian.net")) {
+  var ref = document.referrer;
+  if (ref.indexOf("atlassian.net") === -1) {
     alert("Confluence(.atlassian.net)에서 접근하지 않아 동작이 제한됩니다.");
     return false;
   }
-  const params = new URLSearchParams(window.location.search);
-  const folder = params.get("folder");
-  const tokenParam = params.get("token");
+  var params = new URLSearchParams(window.location.search);
+  var folder = params.get("folder");
+  var tokenParam = params.get("token");
   if (!folder) {
     alert("folder 파라미터가 없습니다. 올바른 접근이 아닙니다.");
     return false;
@@ -125,48 +124,67 @@ function initializeFolder() {
  * 2) 날짜 드롭다운 및 현재 날짜 계산
  ************************************************************/
 function createDateDropdown() {
-  const container = document.getElementById("dateSelectorContainer");
+  var container = document.getElementById("dateSelectorContainer");
   if (!container) return;
   container.innerHTML = "";
-  const select = document.createElement("select");
+  var select = document.createElement("select");
   select.className = "dropdown-select date-dropdown";
-  const latest = getUpcomingThursday();
-  const prev1 = getPreviousThursday(latest, 1);
-  const prev2 = getPreviousThursday(latest, 2);
-  const opts = [
+  var latest = getUpcomingThursday();
+  var prev1 = getPreviousThursday(latest, 1);
+  var prev2 = getPreviousThursday(latest, 2);
+  var opts = [
     { val: latest, text: latest },
     { val: prev1, text: prev1 },
     { val: prev2, text: prev2 },
     { val: "more", text: "더보기" }
   ];
-  opts.forEach(o => {
-    const op = document.createElement("option");
+  for (var i = 0; i < opts.length; i++) {
+    var o = opts[i];
+    var op = document.createElement("option");
     op.value = o.val;
     op.textContent = o.text;
     select.appendChild(op);
-  });
+  }
   container.appendChild(select);
-  select.addEventListener("change", handleDateDropdownChange);
+  select.addEventListener("change", function(e) {
+    handleDateDropdownChange(e);
+  });
 }
 
 function updateDateDropdownWithAllDates() {
-  const select = document.querySelector(".date-dropdown");
+  var select = document.querySelector(".date-dropdown");
   if (!select) return;
   select.innerHTML = "";
-  let dates = fetchedRecords.map(r => r.date);
-  const latest = getUpcomingThursday();
-  if (!dates.includes(latest)) {
+  // ES5 방식: var uniqueDates = Array.from(new Set(dates)); → 구형 브라우저 대비
+  var dates = [];
+  for (var i = 0; i < fetchedRecords.length; i++) {
+    dates.push(fetchedRecords[i].date);
+  }
+  var latest = getUpcomingThursday();
+  if (dates.indexOf(latest) === -1) {
     dates.push(latest);
   }
-  dates = [...new Set(dates)];
-  dates.sort((a, b) => b.localeCompare(a));
-  dates.forEach(date => {
-    const op = document.createElement("option");
+  // 중복 제거
+  var setObj = {};
+  var uniqueArr = [];
+  for (var j = 0; j < dates.length; j++) {
+    if (!setObj[dates[j]]) {
+      setObj[dates[j]] = true;
+      uniqueArr.push(dates[j]);
+    }
+  }
+  // 정렬 (오름차순)
+  uniqueArr.sort(function(a, b) {
+    return a.localeCompare(b);
+  });
+  for (var k = 0; k < uniqueArr.length; k++) {
+    var date = uniqueArr[k];
+    var op = document.createElement("option");
     op.value = date;
     op.textContent = date;
     select.appendChild(op);
-  });
-  if (dates.includes(currentEditingDate)) {
+  }
+  if (uniqueArr.indexOf(currentEditingDate) !== -1) {
     select.value = currentEditingDate;
   } else {
     currentEditingDate = latest;
@@ -175,8 +193,8 @@ function updateDateDropdownWithAllDates() {
 }
 
 function handleDateDropdownChange(e) {
-  const select = e.target;
-  let newDate = select.value;
+  var select = e.target;
+  var newDate = select.value;
   if (newDate === "more") {
     updateDateDropdownWithAllDates();
     return;
@@ -185,18 +203,26 @@ function handleDateDropdownChange(e) {
     select.value = currentEditingDate;
     return;
   }
-  const currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
+  var currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
   if (!currentTableElem) {
     currentEditingDate = newDate;
     updateUIForSelectedDate(newDate);
     return;
   }
-  let currentTableHTML = currentTableElem.innerHTML.trim();
-  let savedRecord = fetchedRecords.find(rec => rec.date === currentEditingDate);
-  let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
+  var currentTableHTML = currentTableElem.innerHTML.trim();
+  var savedRecord = null;
+  for (var i = 0; i < fetchedRecords.length; i++) {
+    if (fetchedRecords[i].date === currentEditingDate) {
+      savedRecord = fetchedRecords[i];
+      break;
+    }
+  }
+  var savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
+  
   if (currentTableHTML !== savedTableHTML) {
-    let choice = prompt(
-      `(${currentEditingDate}) 날짜의 내용에서 변경된 부분이 있습니다.\n아래 옵션 중 선택해주세요:\n1: 변경사항 저장 후 진행\n2: 저장 없이 진행\n3: 취소`
+    var choice = prompt(
+      "(" + currentEditingDate + ") 날짜의 내용에서 변경된 부분이 있습니다.\n" +
+      "아래 옵션 중 선택해주세요:\n1: 변경사항 저장 후 진행\n2: 저장 없이 진행\n3: 취소"
     );
     if (choice === "1") {
       submitData(currentEditingDate, function() {
@@ -216,14 +242,14 @@ function handleDateDropdownChange(e) {
 }
 
 /************************************************************
- * 3) 드롭다운/신호등 생성 함수 (변경 없음 → 수정사항 2,3 반영)
+ * 3) 드롭다운/신호등 생성 함수
  ************************************************************/
 function createStrategyDropdown() {
-  const container = document.createElement("div");
-  const select = document.createElement("select");
+  var container = document.createElement("div");
+  var select = document.createElement("select");
   select.className = "dropdown-select strategy-dropdown";
   // 옵션 구성 – 기본값 "(선택)" 포함
-  const opts = [
+  var opts = [
     { val: "", text: "(선택)" },
     { val: "A", text: "1_AX사업..." },
     { val: "B", text: "1_MS파트너..." },
@@ -234,28 +260,29 @@ function createStrategyDropdown() {
     { val: "G", text: "2_G..." },
     { val: "H", text: "2_Lead..." }
   ];
-  opts.forEach(o => {
-    const op = document.createElement("option");
+  for (var i = 0; i < opts.length; i++) {
+    var o = opts[i];
+    var op = document.createElement("option");
     op.value = o.val;
     op.textContent = o.text;
     select.appendChild(op);
-  });
-  const span = document.createElement("span");
+  }
+  var span = document.createElement("span");
   span.className = "dropdown-text";
   // 처음에는 select 보이고, span은 감춤
   select.style.display = "inline-block";
   span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
-  return { container };
+  return { container: container };
 }
 
 function createDetailDropdown() {
-  const container = document.createElement("div");
-  const select = document.createElement("select");
+  var container = document.createElement("div");
+  var select = document.createElement("select");
   select.className = "dropdown-select detail-dropdown";
   // 기본값 "Select"는 나중에 strategy 선택에 따라 제거할 예정
-  const span = document.createElement("span");
+  var span = document.createElement("span");
   span.className = "dropdown-text";
   // 초기 상태: detail dropdown은 비활성화
   select.style.display = "inline-block";
@@ -263,32 +290,33 @@ function createDetailDropdown() {
   span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
-  return { container };
+  return { container: container };
 }
 
 function createTrafficDropdown() {
-  const container = document.createElement("div");
-  const select = document.createElement("select");
+  var container = document.createElement("div");
+  var select = document.createElement("select");
   select.className = "dropdown-select status-dropdown";
-  const opts = [
+  var opts = [
     { val: "", text: "Select" },
     { val: "red", text: "Red" },
     { val: "yellow", text: "Yellow" },
     { val: "green", text: "Green" }
   ];
-  opts.forEach(o => {
-    const op = document.createElement("option");
+  for (var i = 0; i < opts.length; i++) {
+    var o = opts[i];
+    var op = document.createElement("option");
     op.value = o.val;
     op.textContent = o.text;
     select.appendChild(op);
-  });
-  const img = document.createElement("img");
+  }
+  var img = document.createElement("img");
   img.className = "status-image";
   select.style.display = "inline-block";
   img.style.display = "none";
   container.appendChild(select);
   container.appendChild(img);
-  return { container };
+  return { container: container };
 }
 
 /************************************************************
@@ -296,23 +324,22 @@ function createTrafficDropdown() {
  ************************************************************/
 function initDropDownEvents(td) {
   // --- 0열 (전략과제) ---
-  const strategySelect = td.querySelector(".strategy-dropdown");
-  const strategySpan = td.querySelector(".dropdown-text");
+  var strategySelect = td.querySelector(".strategy-dropdown");
+  var strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
-    // change 이벤트: 사용자가 값을 선택하면...
-    strategySelect.addEventListener("change", () => {
-      const val = strategySelect.value;
-      const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
-      // 만약 기본값 "(선택)"이 선택되었으면 detail dropdown은 비활성화
-      const detailSelect = td.parentNode.querySelector(".detail-dropdown");
+    strategySelect.addEventListener("change", function() {
+      var val = strategySelect.value;
+      var displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
+      // detail dropdown 비활성화 여부
+      var detailSelect = td.parentNode.querySelector(".detail-dropdown");
       if (val === "") {
         if (detailSelect) {
           detailSelect.disabled = true;
           detailSelect.style.display = "none";
         }
       } else {
-        // 선택된 경우, 0열 드롭다운에서 기본값 "(선택)" 제거 (한 번 선택한 후에는 목록에 나타나지 않음)
-        for (let i = 0; i < strategySelect.options.length; i++) {
+        // "(선택)" 제거
+        for (var i = 0; i < strategySelect.options.length; i++) {
           if (strategySelect.options[i].value === "") {
             strategySelect.remove(i);
             break;
@@ -324,10 +351,9 @@ function initDropDownEvents(td) {
       }
       handleStrategyChange(td, val);
     });
-    // click 이벤트: 텍스트(span)를 클릭하면 바로 드롭다운(select)로 전환하고 드롭다운을 열도록 시도
-    strategySpan.addEventListener("click", () => {
-      // 드롭다운 변경 시 detail dropdown을 초기화(비활성화)함
-      const detailSelect = td.parentNode.querySelector(".detail-dropdown");
+    // click 이벤트
+    strategySpan.addEventListener("click", function() {
+      var detailSelect = td.parentNode.querySelector(".detail-dropdown");
       if (detailSelect) {
         detailSelect.disabled = true;
         detailSelect.style.display = "none";
@@ -335,47 +361,46 @@ function initDropDownEvents(td) {
       strategySpan.style.display = "none";
       strategySelect.style.display = "inline-block";
       strategySelect.focus();
-      let event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
       strategySelect.dispatchEvent(event);
     });
   }
   
   // --- 1열 (세부 과제) ---
-  const detailSelect = td.querySelector(".detail-dropdown");
-  const detailSpan = td.querySelector(".dropdown-text");
+  var detailSelect = td.querySelector(".detail-dropdown");
+  var detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
-    detailSelect.addEventListener("change", () => {
-      const val = detailSelect.value;
+    detailSelect.addEventListener("change", function() {
+      var val = detailSelect.value;
       if (val) {
         detailSpan.textContent = val;
         detailSelect.style.display = "none";
         detailSpan.style.display = "inline-block";
       }
     });
-    detailSpan.addEventListener("click", () => {
-      // detail dropdown이 활성화되어 있을 때만 열리도록 함
+    detailSpan.addEventListener("click", function() {
       if (detailSelect.disabled) return;
       detailSpan.style.display = "none";
       detailSelect.style.display = "inline-block";
       detailSelect.focus();
-      let event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
       detailSelect.dispatchEvent(event);
     });
   }
   
   // --- 6열 (신호등) ---
-  const statusSelect = td.querySelector(".status-dropdown");
-  const statusImage = td.querySelector(".status-image");
+  var statusSelect = td.querySelector(".status-dropdown");
+  var statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
-    statusSelect.addEventListener("change", () => {
-      const colorVal = statusSelect.value;
+    statusSelect.addEventListener("change", function() {
+      var colorVal = statusSelect.value;
       if (IMAGE_URLS[colorVal]) {
         statusImage.src = IMAGE_URLS[colorVal];
         statusSelect.style.display = "none";
         statusImage.style.display = "inline-block";
       }
     });
-    statusImage.addEventListener("click", () => {
+    statusImage.addEventListener("click", function() {
       statusImage.style.display = "none";
       statusSelect.value = "";
       statusSelect.style.display = "inline-block";
@@ -384,13 +409,13 @@ function initDropDownEvents(td) {
 }
 
 function handleStrategyChange(strategyTd, strategyVal) {
-  const row = strategyTd.closest("tr");
+  var row = strategyTd.closest("tr");
   if (!row) return;
-  const tds = row.querySelectorAll("td");
+  var tds = row.querySelectorAll("td");
   if (tds.length < 2) return;
-  const detailTd = tds[1];
-  const detailSelect = detailTd.querySelector(".detail-dropdown");
-  const detailSpan = detailTd.querySelector(".dropdown-text");
+  var detailTd = tds[1];
+  var detailSelect = detailTd.querySelector(".detail-dropdown");
+  var detailSpan = detailTd.querySelector(".dropdown-text");
   if (!strategyVal) {
     detailSelect.innerHTML = "";
     detailSelect.disabled = true;
@@ -398,17 +423,16 @@ function handleStrategyChange(strategyTd, strategyVal) {
     detailSpan.style.display = "none";
     return;
   }
-  // 전략값이 선택된 경우: detail dropdown 활성화하고, 옵션 목록을 해당 전략값에 맞게 채움
   detailSelect.disabled = false;
   detailSelect.innerHTML = "";
-  // 기본 "Select" 옵션은 더 이상 표시하지 않음
-  const newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
-  newOptions.forEach(val => {
-    const op = document.createElement("option");
-    op.value = val;
-    op.textContent = val;
+  var newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
+  for (var i = 0; i < newOptions.length; i++) {
+    var opVal = newOptions[i];
+    var op = document.createElement("option");
+    op.value = opVal;
+    op.textContent = opVal;
     detailSelect.appendChild(op);
-  });
+  }
   detailSelect.style.display = "inline-block";
   detailSpan.textContent = "";
   detailSpan.style.display = "none";
@@ -419,36 +443,37 @@ function handleStrategyChange(strategyTd, strategyVal) {
  ************************************************************/
 function initTable(table) {
   if (!table) return;
-  const rows = table.querySelectorAll("tbody tr");
-  rows.forEach(row => {
-    const tds = row.querySelectorAll("td");
+  var rows = table.querySelectorAll("tbody tr");
+  for (var r = 0; r < rows.length; r++) {
+    var row = rows[r];
+    var tds = row.querySelectorAll("td");
     if (tds[0] && !tds[0].querySelector(".strategy-dropdown")) {
-      const { container } = createStrategyDropdown();
-      tds[0].appendChild(container);
+      var sObj = createStrategyDropdown();
+      tds[0].appendChild(sObj.container);
     }
     if (tds[1] && !tds[1].querySelector(".detail-dropdown")) {
-      const { container } = createDetailDropdown();
-      tds[1].appendChild(container);
+      var dObj = createDetailDropdown();
+      tds[1].appendChild(dObj.container);
     }
     if (tds[6] && !tds[6].querySelector(".status-dropdown")) {
-      const { container } = createTrafficDropdown();
-      tds[6].appendChild(container);
+      var tObj = createTrafficDropdown();
+      tds[6].appendChild(tObj.container);
     }
-    tds.forEach(td => initDropDownEvents(td));
-  });
+    for (var c = 0; c < tds.length; c++) {
+      initDropDownEvents(tds[c]);
+    }
+  }
 }
 
 function addNewRow() {
-  const table = document.querySelector(".myTable");
+  var table = document.querySelector(".myTable");
   if (!table) return;
-  const tbody = table.querySelector("tbody");
+  var tbody = table.querySelector("tbody");
   if (!tbody) return;
-  const tr = document.createElement("tr");
-  for (let i = 0; i < 8; i++) {
-    const td = document.createElement("td");
-    if ([0, 1, 6].includes(i)) {
-      // 드롭다운은 initTable에서 추가됨
-    } else {
+  var tr = document.createElement("tr");
+  for (var i = 0; i < 8; i++) {
+    var td = document.createElement("td");
+    if (i !== 0 && i !== 1 && i !== 6) {
       td.classList.add("editable");
       td.contentEditable = "true";
     }
@@ -460,58 +485,63 @@ function addNewRow() {
 
 /************************************************************
  * 6) 서버 저장 데이터 불러오기 및 UI 업데이트
- *     - 편집 영역 (#currentTableContainer) 및
- *     - 조회 영역 (#pastDataContainer)
  ************************************************************/
 function fetchStoredData(callback) {
-  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}&token=${token}`)
-    .then(resp => resp.json())
-    .then(records => {
+  fetch(LOCAL_SERVER_URL + "/listData?folder=" + folderName + "&token=" + token)
+    .then(function(resp) {
+      return resp.json();
+    })
+    .then(function(records) {
       console.log("Fetched records:", records);
       if (!Array.isArray(records)) {
          records = [];
       }
       fetchedRecords = records;
-      if (callback) callback();
+      if (callback) { callback(); }
       updateUIForSelectedDate(currentEditingDate);
     })
-    .catch(err => {
+    .catch(function(err) {
       console.error("데이터 로드 오류:", err);
     });
 }
 
 function updateUIForSelectedDate(selectedDate) {
-  const latest = getUpcomingThursday();
-  const currentHeader = document.getElementById("currentHeader");
-  const currentContainer = document.getElementById("currentTableContainer");
-  const pastContainer = document.getElementById("pastDataContainer");
+  var latest = getUpcomingThursday();
+  var currentHeader = document.getElementById("currentHeader");
+  var currentContainer = document.getElementById("currentTableContainer");
+  var pastContainer = document.getElementById("pastDataContainer");
   
-  // 편집 영역 헤더: 최신이면 (이번주), 아니면 (과거)
-  let headerText = (selectedDate === latest)
-                   ? `(이번주) ${selectedDate} 주간현황`
-                   : `(과거) ${selectedDate} 주간현황`;
+  // 편집 영역 헤더
+  var headerText = (selectedDate === latest)
+                   ? "(이번주) " + selectedDate + " 주간현황"
+                   : "(과거) " + selectedDate + " 주간현황";
   currentHeader.textContent = headerText;
   
-  // 편집 영역 업데이트 – 기존 테이블의 tbody 만 갱신
-  const editableTable = currentContainer.querySelector(".myTable");
+  // 편집 영역 업데이트
+  var editableTable = currentContainer.querySelector(".myTable");
   if (editableTable) {
-    const editableTbody = editableTable.querySelector("tbody");
-    const record = fetchedRecords.find(rec => rec.date === selectedDate);
+    var editableTbody = editableTable.querySelector("tbody");
+    var record = null;
+    for (var i = 0; i < fetchedRecords.length; i++) {
+      if (fetchedRecords[i].date === selectedDate) {
+        record = fetchedRecords[i];
+        break;
+      }
+    }
     if (record) {
       editableTbody.innerHTML = record.tableHTML;
       initTable(editableTable);
     } else {
       if (selectedDate === latest) {
-        currentHeader.textContent = `(이번주) ${selectedDate} 주간현황 : 아직 작성되지 않았음`;
+        currentHeader.textContent = "(이번주) " + selectedDate + " 주간현황 : 아직 작성되지 않았음";
       }
       editableTbody.innerHTML = "";
     }
   }
   
-  // 조회 영역 업데이트 – 각 기록을 표 형태로 출력
+  // 조회 영역 업데이트
   pastContainer.innerHTML = "";
-  // 요구사항 5: 수평선 바로 뒤에 빈 줄 1줄과 "<저장된 주간현황 내역>" 텍스트 추가
-  const pastHeader = document.createElement("div");
+  var pastHeader = document.createElement("div");
   pastHeader.style.textAlign = "center";
   pastHeader.style.fontWeight = "bold";
   pastHeader.textContent = "<저장된 주간현황 내역>";
@@ -519,145 +549,190 @@ function updateUIForSelectedDate(selectedDate) {
   pastContainer.appendChild(pastHeader);
   pastContainer.appendChild(document.createElement("br"));
   
-  let datesToShow = [];
+  var datesToShow = [];
   if (selectedDate === latest) {
-    const recLatest = fetchedRecords.find(rec => rec.date === latest);
+    // find record of latest
+    var recLatest = null;
+    for (var x = 0; x < fetchedRecords.length; x++) {
+      if (fetchedRecords[x].date === latest) {
+        recLatest = fetchedRecords[x];
+        break;
+      }
+    }
     if (recLatest) {
       datesToShow.push(latest);
     }
-    const prev1 = getPreviousThursday(latest, 1);
-    const prev2 = getPreviousThursday(latest, 2);
-    if (fetchedRecords.find(rec => rec.date === prev1)) {
+    var prev1 = getPreviousThursday(latest, 1);
+    var prev2 = getPreviousThursday(latest, 2);
+    var foundPrev1 = false;
+    var foundPrev2 = false;
+    for (var y = 0; y < fetchedRecords.length; y++) {
+      if (fetchedRecords[y].date === prev1) foundPrev1 = true;
+      if (fetchedRecords[y].date === prev2) foundPrev2 = true;
+    }
+    if (foundPrev1) {
       datesToShow.push(prev1);
     }
-    if (fetchedRecords.find(rec => rec.date === prev2)) {
+    if (foundPrev2) {
       datesToShow.push(prev2);
     }
   } else {
-    datesToShow = fetchedRecords
-                  .map(r => r.date)
-                  .filter(d => d <= latest && d >= selectedDate);
-    if (!datesToShow.includes(latest)) {
+    // dates from selectedDate up to latest
+    var recordDates = [];
+    for (var d = 0; d < fetchedRecords.length; d++) {
+      recordDates.push(fetchedRecords[d].date);
+    }
+    for (var dd = 0; dd < recordDates.length; dd++) {
+      var dt = recordDates[dd];
+      if (dt <= latest && dt >= selectedDate) {
+        if (datesToShow.indexOf(dt) === -1) {
+          datesToShow.push(dt);
+        }
+      }
+    }
+    if (datesToShow.indexOf(latest) === -1) {
       datesToShow.push(latest);
     }
-    datesToShow.sort((a, b) => b.localeCompare(a));
+    // 내림차순 정렬
+    datesToShow.sort(function(a, b) {
+      return b.localeCompare(a);
+    });
   }
   
   if (datesToShow.length === 0) {
     pastContainer.appendChild(document.createTextNode("(과거 주간현황 기록 없음)"));
   } else {
-    datesToShow.forEach(date => {
-      const record = fetchedRecords.find(rec => rec.date === date);
-      const section = document.createElement("div");
+    for (var t = 0; t < datesToShow.length; t++) {
+      var dateVal = datesToShow[t];
+      var rec = null;
+      for (var r = 0; r < fetchedRecords.length; r++) {
+        if (fetchedRecords[r].date === dateVal) {
+          rec = fetchedRecords[r];
+          break;
+        }
+      }
+      var section = document.createElement("div");
       section.style.marginBottom = "20px";
-      const header = document.createElement("div");
-      header.textContent = (date === latest)
-                           ? `(이번주) ${date} 주간현황`
-                           : `(과거) ${date} 주간현황`;
-      if (date === selectedDate) {
+      var header = document.createElement("div");
+      if (dateVal === latest) {
+        header.textContent = "(이번주) " + dateVal + " 주간현황";
+      } else {
+        header.textContent = "(과거) " + dateVal + " 주간현황";
+      }
+      if (dateVal === selectedDate) {
         header.style.backgroundColor = "#ffffe0";
         header.style.color = "blue";
         header.style.fontWeight = "bold";
         header.style.fontStyle = "italic";
       }
       section.appendChild(header);
-      if (record) {
-        // 새 table 요소 생성 – TABLE_TEMPLATE + 저장된 tbody 내용을 포함
-        const table = document.createElement("table");
+      if (rec) {
+        var table = document.createElement("table");
         table.className = "myTable";
-        table.innerHTML = TABLE_TEMPLATE + "<tbody>" + record.tableHTML + "</tbody>";
+        table.innerHTML = TABLE_TEMPLATE + "<tbody>" + rec.tableHTML + "</tbody>";
         makeTableStatic(table);
         section.appendChild(table);
       } else {
-        const msg = document.createElement("div");
+        var msg = document.createElement("div");
         msg.textContent = "기록 없음";
         section.appendChild(msg);
       }
       pastContainer.appendChild(section);
-    });
+    }
   }
 }
 
 function makeTableStatic(wrapper) {
-  const selects = wrapper.querySelectorAll("select");
-  selects.forEach(sel => sel.disabled = true);
-  const tds = wrapper.querySelectorAll("td.editable");
-  tds.forEach(td => {
-    td.removeAttribute("contenteditable");
-    td.style.backgroundColor = "#f0f0f0";
-  });
+  var selects = wrapper.querySelectorAll("select");
+  for (var i = 0; i < selects.length; i++) {
+    selects[i].disabled = true;
+  }
+  var tds = wrapper.querySelectorAll("td.editable");
+  for (var j = 0; j < tds.length; j++) {
+    tds[j].removeAttribute("contenteditable");
+    tds[j].style.backgroundColor = "#f0f0f0";
+  }
 }
 
 /************************************************************
  * 7) 데이터 제출 (Submit 버튼)
  ************************************************************/
 function submitData(date, callback) {
-  const tbodyElem = document.querySelector("#currentTableContainer .myTable tbody");
+  var tbodyElem = document.querySelector("#currentTableContainer .myTable tbody");
   if (!tbodyElem) {
     alert("표 데이터가 없습니다.");
     return;
   }
-  const tableData = tbodyElem.innerHTML;
-  const payload = { folder: folderName, date: date, tableData: tableData, token: token };
-  fetch(`${LOCAL_SERVER_URL}/submit`, {
+  var tableData = tbodyElem.innerHTML;
+  var payload = { folder: folderName, date: date, tableData: tableData, token: token };
+  fetch(LOCAL_SERVER_URL + "/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
-    .then(resp => resp.json())
-    .then(data => {
+    .then(function(resp) {
+      return resp.json();
+    })
+    .then(function(data) {
       if (data.error) {
         alert("전송 오류: " + data.error);
       } else {
-        if (callback) callback();
+        if (callback) { callback(); }
         fetchStoredData();
       }
     })
-    .catch(err => {
+    .catch(function(err) {
       console.error("전송 오류:", err);
       alert("전송에 실패했습니다.");
     });
 }
 
 function initSubmitButton() {
-  const submitBtn = document.getElementById("submitBtn");
+  var submitBtn = document.getElementById("submitBtn");
   if (!submitBtn) return;
-  submitBtn.addEventListener("click", () => {
+  submitBtn.addEventListener("click", function() {
     if (!folderName) {
       alert("folder 파라미터가 유효하지 않습니다.");
       return;
     }
-    const dateSelect = document.querySelector(".date-dropdown");
+    var dateSelect = document.querySelector(".date-dropdown");
     if (!dateSelect || !dateSelect.value) {
       alert("날짜를 선택해주세요.");
       return;
     }
-    const selectedDate = dateSelect.value;
-    const currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
+    var selectedDate = dateSelect.value;
+    var currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
     if (!currentTableElem) return;
-    let currentTableHTML = currentTableElem.innerHTML.trim();
-    let savedRecord = fetchedRecords.find(rec => rec.date === selectedDate);
-    let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
+    var currentTableHTML = currentTableElem.innerHTML.trim();
+    var savedRecord = null;
+    for (var i = 0; i < fetchedRecords.length; i++) {
+      if (fetchedRecords[i].date === selectedDate) {
+        savedRecord = fetchedRecords[i];
+        break;
+      }
+    }
+    var savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
     if (!savedRecord) {
-      submitData(selectedDate, () => {
-        alert(`(${selectedDate}) 진행현황을 신규 저장했습니다.`);
+      submitData(selectedDate, function() {
+        alert("(" + selectedDate + ") 진행현황을 신규 저장했습니다.");
         updateUIForSelectedDate(selectedDate);
       });
     } else {
       if (currentTableHTML !== savedTableHTML) {
-        let choice = prompt(
-          "현재 작성한 내용을 저장하시겠습니까? 기존 저장 내용과 다른 부분이 있습니다.\n1: 저장하기\n2: 취소 및 다시 확인하기"
+        var choice = prompt(
+          "현재 작성한 내용을 저장하시겠습니까? 기존 저장 내용과 다른 부분이 있습니다.\n" +
+          "1: 저장하기\n2: 취소 및 다시 확인하기"
         );
         if (choice === "1") {
-          submitData(selectedDate, () => {
-            alert(`(${selectedDate}) 진행현황을 저장했습니다.`);
+          submitData(selectedDate, function() {
+            alert("(" + selectedDate + ") 진행현황을 저장했습니다.");
             updateUIForSelectedDate(selectedDate);
           });
         } else {
           return;
         }
       } else {
-        alert(`(${selectedDate}) 진행현황을 저장했습니다.`);
+        alert("(" + selectedDate + ") 진행현황을 저장했습니다.");
         updateUIForSelectedDate(selectedDate);
       }
     }
@@ -668,18 +743,29 @@ function initSubmitButton() {
 /************************************************************
  * 8) DOMContentLoaded – 초기화
  ************************************************************/
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
   if (!initializeFolder()) {
-    const submitBtn = document.getElementById("submitBtn");
+    var submitBtn = document.getElementById("submitBtn");
     if (submitBtn) submitBtn.disabled = true;
     return;
   }
   createDateDropdown();
-  const editingTable = document.querySelector("#currentTableContainer .myTable");
-  if (editingTable) initTable(editingTable);
-  const addBtn = document.getElementById("addRowBtn");
-  if (addBtn) addBtn.addEventListener("click", addNewRow);
+  var editingTable = document.querySelector("#currentTableContainer .myTable");
+  if (editingTable) {
+    initTable(editingTable);
+  }
+  var addBtn = document.getElementById("addRowBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", function() {
+      addNewRow();
+    });
+  }
   initSubmitButton();
-  currentEditingDate = document.querySelector(".date-dropdown") ? document.querySelector(".date-dropdown").value : getUpcomingThursday();
+  var defaultSelect = document.querySelector(".date-dropdown");
+  if (defaultSelect && defaultSelect.value) {
+    currentEditingDate = defaultSelect.value;
+  } else {
+    currentEditingDate = getUpcomingThursday();
+  }
   fetchStoredData();
 });
