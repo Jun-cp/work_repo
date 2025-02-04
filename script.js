@@ -20,13 +20,13 @@ const AUTO_COMPLETE_LIST = [
 ];
 
 const STRATEGY_TO_DETAIL_OPTIONS = {
-  A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
-  B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"],
-  C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
+  A: ["핵심&전략고객 대상 컨설팅/제안", "고객발굴/사업화를 위한 사전컨설팅", "AX전략이행/사업추진을 위한 이슈조정/해소"],
+  B: ["AI 서비스 Delivery 방안 확보", "KT Custom LLM 활용한 고객 레퍼런스 확보", "AI Agent 서비스 발굴/확보"],
+  C: ["글로벌 확장을 위한 레퍼런스 확보", "사업 협력 파트너 확보", "파트너 CoWork 사업 레퍼런스 확보"],
   D: ["Lead 내 담당 업무"],
-  E: ["컨설팅/제안 지원(핵심&전략고객)", "그룹AX협력과제 발굴/이행지원", "MS/AX유관조직 가교역할"],
-  F: ["AX컨설팅수행(핵심&전략고객)", "PoC기획/개발/프로토타이핑(핵심&전략고객)", "AIMSP협력모델 구축"],
-  G: ["AX컨설팅방법론 표준화/확산", "AI신기술분석/내부역량강화/기술지원", "Ref.아키텍처 발굴/확산"],
+  E: ["핵심&전략고객 대상 컨설팅/제안", "그룹AX협력과제 발굴/이행지원", "MS 및 AX유관조직 가교역할"],
+  F: ["핵심&전략고객 대상 AX컨 설팅 수행", "핵심&전략고객 대상 PoC기획/개발/프로토타이핑", "AI MSP 사업을 위한 협력모델 구축"],
+  G: ["AX 컨설팅 방법론 표준화/확산", "AI 신기술 분석/내부 역량 강화/기술지원", "B2B 대상 레퍼런스 아키텍처 발굴/확산"],
   H: ["Lead 내 담당 업무"]
 };
 
@@ -174,6 +174,9 @@ function updateDateDropdownWithAllDates() {
   }
 }
 
+/************************************************************
+ * [변경된 부분] 2-(3): 날짜 드롭다운 값 변경 시 저장 여부 확인
+ ************************************************************/
 function handleDateDropdownChange(e) {
   const select = e.target;
   let newDate = select.value;
@@ -195,19 +198,18 @@ function handleDateDropdownChange(e) {
   let savedRecord = fetchedRecords.find(rec => rec.date === currentEditingDate);
   let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
   if (currentTableHTML !== savedTableHTML) {
-    let choice = prompt(
-      `(${currentEditingDate}) 날짜의 내용에서 변경된 부분이 있습니다.\n아래 옵션 중 선택해주세요:\n1: 변경사항 저장 후 진행\n2: 저장 없이 진행\n3: 취소`
-    );
-    if (choice === "1") {
+    // 기존 프롬프트를 제거하고, 확인/취소 confirm 창으로 변경
+    if (confirm(`(${currentEditingDate}) 날짜의 내용에서 변경된 부분이 있습니다. 변경된 부분을 저장하시겠습니까?`)) {
+      // 사용자가 확인(OK)을 누른 경우 → 저장 후 변경 (2-(3)-(b))
       submitData(currentEditingDate, function() {
         currentEditingDate = newDate;
         updateUIForSelectedDate(newDate);
       });
       return;
-    } else if (choice === "2") {
-      // 저장 없이 진행
     } else {
-      select.value = currentEditingDate;
+      // 사용자가 취소(Cancel)을 누른 경우 → 저장 없이 변경 (2-(3)-(c))
+      currentEditingDate = newDate;
+      updateUIForSelectedDate(newDate);
       return;
     }
   }
@@ -216,7 +218,7 @@ function handleDateDropdownChange(e) {
 }
 
 /************************************************************
- * 3) 드롭다운/신호등 생성 함수 (변경 없음 → 수정사항 2,3 반영)
+ * 3) 드롭다운/신호등 생성 함수 (수정사항 2, 3 반영)
  ************************************************************/
 function createStrategyDropdown() {
   const container = document.createElement("div");
@@ -225,15 +227,16 @@ function createStrategyDropdown() {
   // 옵션 구성 – 기본값 "(선택)" 포함
   const opts = [
     { val: "", text: "(선택)" },
-    { val: "A", text: "1_AX사업..." },
-    { val: "B", text: "1_MS파트너..." },
-    { val: "C", text: "1_C..." },
-    { val: "D", text: "1_D..." },
-    { val: "E", text: "2_E..." },
-    { val: "F", text: "2_F..." },
-    { val: "G", text: "2_G..." },
-    { val: "H", text: "2_Lead..." }
+    { val: "A", text: "1_AX사업 수주 지원 및 컨설팅" },
+    { val: "B", text: "1_MS파트너십 기반 고객 경험 혁신서비스 발굴" },
+    { val: "C", text: "1_AX사업 경쟁력 강화를 위한 파트너 발굴" },
+    { val: "D", text: "1_Lead 내 담당 업무" },
+    { val: "E", text: "2_AX사업 수주 지원 및 컨설팅" },
+    { val: "F", text: "2_AX전문 컨설팅 및 프로토타이핑 수행" },
+    { val: "G", text: "2_고객 기반 표준화된 오퍼링 제공" },
+    { val: "H", text: "2_Lead 내 담당 업무" }
   ];
+
   opts.forEach(o => {
     const op = document.createElement("option");
     op.value = o.val;
@@ -311,7 +314,7 @@ function initDropDownEvents(td) {
           detailSelect.style.display = "none";
         }
       } else {
-        // 선택된 경우, 0열 드롭다운에서 기본값 "(선택)" 제거 (한 번 선택한 후에는 목록에 나타나지 않음)
+        // 선택된 경우, 0열 드롭다운에서 기본값 "(선택)" 제거
         for (let i = 0; i < strategySelect.options.length; i++) {
           if (strategySelect.options[i].value === "") {
             strategySelect.remove(i);
@@ -324,9 +327,8 @@ function initDropDownEvents(td) {
       }
       handleStrategyChange(td, val);
     });
-    // click 이벤트: 텍스트(span)를 클릭하면 바로 드롭다운(select)로 전환하고 드롭다운을 열도록 시도
+    // click 이벤트: span을 클릭하면 바로 드롭다운(select)을 열도록 함
     strategySpan.addEventListener("click", () => {
-      // 드롭다운 변경 시 detail dropdown을 초기화(비활성화)함
       const detailSelect = td.parentNode.querySelector(".detail-dropdown");
       if (detailSelect) {
         detailSelect.disabled = true;
@@ -353,7 +355,6 @@ function initDropDownEvents(td) {
       }
     });
     detailSpan.addEventListener("click", () => {
-      // detail dropdown이 활성화되어 있을 때만 열리도록 함
       if (detailSelect.disabled) return;
       detailSpan.style.display = "none";
       detailSelect.style.display = "inline-block";
@@ -398,7 +399,6 @@ function handleStrategyChange(strategyTd, strategyVal) {
     detailSpan.style.display = "none";
     return;
   }
-  // 전략값이 선택된 경우: detail dropdown 활성화하고, 옵션 목록을 해당 전략값에 맞게 채움
   detailSelect.disabled = false;
   detailSelect.innerHTML = "";
   // 기본 "Select" 옵션은 더 이상 표시하지 않음
@@ -510,7 +510,7 @@ function updateUIForSelectedDate(selectedDate) {
   
   // 조회 영역 업데이트 – 각 기록을 표 형태로 출력
   pastContainer.innerHTML = "";
-  // 요구사항 5: 수평선 바로 뒤에 빈 줄 1줄과 "<저장된 주간현황 내역>" 텍스트 추가
+  // 수평선 바로 뒤에 빈 줄과 "<저장된 주간현황 내역>" 텍스트 추가
   const pastHeader = document.createElement("div");
   pastHeader.style.textAlign = "center";
   pastHeader.style.fontWeight = "bold";
