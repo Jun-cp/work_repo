@@ -348,7 +348,12 @@ function fetchStoredData(callback) {
   fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}`)
     .then(resp => resp.json())
     .then(records => {
-      fetchedRecords = records || [];
+      console.log("Fetched records:", records);
+      // records가 배열이 아닐 경우 강제로 배열로 처리
+      if (!Array.isArray(records)) {
+         records = [];
+      }
+      fetchedRecords = records;
       if (callback) callback();
       updateUIForSelectedDate(currentEditingDate);
     })
@@ -356,6 +361,7 @@ function fetchStoredData(callback) {
       console.error("데이터 로드 오류:", err);
     });
 }
+
 
 function updateUIForSelectedDate(selectedDate) {
   const currentHeader = document.getElementById("currentHeader");
