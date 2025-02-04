@@ -62,7 +62,6 @@ let fetchedRecords = [];
 /************************************************************
  * 날짜 관련 헬퍼 함수
  ************************************************************/
-// “최신 목요일”은 오늘이 목요일이면 오늘, 그 외에는 이번주 목요일
 function getUpcomingThursdayDate() {
   const today = new Date();
   let diff;
@@ -87,7 +86,6 @@ function getUpcomingThursday() {
   return formatDate(getUpcomingThursdayDate());
 }
 
-// selectedDate(YYMMDD)를 Date객체로 변환한 후 weeksAgo 주(7일씩) 빼서 다시 YYMMDD 문자열 반환
 function getPreviousThursday(dateStr, weeksAgo) {
   const year = 2000 + parseInt(dateStr.slice(0,2));
   const month = parseInt(dateStr.slice(2,4)) - 1;
@@ -108,7 +106,7 @@ function initializeFolder() {
   }
   const params = new URLSearchParams(window.location.search);
   const folder = params.get("folder");
-  const tokenParam = params.get("token");  // token 읽기
+  const tokenParam = params.get("token");
   if (!folder) {
     alert("folder 파라미터가 없습니다. 올바른 접근이 아닙니다.");
     return false;
@@ -218,12 +216,13 @@ function handleDateDropdownChange(e) {
 }
 
 /************************************************************
- * 3) 드롭다운/신호등 생성 함수 (변경 없음)
+ * 3) 드롭다운/신호등 생성 함수 (변경 없음 → 수정사항 2,3 반영)
  ************************************************************/
 function createStrategyDropdown() {
   const container = document.createElement("div");
   const select = document.createElement("select");
   select.className = "dropdown-select strategy-dropdown";
+  // 옵션 구성 – 기본값 "(선택)" 포함
   const opts = [
     { val: "", text: "(선택)" },
     { val: "A", text: "1_AX사업..." },
@@ -243,6 +242,7 @@ function createStrategyDropdown() {
   });
   const span = document.createElement("span");
   span.className = "dropdown-text";
+  // 처음에는 select 보이고, span은 감춤
   select.style.display = "inline-block";
   span.style.display = "none";
   container.appendChild(select);
@@ -254,9 +254,12 @@ function createDetailDropdown() {
   const container = document.createElement("div");
   const select = document.createElement("select");
   select.className = "dropdown-select detail-dropdown";
+  // 기본값 "Select"는 나중에 strategy 선택에 따라 제거할 예정
   const span = document.createElement("span");
   span.className = "dropdown-text";
+  // 초기 상태: detail dropdown은 비활성화
   select.style.display = "inline-block";
+  select.disabled = true;
   span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
@@ -292,27 +295,52 @@ function createTrafficDropdown() {
  * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
  ************************************************************/
 function initDropDownEvents(td) {
+  // --- 0열 (전략과제) ---
   const strategySelect = td.querySelector(".strategy-dropdown");
   const strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
+    // change 이벤트: 사용자가 값을 선택하면...
     strategySelect.addEventListener("change", () => {
       const val = strategySelect.value;
       const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
-      if (val) {
+      // 만약 기본값 "(선택)"이 선택되었으면 detail dropdown은 비활성화
+      const detailSelect = td.parentNode.querySelector(".detail-dropdown");
+      if (val === "") {
+        if (detailSelect) {
+          detailSelect.disabled = true;
+          detailSelect.style.display = "none";
+        }
+      } else {
+        // 선택된 경우, 0열 드롭다운에서 기본값 "(선택)" 제거 (한 번 선택한 후에는 목록에 나타나지 않음)
+        for (let i = 0; i < strategySelect.options.length; i++) {
+          if (strategySelect.options[i].value === "") {
+            strategySelect.remove(i);
+            break;
+          }
+        }
         strategySpan.textContent = displayText;
         strategySelect.style.display = "none";
         strategySpan.style.display = "inline-block";
       }
       handleStrategyChange(td, val);
     });
+    // click 이벤트: 텍스트(span)를 클릭하면 바로 드롭다운(select)로 전환하고 드롭다운을 열도록 시도
     strategySpan.addEventListener("click", () => {
-      strategySpan.textContent = "";
+      // 드롭다운 변경 시 detail dropdown을 초기화(비활성화)함
+      const detailSelect = td.parentNode.querySelector(".detail-dropdown");
+      if (detailSelect) {
+        detailSelect.disabled = true;
+        detailSelect.style.display = "none";
+      }
       strategySpan.style.display = "none";
-      strategySelect.value = "";
       strategySelect.style.display = "inline-block";
+      strategySelect.focus();
+      let event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      strategySelect.dispatchEvent(event);
     });
   }
   
+  // --- 1열 (세부 과제) ---
   const detailSelect = td.querySelector(".detail-dropdown");
   const detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
@@ -325,13 +353,17 @@ function initDropDownEvents(td) {
       }
     });
     detailSpan.addEventListener("click", () => {
-      detailSpan.textContent = "";
+      // detail dropdown이 활성화되어 있을 때만 열리도록 함
+      if (detailSelect.disabled) return;
       detailSpan.style.display = "none";
-      detailSelect.value = "";
       detailSelect.style.display = "inline-block";
+      detailSelect.focus();
+      let event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      detailSelect.dispatchEvent(event);
     });
   }
   
+  // --- 6열 (신호등) ---
   const statusSelect = td.querySelector(".status-dropdown");
   const statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
@@ -361,16 +393,15 @@ function handleStrategyChange(strategyTd, strategyVal) {
   const detailSpan = detailTd.querySelector(".dropdown-text");
   if (!strategyVal) {
     detailSelect.innerHTML = "";
-    detailSelect.style.display = "inline-block";
+    detailSelect.disabled = true;
     detailSpan.textContent = "";
     detailSpan.style.display = "none";
     return;
   }
+  // 전략값이 선택된 경우: detail dropdown 활성화하고, 옵션 목록을 해당 전략값에 맞게 채움
+  detailSelect.disabled = false;
   detailSelect.innerHTML = "";
-  const blankOpt = document.createElement("option");
-  blankOpt.value = "";
-  blankOpt.textContent = "Select";
-  detailSelect.appendChild(blankOpt);
+  // 기본 "Select" 옵션은 더 이상 표시하지 않음
   const newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
   newOptions.forEach(val => {
     const op = document.createElement("option");
@@ -378,7 +409,6 @@ function handleStrategyChange(strategyTd, strategyVal) {
     op.textContent = val;
     detailSelect.appendChild(op);
   });
-  detailSelect.value = "";
   detailSelect.style.display = "inline-block";
   detailSpan.textContent = "";
   detailSpan.style.display = "none";
@@ -450,7 +480,6 @@ function fetchStoredData(callback) {
     });
 }
 
-// 편집 영역과 조회 영역을 업데이트하는 함수
 function updateUIForSelectedDate(selectedDate) {
   const latest = getUpcomingThursday();
   const currentHeader = document.getElementById("currentHeader");
@@ -463,7 +492,7 @@ function updateUIForSelectedDate(selectedDate) {
                    : `(과거) ${selectedDate} 주간현황`;
   currentHeader.textContent = headerText;
   
-  // 편집 영역 업데이트 (현재 영역은 tbody 내부만 갱신)
+  // 편집 영역 업데이트 – 기존 테이블의 tbody 만 갱신
   const editableTable = currentContainer.querySelector(".myTable");
   if (editableTable) {
     const editableTbody = editableTable.querySelector("tbody");
@@ -481,6 +510,15 @@ function updateUIForSelectedDate(selectedDate) {
   
   // 조회 영역 업데이트 – 각 기록을 표 형태로 출력
   pastContainer.innerHTML = "";
+  // 요구사항 5: 수평선 바로 뒤에 빈 줄 1줄과 "<저장된 주간현황 내역>" 텍스트 추가
+  const pastHeader = document.createElement("div");
+  pastHeader.style.textAlign = "center";
+  pastHeader.style.fontWeight = "bold";
+  pastHeader.textContent = "<저장된 주간현황 내역>";
+  pastContainer.appendChild(document.createElement("br"));
+  pastContainer.appendChild(pastHeader);
+  pastContainer.appendChild(document.createElement("br"));
+  
   let datesToShow = [];
   if (selectedDate === latest) {
     const recLatest = fetchedRecords.find(rec => rec.date === latest);
@@ -506,7 +544,7 @@ function updateUIForSelectedDate(selectedDate) {
   }
   
   if (datesToShow.length === 0) {
-    pastContainer.textContent = "(과거 주간현황 기록 없음)";
+    pastContainer.appendChild(document.createTextNode("(과거 주간현황 기록 없음)"));
   } else {
     datesToShow.forEach(date => {
       const record = fetchedRecords.find(rec => rec.date === date);
@@ -540,7 +578,6 @@ function updateUIForSelectedDate(selectedDate) {
   }
 }
 
-// 조회 영역의 테이블을 읽기 전용으로 만들기
 function makeTableStatic(wrapper) {
   const selects = wrapper.querySelectorAll("select");
   selects.forEach(sel => sel.disabled = true);
