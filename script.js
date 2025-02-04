@@ -2,10 +2,8 @@
  * 0. 전역 변수 / 상수
  ************************************************************/
 let folderName = "";
-const ALLOWED_FOLDERS = ["11", "1", "3"]; // 허용된 folder 값 (서버에서도 검증)
 const LOCAL_SERVER_URL = "https://jun_cp.inviteu.org"; // 서버 주소
-
-// 이미지, 자동완성 후보, 전략→세부 매핑 (기존 그대로)
+// (기타 이미지, 자동완성 후보, 전략→세부 매핑은 그대로 유지)
 const IMAGE_URLS = {
   red: "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
   yellow: "https://github.com/Jun-cp/work_repo/blob/main/traffic_yellow.jpg?raw=true",
@@ -29,15 +27,14 @@ const STRATEGY_TO_DETAIL_OPTIONS = {
   H: ["Lead 내 담당 업무"]
 };
 
-// 편집 영역 현재 날짜 (기본적으로 드롭다운 기본값) 저장
+// 편집 영역 기본 날짜(최신 날짜)
 let currentEditingDate = "";
 // 서버에서 불러온 기록들을 저장할 전역 변수 (배열)
 let fetchedRecords = [];
 
 /************************************************************
  * 1) 폴더 초기화 및 부모 도메인 검사
- *    - 반드시 쿼리파라미터 (?folder=1 등)로 전달되어야 함.
- *    - 또한 document.referrer로 최소한 atlassian.net 도메인인지 확인.
+ *    - 부모 페이지에서는 반드시 iframe의 src에 ?folder=... 파라미터로 전달되어야 함.
  ************************************************************/
 function initializeFolder() {
   const ref = document.referrer;
@@ -47,25 +44,14 @@ function initializeFolder() {
   }
   const params = new URLSearchParams(window.location.search);
   const folder = params.get("folder");
-  const tokenParam = params.get("token"); // 추가: token 파라미터 읽기
   if (!folder) {
     alert("folder 파라미터가 없습니다. 올바른 접근이 아닙니다.");
     return false;
   }
-  if (!ALLOWED_FOLDERS.includes(folder)) {
-    alert("허용되지 않은 folder 파라미터: " + folder);
-    return false;
-  }
-  if (!tokenParam) {
-    alert("token 파라미터가 없습니다. 올바른 접근이 아닙니다.");
-    return false;
-  }
   folderName = folder;
-  token = tokenParam;  // 전역 변수 token에 저장 (새 전역 변수 추가)
-  console.log("Folder initialized as:", folderName, "with token:", token);
+  console.log("Folder initialized as:", folderName);
   return true;
 }
-
 
 /************************************************************
  * 2) 날짜 드롭다운 관련 및 현재 날짜 계산
@@ -83,7 +69,7 @@ function getNextThursday() {
   const dd = String(nextThursday.getDate()).padStart(2, "0");
   return yy + mm + dd;
 }
-// 현재 편집 대상 날짜는 기본적으로 getNextThursday() (최신)로 설정됨.
+// 현재 편집 대상 날짜: 기본적으로 최신 날짜 (getNextThursday())
 function getCurrentDate() {
   return getNextThursday();
 }
@@ -109,43 +95,34 @@ function createDateDropdown() {
     select.appendChild(op);
   });
   container.appendChild(select);
-  
-  // 날짜 변경 시 처리 (아래 추가 이벤트에서 업데이트)
   select.addEventListener("change", (e) => {
     let newDate = e.target.value;
-    // 만약 변경 전 날짜와 다르다면...
-    if (newDate === currentEditingDate) return;
-    
-    // 만일 변경하려는 날짜가 과거 (getCurrentDate()보다 작은 값)…
+    // 만약 변경하려는 날짜가 과거이면 (최신 날짜보다 작은 값)
     if (newDate < getCurrentDate()) {
-      // 현재 편집 영역(.myTable tbody)의 내용과 저장된 값(저장된 기록 중 currentEditingDate의 내용)을 비교
-      let currentTableHTML = document.querySelector(".myTable tbody").innerHTML.trim();
+      let currentTableHTML = document.querySelector("#currentTableContainer .myTable tbody").innerHTML.trim();
       let savedRecord = fetchedRecords.find(rec => rec.date === currentEditingDate);
       let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
       if (currentTableHTML !== savedTableHTML) {
         if (!confirm(`경고: 과거 (${currentEditingDate}) 날짜의 데이터를 덮어씌우는 작업이 수행됩니다. 과거 데이터는 복구하실 수 없습니다. 수행하시겠습니까?`)) {
-          // 사용자가 취소하면 드롭다운을 이전 값으로 되돌림.
           e.target.value = currentEditingDate;
           return;
         } else {
-          // 확인 시, 기존 편집 내용을 저장하고 UI 갱신
+          // 저장 후 날짜 변경 (submitData() 함수 사용)
           submitData(currentEditingDate, function() {
-            // 저장 후 계속 진행하여 날짜 변경
             currentEditingDate = newDate;
             updateUIForSelectedDate(newDate);
           });
-          return; // submitData 호출 후 리턴
+          return;
         }
       }
     }
-    // 변경 사항이 없거나 최신 날짜인 경우 바로 변경
     currentEditingDate = newDate;
     updateUIForSelectedDate(newDate);
   });
 }
 
 /************************************************************
- * 3) 기존 드롭다운/신호등 생성 및 이벤트 (변경 없음)
+ * 3) 드롭다운/신호등 생성 함수
  ************************************************************/
 function createStrategyDropdown() {
   const container = document.createElement("div");
@@ -169,7 +146,10 @@ function createStrategyDropdown() {
     select.appendChild(op);
   });
   const span = document.createElement("span");
-  span.className = "dropdown-text hidden";
+  span.className = "dropdown-text";
+  // 초기 상태: 드롭다운 보임, span 숨김
+  select.style.display = "inline-block";
+  span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
   return { container };
@@ -178,9 +158,11 @@ function createStrategyDropdown() {
 function createDetailDropdown() {
   const container = document.createElement("div");
   const select = document.createElement("select");
-  select.className = "dropdown-select detail-dropdown hidden";
+  select.className = "dropdown-select detail-dropdown";
   const span = document.createElement("span");
-  span.className = "dropdown-text hidden";
+  span.className = "dropdown-text";
+  select.style.display = "inline-block";
+  span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
   return { container };
@@ -203,67 +185,78 @@ function createTrafficDropdown() {
     select.appendChild(op);
   });
   const img = document.createElement("img");
-  img.className = "status-image hidden";
+  img.className = "status-image";
+  select.style.display = "inline-block";
+  img.style.display = "none";
   container.appendChild(select);
   container.appendChild(img);
   return { container };
 }
 
+/************************************************************
+ * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
+ ************************************************************/
 function initDropDownEvents(td) {
+  // (0열) 전략과제
   const strategySelect = td.querySelector(".strategy-dropdown");
-  const strategySpan   = td.querySelector(".dropdown-text");
+  const strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
     strategySelect.addEventListener("change", () => {
       const val = strategySelect.value;
       const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
       if (val) {
         strategySpan.textContent = displayText;
-        strategySelect.classList.add("hidden");
-        strategySpan.classList.remove("hidden");
-      } else {
-        strategySpan.textContent = "";
+        // 드롭다운 숨기고 텍스트만 보이게
+        strategySelect.style.display = "none";
+        strategySpan.style.display = "inline-block";
       }
       handleStrategyChange(td, val);
     });
     strategySpan.addEventListener("click", () => {
-      strategySpan.classList.add("hidden");
-      strategySelect.classList.remove("hidden");
+      // 텍스트 클릭 시 다시 드롭다운으로 전환
+      strategySpan.textContent = "";
+      strategySpan.style.display = "none";
+      strategySelect.value = "";
+      strategySelect.style.display = "inline-block";
     });
   }
+  
+  // (1열) 세부항목
   const detailSelect = td.querySelector(".detail-dropdown");
-  const detailSpan   = td.querySelector(".dropdown-text");
+  const detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
     detailSelect.addEventListener("change", () => {
       const val = detailSelect.value;
       if (val) {
         detailSpan.textContent = val;
-        detailSelect.classList.add("hidden");
-        detailSpan.classList.remove("hidden");
-      } else {
-        detailSpan.textContent = "";
+        detailSelect.style.display = "none";
+        detailSpan.style.display = "inline-block";
       }
     });
     detailSpan.addEventListener("click", () => {
-      detailSpan.classList.add("hidden");
-      detailSelect.classList.remove("hidden");
+      detailSpan.textContent = "";
+      detailSpan.style.display = "none";
+      detailSelect.value = "";
+      detailSelect.style.display = "inline-block";
     });
   }
+  
+  // (6열) 신호등
   const statusSelect = td.querySelector(".status-dropdown");
-  const statusImage  = td.querySelector(".status-image");
+  const statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
     statusSelect.addEventListener("change", () => {
       const colorVal = statusSelect.value;
       if (IMAGE_URLS[colorVal]) {
         statusImage.src = IMAGE_URLS[colorVal];
-        statusSelect.classList.add("hidden");
-        statusImage.classList.remove("hidden");
-      } else {
-        statusImage.classList.add("hidden");
+        statusSelect.style.display = "none";
+        statusImage.style.display = "inline-block";
       }
     });
     statusImage.addEventListener("click", () => {
-      statusImage.classList.add("hidden");
-      statusSelect.classList.remove("hidden");
+      statusImage.style.display = "none";
+      statusSelect.value = "";
+      statusSelect.style.display = "inline-block";
     });
   }
 }
@@ -279,9 +272,9 @@ function handleStrategyChange(strategyTd, strategyVal) {
   if (!detailSelect || !detailSpan) return;
   if (!strategyVal) {
     detailSelect.innerHTML = "";
-    detailSelect.classList.add("hidden");
-    detailSpan.classList.add("hidden");
+    detailSelect.style.display = "inline-block";
     detailSpan.textContent = "";
+    detailSpan.style.display = "none";
     return;
   }
   detailSelect.innerHTML = "";
@@ -297,13 +290,13 @@ function handleStrategyChange(strategyTd, strategyVal) {
     detailSelect.appendChild(op);
   });
   detailSelect.value = "";
-  detailSelect.classList.remove("hidden");
-  detailSpan.classList.add("hidden");
+  detailSelect.style.display = "inline-block";
   detailSpan.textContent = "";
+  detailSpan.style.display = "none";
 }
 
 /************************************************************
- * 4) 표 초기화 및 행 추가 (편집용)
+ * 5) 표 초기화 및 행 추가 (편집용 표)
  ************************************************************/
 function initTable(table) {
   if (!table) return;
@@ -347,11 +340,12 @@ function addNewRow() {
 }
 
 /************************************************************
- * 5) 서버 저장 데이터 불러오기 및 UI 업데이트
+ * 6) 서버 저장 데이터 불러오기 및 UI 업데이트
+ *     - 수평선 위: 편집 영역 (현재 데이터)
+ *     - 수평선 아래: 과거 기록 영역 (읽기 전용)
  ************************************************************/
-// 전역에 저장된 fetchedRecords (배열)
 function fetchStoredData(callback) {
-  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}&token=${token}`)
+  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}`)
     .then(resp => resp.json())
     .then(records => {
       fetchedRecords = records || [];
@@ -363,34 +357,30 @@ function fetchStoredData(callback) {
     });
 }
 
-// 편집영역과 과거영역을 업데이트
 function updateUIForSelectedDate(selectedDate) {
   const currentHeader = document.getElementById("currentHeader");
   const currentContainer = document.getElementById("currentTableContainer");
   const pastContainer = document.getElementById("pastDataContainer");
   currentHeader.textContent = `(현재) ${selectedDate} 주간현황`;
-
-  // 편집영역 업데이트: 현재 편집용 표는 반드시 #currentTableContainer 안에 위치
+  
+  // 편집 영역 업데이트: #currentTableContainer 내 편집용 표
   const editableTable = currentContainer.querySelector(".myTable");
   if (editableTable) {
     const editableTbody = editableTable.querySelector("tbody");
-    // 만약 해당 날짜에 저장된 기록이 있으면 불러오고, 없으면 현재 편집 표 그대로 유지
     const record = fetchedRecords.find(rec => rec.date === selectedDate);
     if (record) {
       editableTbody.innerHTML = record.tableHTML;
       initTable(editableTable);
-    } else {
-      // 저장된 기록이 없으면 편집 표를 그대로 두어 사용자가 새로 입력할 수 있도록 함
     }
+    // 기록이 없으면 편집 표 그대로 둠
   }
-
-  // 과거 기록 업데이트 (읽기 전용)
+  
+  // 과거 영역 업데이트: selectedDate보다 이전 날짜의 기록만 표시
   pastContainer.innerHTML = "";
   const pastRecords = fetchedRecords.filter(rec => rec.date < selectedDate);
   if (pastRecords.length === 0) {
     pastContainer.textContent = "(과거 주간현황 기록 없음)";
   } else {
-    // 내림차순 정렬 (최신순)
     pastRecords.sort((a, b) => b.date.localeCompare(a.date));
     pastRecords.forEach(rec => {
       const section = document.createElement("div");
@@ -401,7 +391,6 @@ function updateUIForSelectedDate(selectedDate) {
       section.appendChild(header);
       const wrapper = document.createElement("div");
       wrapper.innerHTML = rec.tableHTML;
-      // makeTableStatic: 드롭다운 비활성화, contenteditable 제거하여 읽기 전용으로 만듦
       makeTableStatic(wrapper);
       section.appendChild(wrapper);
       pastContainer.appendChild(section);
@@ -409,13 +398,10 @@ function updateUIForSelectedDate(selectedDate) {
   }
 }
 
-
-// 함수: wrapper 내의 모든 드롭다운, contenteditable 속성을 제거하여 읽기 전용으로 만듦.
+// makeTableStatic: wrapper 내의 드롭다운과 편집 기능 비활성화 (읽기 전용)
 function makeTableStatic(wrapper) {
-  // 모든 select 태그는 disabled 처리
   const selects = wrapper.querySelectorAll("select");
   selects.forEach(sel => sel.disabled = true);
-  // 모든 td.editable는 contenteditable 제거
   const tds = wrapper.querySelectorAll("td.editable");
   tds.forEach(td => {
     td.removeAttribute("contenteditable");
@@ -423,19 +409,18 @@ function makeTableStatic(wrapper) {
   });
 }
 
-
 /************************************************************
- * 6) 데이터 제출 (Submit 버튼 클릭 시)
+ * 7) 데이터 제출 (Submit 버튼)
+ *     - 과거 날짜 제출 시, 기존 데이터와 비교하여 경고창 표시
  ************************************************************/
 function submitData(date, callback) {
-  // 수집: 편집 표(.myTable tbody)의 innerHTML
-  const tbodyElem = document.querySelector(".myTable tbody");
+  const tbodyElem = document.querySelector("#currentTableContainer .myTable tbody");
   if (!tbodyElem) {
     alert("표 데이터가 없습니다.");
     return;
   }
   const tableData = tbodyElem.innerHTML;
-  const payload = { folder: folderName, date: date, tableData: tableData, token: token };
+  const payload = { folder: folderName, date: date, tableData: tableData };
   fetch(`${LOCAL_SERVER_URL}/submit`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -445,7 +430,7 @@ function submitData(date, callback) {
     .then(data => {
       alert("전송 성공: " + JSON.stringify(data));
       if (callback) callback();
-      fetchStoredData(); // 저장 후 데이터 새로 불러오기
+      fetchStoredData();
     })
     .catch(err => {
       console.error("전송 오류:", err);
@@ -453,7 +438,6 @@ function submitData(date, callback) {
     });
 }
 
-// Submit 버튼 이벤트 – 사용자가 직접 Submit 버튼을 클릭할 경우
 function initSubmitButton() {
   const submitBtn = document.getElementById("submitBtn");
   if (!submitBtn) return;
@@ -468,26 +452,24 @@ function initSubmitButton() {
       return;
     }
     const selectedDate = dateSelect.value;
-    // 만일 과거 날짜로 제출할 경우, 편집 표 내용이 저장된 기록과 다르면 경고
+    // 과거 날짜로 제출하는 경우
     if (selectedDate < getCurrentDate()) {
-      let currentTableHTML = document.querySelector(".myTable tbody").innerHTML.trim();
+      let currentTableHTML = document.querySelector("#currentTableContainer .myTable tbody").innerHTML.trim();
       let savedRecord = fetchedRecords.find(rec => rec.date === selectedDate);
       let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
       if (currentTableHTML !== savedTableHTML) {
         if (!confirm(`경고: 과거 (${selectedDate}) 날짜의 데이터를 덮어씌우는 작업이 수행됩니다. 과거 데이터는 복구하실 수 없습니다. 수행하시겠습니까?`)) {
-          return; // 취소하면 아무 작업도 하지 않음
+          return;
         }
       }
     }
-    // 제출
     submitData(selectedDate);
-    // currentEditingDate는 dropdown의 현재 값으로 업데이트
     currentEditingDate = selectedDate;
   });
 }
 
 /************************************************************
- * 7) DOMContentLoaded – 초기화
+ * 8) DOMContentLoaded – 초기화
  ************************************************************/
 document.addEventListener("DOMContentLoaded", () => {
   if (!initializeFolder()) {
@@ -496,15 +478,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
   createDateDropdown();
-  // 기본 편집 표 초기화
-  const editingTable = document.querySelector(".myTable");
+  const editingTable = document.querySelector("#currentTableContainer .myTable");
   if (editingTable) initTable(editingTable);
   const addBtn = document.getElementById("addRowBtn");
   if (addBtn) addBtn.addEventListener("click", addNewRow);
   initSubmitButton();
-  // 전역 편집 날짜 기본값: 드롭다운의 현재 선택값
-  const dateSelect = document.querySelector(".date-dropdown");
-  currentEditingDate = dateSelect ? dateSelect.value : getCurrentDate();
-  // 페이지 진입 시 서버 데이터 불러오기 및 UI 업데이트
+  currentEditingDate = document.querySelector(".date-dropdown") ? document.querySelector(".date-dropdown").value : getCurrentDate();
   fetchStoredData();
 });
