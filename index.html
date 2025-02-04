@@ -72,55 +72,59 @@
     <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
-  <!-- 현재 데이터(편집영역) -->
+  <!-- 현재 데이터 편집영역 -->
   <div id="currentDataContainer">
     <div id="currentHeader" class="data-section-header"></div>
-    <div id="currentTableContainer"></div>
+    <div id="currentTableContainer">
+      <table class="myTable">
+        <colgroup>
+          <col><col><col><col><col><col><col><col><col><col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>담당 전략과제</th>
+            <th>세부 과제</th>
+            <th>프로젝트/업무명</th>
+            <th>개요</th>
+            <th>주요 로드맵</th>
+            <th>진척률</th>
+            <th>원활도</th>
+            <th>현 주요 사항</th>
+            <th>추진 결과 / 산출물</th>
+            <th>담당자 (업무)</th>
+            <th>Issue / 대응 방안</th>
+            <th>컨플루언스 (히스토리)</th>
+            <th>(상무님 코멘터리)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+          </tr>
+          <!-- 추가 행 가능 -->
+        </tbody>
+      </table>
+    </div>
   </div>
+  
   <hr>
-  <!-- 과거 데이터(읽기 전용) -->
+  
+  <!-- 과거 데이터 영역 (히스토리) -->
   <div id="pastDataContainer"></div>
-  <!-- 기본 편집용 표 (현재 데이터 편집용, 드롭다운 및 편집 가능) -->
-  <table class="myTable">
-    <colgroup>
-      <col><col><col><col><col><col><col><col><col><col><col><col><col>
-    </colgroup>
-    <thead>
-      <tr>
-        <th>담당 전략과제</th>
-        <th>세부 과제</th>
-        <th>프로젝트/업무명</th>
-        <th>개요</th>
-        <th>주요 로드맵</th>
-        <th>진척률</th>
-        <th>원활도</th>
-        <th>현 주요 사항</th>
-        <th>추진 결과 / 산출물</th>
-        <th>담당자 (업무)</th>
-        <th>Issue / 대응 방안</th>
-        <th>컨플루언스 (히스토리)</th>
-        <th>(상무님 코멘터리)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-        <td class="editable" contenteditable="true"></td>
-      </tr>
-      <!-- 추가 행 가능 -->
-    </tbody>
-  </table>
+
+
   <script src="script.js"></script>
 </body>
 </html>
