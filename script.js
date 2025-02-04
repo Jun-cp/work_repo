@@ -47,6 +47,7 @@ function initializeFolder() {
   }
   const params = new URLSearchParams(window.location.search);
   const folder = params.get("folder");
+  const tokenParam = params.get("token"); // 추가: token 파라미터 읽기
   if (!folder) {
     alert("folder 파라미터가 없습니다. 올바른 접근이 아닙니다.");
     return false;
@@ -55,10 +56,16 @@ function initializeFolder() {
     alert("허용되지 않은 folder 파라미터: " + folder);
     return false;
   }
+  if (!tokenParam) {
+    alert("token 파라미터가 없습니다. 올바른 접근이 아닙니다.");
+    return false;
+  }
   folderName = folder;
-  console.log("Folder initialized as:", folderName);
+  token = tokenParam;  // 전역 변수 token에 저장 (새 전역 변수 추가)
+  console.log("Folder initialized as:", folderName, "with token:", token);
   return true;
 }
+
 
 /************************************************************
  * 2) 날짜 드롭다운 관련 및 현재 날짜 계산
@@ -358,23 +365,26 @@ function fetchStoredData(callback) {
 
 // 편집영역과 과거영역을 업데이트
 function updateUIForSelectedDate(selectedDate) {
-  // 업데이트 대상: currentDataContainer (편집영역)와 pastDataContainer (읽기 전용 과거 기록)
   const currentHeader = document.getElementById("currentHeader");
   const currentContainer = document.getElementById("currentTableContainer");
   const pastContainer = document.getElementById("pastDataContainer");
   currentHeader.textContent = `(현재) ${selectedDate} 주간현황`;
-  // 편집영역: 만약 저장된 기록이 있으면 불러오고, 없으면 기존 .myTable (빈 편집 표) 그대로 유지
-  const record = fetchedRecords.find(rec => rec.date === selectedDate);
-  if (record) {
-    // 편집영역에 저장된 HTML을 불러오되, 드롭다운 및 이벤트는 활성화되어야 하므로
-    // 기존 편집용 표(.myTable)의 tbody를 교체
-    const editableTbody = document.querySelector(".myTable tbody");
-    editableTbody.innerHTML = record.tableHTML;
-    initTable(document.querySelector(".myTable"));
-  } else {
-    // 저장된 기록이 없으면 그대로 빈 편집 표를 유지
+
+  // 편집영역 업데이트: 현재 편집용 표는 반드시 #currentTableContainer 안에 위치
+  const editableTable = currentContainer.querySelector(".myTable");
+  if (editableTable) {
+    const editableTbody = editableTable.querySelector("tbody");
+    // 만약 해당 날짜에 저장된 기록이 있으면 불러오고, 없으면 현재 편집 표 그대로 유지
+    const record = fetchedRecords.find(rec => rec.date === selectedDate);
+    if (record) {
+      editableTbody.innerHTML = record.tableHTML;
+      initTable(editableTable);
+    } else {
+      // 저장된 기록이 없으면 편집 표를 그대로 두어 사용자가 새로 입력할 수 있도록 함
+    }
   }
-  // 과거 영역: selectedDate보다 이전인 기록만 표시 (읽기 전용)
+
+  // 과거 기록 업데이트 (읽기 전용)
   pastContainer.innerHTML = "";
   const pastRecords = fetchedRecords.filter(rec => rec.date < selectedDate);
   if (pastRecords.length === 0) {
@@ -391,7 +401,7 @@ function updateUIForSelectedDate(selectedDate) {
       section.appendChild(header);
       const wrapper = document.createElement("div");
       wrapper.innerHTML = rec.tableHTML;
-      // Make static: disable editing and hide dropdowns
+      // makeTableStatic: 드롭다운 비활성화, contenteditable 제거하여 읽기 전용으로 만듦
       makeTableStatic(wrapper);
       section.appendChild(wrapper);
       pastContainer.appendChild(section);
@@ -399,18 +409,20 @@ function updateUIForSelectedDate(selectedDate) {
   }
 }
 
+
 // 함수: wrapper 내의 모든 드롭다운, contenteditable 속성을 제거하여 읽기 전용으로 만듦.
 function makeTableStatic(wrapper) {
   // 모든 select 태그는 disabled 처리
   const selects = wrapper.querySelectorAll("select");
   selects.forEach(sel => sel.disabled = true);
-  // 모든 td.editable는 contenteditable="false"
+  // 모든 td.editable는 contenteditable 제거
   const tds = wrapper.querySelectorAll("td.editable");
   tds.forEach(td => {
     td.removeAttribute("contenteditable");
     td.style.backgroundColor = "#f0f0f0";
   });
 }
+
 
 /************************************************************
  * 6) 데이터 제출 (Submit 버튼 클릭 시)
