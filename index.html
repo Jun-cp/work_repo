@@ -10,13 +10,13 @@
     #headerArea {
       margin: 20px;
       display: flex;
-      align-items: left;
+      align-items: center;
       gap: 10px;
     }
     #dateSelectorContainer select { font-size: 1em; }
     h2 { font-size: 1em; margin: 0; }
-    /* 버튼 영역 */
-    .button-area { text-align: center; margin: 20px; }
+    /* 버튼 영역 – 수정사항 6: 왼쪽 정렬 */
+    .button-area { text-align: left; margin: 20px; }
     button { padding: 6px 12px; cursor: pointer; margin: 0 5px; }
     /* 테이블 스타일 – 기존 열별 크기 유지 */
     table {
@@ -32,6 +32,8 @@
       vertical-align: middle;
       position: relative;
     }
+    /* 수정사항 1: 편집 영역 테이블 셀의 최소 높이 지정 */
+    .myTable tbody tr td { min-height: 30px; }
     th { background: #f8f8f8; }
     td.editable { cursor: text; }
     td.editable:focus { outline: 2px solid #007bff; }
@@ -55,6 +57,8 @@
     colgroup col:nth-child(13) { width: 280px; }
     /* 수평선 */
     hr { border: none; border-top: 2px solid #ccc; margin: 20px 0; }
+    /* 수정사항 4: 편집 영역과 수평선 사이에 빈 줄 2줄 추가 */
+    #currentDataContainer + hr { margin-top: 20px; }
     /* 데이터 표시 영역 */
     #currentDataContainer, #pastDataContainer { margin: 20px; }
     .data-section-header { font-weight: bold; margin: 10px 0; }
@@ -119,11 +123,17 @@
     </div>
   </div>
   
+  <!-- 수정사항 4: 편집 영역과 수평선 사이에 빈 줄 2줄 -->
+  <br><br>
   <hr>
+  
+  <!-- 수정사항 5: 수평선 바로 뒤에 빈 줄 1줄과 "<저장된 주간현황 내역>" 텍스트 (중앙정렬), 그 후 빈 줄 -->
+  <br>
+  <div id="pastDataHeader" style="text-align: center; font-weight: bold;">&lt;저장된 주간현황 내역&gt;</div>
+  <br>
   
   <!-- 과거 데이터 영역 (히스토리) -->
   <div id="pastDataContainer"></div>
-
 
   <script src="script.js"></script>
 </body>
