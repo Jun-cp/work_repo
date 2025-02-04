@@ -5,36 +5,20 @@
   <title>팀 진행현황</title>
   <style>
     /* 기본 폰트 및 레이아웃 */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    /* 헤더: 날짜 드롭다운과 팀 진행현황 텍스트 */
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    /* 헤더: 날짜 드롭다운과 "팀 진행현황" 텍스트 (같은 글자 크기) */
     #headerArea {
       margin: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    #dateSelectorContainer select {
-      font-size: 1em;
-    }
-    h2 {
-      font-size: 1em;
-      margin: 0;
-    }
+    #dateSelectorContainer select { font-size: 1em; }
+    h2 { font-size: 1em; margin: 0; }
     /* 버튼 영역 */
-    .button-area {
-      text-align: center;
-      margin: 20px;
-    }
-    button {
-      padding: 6px 12px;
-      cursor: pointer;
-      margin: 0 5px;
-    }
-    /* 테이블 스타일 (기존 열별 크기 유지) */
+    .button-area { text-align: center; margin: 20px; }
+    button { padding: 6px 12px; cursor: pointer; margin: 0 5px; }
+    /* 테이블 스타일 – 기존 열별 크기 유지 */
     table {
       border-collapse: collapse;
       margin: 10px auto;
@@ -48,21 +32,12 @@
       vertical-align: middle;
       position: relative;
     }
-    th {
-      background: #f8f8f8;
-    }
-    td.editable {
-      cursor: text;
-    }
-    td.editable:focus {
-      outline: 2px solid #007bff;
-    }
+    th { background: #f8f8f8; }
+    td.editable { cursor: text; }
+    td.editable:focus { outline: 2px solid #007bff; }
     .status-image {
-      display: block;
-      margin: 0 auto;
-      height: 1.2em;
-      width: auto;
-      object-fit: contain;
+      display: block; margin: 0 auto;
+      height: 1.2em; width: auto; object-fit: contain;
       cursor: pointer;
     }
     colgroup col:nth-child(1) { width: 150px; }
@@ -79,24 +54,16 @@
     colgroup col:nth-child(12) { width: 140px; }
     colgroup col:nth-child(13) { width: 280px; }
     /* 수평선 */
-    hr {
-      border: none;
-      border-top: 2px solid #ccc;
-      margin: 20px 0;
-    }
+    hr { border: none; border-top: 2px solid #ccc; margin: 20px 0; }
     /* 데이터 표시 영역 */
-    #currentDataContainer, #pastDataContainer {
-      margin: 20px;
-    }
-    .data-section-header {
-      font-weight: bold;
-      margin: 10px 0;
-    }
+    #currentDataContainer, #pastDataContainer { margin: 20px; }
+    .data-section-header { font-weight: bold; margin: 10px 0; }
   </style>
 </head>
 <body>
-  <!-- 헤더 -->
+  <!-- 헤더 영역 -->
   <div id="headerArea">
+    <!-- 날짜 드롭다운 (왼쪽) -->
     <div id="dateSelectorContainer"></div>
     <h2>팀 진행현황</h2>
   </div>
@@ -105,15 +72,15 @@
     <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
-  <!-- 현재 데이터 영역 -->
+  <!-- 현재 데이터(편집영역) -->
   <div id="currentDataContainer">
     <div id="currentHeader" class="data-section-header"></div>
     <div id="currentTableContainer"></div>
   </div>
   <hr>
-  <!-- 과거 데이터 영역 -->
+  <!-- 과거 데이터(읽기 전용) -->
   <div id="pastDataContainer"></div>
-  <!-- 편집용 기본 표 (현재 데이터 편집용) -->
+  <!-- 기본 편집용 표 (현재 데이터 편집용, 드롭다운 및 편집 가능) -->
   <table class="myTable">
     <colgroup>
       <col><col><col><col><col><col><col><col><col><col><col><col><col>
