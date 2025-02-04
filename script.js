@@ -542,7 +542,7 @@ function updateUIForSelectedDate(selectedDate) {
   // 조회 영역 업데이트
   pastContainer.innerHTML = "";
   var pastHeader = document.createElement("div");
-  pastHeader.style.textAlign = "center";
+  pastHeader.style.textAlign = "left";
   pastHeader.style.fontWeight = "bold";
   pastHeader.textContent = "<저장된 주간현황 내역>";
   pastContainer.appendChild(document.createElement("br"));
