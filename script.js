@@ -351,7 +351,7 @@ function addNewRow() {
  ************************************************************/
 // 전역에 저장된 fetchedRecords (배열)
 function fetchStoredData(callback) {
-  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}`)
+  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}&token=${token}`)
     .then(resp => resp.json())
     .then(records => {
       fetchedRecords = records || [];
@@ -435,7 +435,7 @@ function submitData(date, callback) {
     return;
   }
   const tableData = tbodyElem.innerHTML;
-  const payload = { folder: folderName, date: date, tableData: tableData };
+  const payload = { folder: folderName, date: date, tableData: tableData, token: token };
   fetch(`${LOCAL_SERVER_URL}/submit`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
