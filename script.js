@@ -2,6 +2,7 @@
  * 0. 전역 변수 / 상수
  ************************************************************/
 let folderName = "";
+let token = "";
 const LOCAL_SERVER_URL = "https://jun_cp.inviteu.org"; // 서버 주소
 // (기타 이미지, 자동완성 후보, 전략→세부 매핑은 그대로 유지)
 const IMAGE_URLS = {
@@ -44,12 +45,18 @@ function initializeFolder() {
   }
   const params = new URLSearchParams(window.location.search);
   const folder = params.get("folder");
+  const tokenParam = params.get("token");  // token 읽기
   if (!folder) {
     alert("folder 파라미터가 없습니다. 올바른 접근이 아닙니다.");
     return false;
   }
+  if (!tokenParam) {
+    alert("token 파라미터가 없습니다. 올바른 접근이 아닙니다.");
+    return false;
+  }
   folderName = folder;
-  console.log("Folder initialized as:", folderName);
+  token = tokenParam;  // 전역 변수 token에 저장
+  console.log("Folder initialized as:", folderName, "with token:", token);
   return true;
 }
 
@@ -346,11 +353,9 @@ function addNewRow() {
  ************************************************************/
 function fetchStoredData(callback) {
   fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}&token=${token}`)
-
     .then(resp => resp.json())
     .then(records => {
       console.log("Fetched records:", records);
-      // records가 배열이 아닐 경우 강제로 배열로 처리
       if (!Array.isArray(records)) {
          records = [];
       }
@@ -427,7 +432,7 @@ function submitData(date, callback) {
     return;
   }
   const tableData = tbodyElem.innerHTML;
-  const payload = { folder: folderName, date: date, tableData: tableData, token: token };
+  const payload = { folder: folderName, date: date, tableData: tableData, token: token }; // token 포함
   fetch(`${LOCAL_SERVER_URL}/submit`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
