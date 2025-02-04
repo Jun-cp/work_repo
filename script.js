@@ -345,7 +345,8 @@ function addNewRow() {
  *     - 수평선 아래: 과거 기록 영역 (읽기 전용)
  ************************************************************/
 function fetchStoredData(callback) {
-  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}`)
+  fetch(`${LOCAL_SERVER_URL}/listData?folder=${folderName}&token=${token}`)
+
     .then(resp => resp.json())
     .then(records => {
       console.log("Fetched records:", records);
