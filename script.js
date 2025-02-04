@@ -2,7 +2,7 @@
  * 0. 전역 변수 / 상수
  ************************************************************/
 let folderName = "";
-const ALLOWED_FOLDERS = ["1", "2", "3"]; // 허용된 folder 값
+const ALLOWED_FOLDERS = ["11", "1", "3"]; // 허용된 folder 값
 const LOCAL_SERVER_URL = "https://jun_cp.inviteu.org"; // 서버 주소
 
 // 이미지, 자동완성 후보, 전략→세부 매핑
