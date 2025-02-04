@@ -30,6 +30,30 @@ const STRATEGY_TO_DETAIL_OPTIONS = {
   H: ["Lead 내 담당 업무"]
 };
 
+// index.html에 사용한 테이블 구조 (colgroup + thead)
+const TABLE_TEMPLATE = `
+<colgroup>
+  <col><col><col><col><col><col><col><col><col><col><col><col><col>
+</colgroup>
+<thead>
+  <tr>
+    <th>담당 전략과제</th>
+    <th>세부 과제</th>
+    <th>프로젝트/업무명</th>
+    <th>개요</th>
+    <th>주요 로드맵</th>
+    <th>진척률</th>
+    <th>원활도</th>
+    <th>현 주요 사항</th>
+    <th>추진 결과 / 산출물</th>
+    <th>담당자 (업무)</th>
+    <th>Issue / 대응 방안</th>
+    <th>컨플루언스 (히스토리)</th>
+    <th>(상무님 코멘터리)</th>
+  </tr>
+</thead>
+`;
+
 // 현재 편집 대상 날짜 (기본적으로 최신 목요일)
 let currentEditingDate = "";
 // 서버에서 불러온 기록들을 저장할 전역 변수 (배열)
@@ -43,9 +67,9 @@ function getUpcomingThursdayDate() {
   const today = new Date();
   let diff;
   if (today.getDay() <= 4) {
-    diff = 4 - today.getDay(); // 오늘이 목요일이면 diff=0
+    diff = 4 - today.getDay();
   } else {
-    diff = 11 - today.getDay(); // 금/토/일이면 다음주 목요일까지
+    diff = 11 - today.getDay();
   }
   const thursday = new Date(today);
   thursday.setDate(today.getDate() + diff);
@@ -94,7 +118,7 @@ function initializeFolder() {
     return false;
   }
   folderName = folder;
-  token = tokenParam;  // 전역 변수 token에 저장
+  token = tokenParam;
   console.log("Folder initialized as:", folderName, "with token:", token);
   return true;
 }
@@ -127,26 +151,23 @@ function createDateDropdown() {
   select.addEventListener("change", handleDateDropdownChange);
 }
 
-// "더보기" 선택 시 서버에서 가져온 모든 날짜로 드롭다운 옵션 재구성
 function updateDateDropdownWithAllDates() {
   const select = document.querySelector(".date-dropdown");
   if (!select) return;
   select.innerHTML = "";
-  // fetchedRecords에 저장된 날짜들을 사용 (중복 제거)
   let dates = fetchedRecords.map(r => r.date);
   const latest = getUpcomingThursday();
   if (!dates.includes(latest)) {
     dates.push(latest);
   }
   dates = [...new Set(dates)];
-  dates.sort((a, b) => b.localeCompare(a)); // 내림차순 정렬
+  dates.sort((a, b) => b.localeCompare(a));
   dates.forEach(date => {
     const op = document.createElement("option");
     op.value = date;
     op.textContent = date;
     select.appendChild(op);
   });
-  // 현재 편집 날짜가 옵션에 있다면 그대로, 없으면 최신 날짜로 설정
   if (dates.includes(currentEditingDate)) {
     select.value = currentEditingDate;
   } else {
@@ -155,7 +176,6 @@ function updateDateDropdownWithAllDates() {
   }
 }
 
-// 날짜 드롭다운 값 변경 시 – (2) 이미 띄운 페이지 수정
 function handleDateDropdownChange(e) {
   const select = e.target;
   let newDate = select.value;
@@ -164,11 +184,9 @@ function handleDateDropdownChange(e) {
     return;
   }
   if (newDate === currentEditingDate) {
-    // 같은 날짜 선택 시 아무런 동작 없이 원래 선택으로 복원
     select.value = currentEditingDate;
     return;
   }
-  // 현재 편집 영역의 내용과 서버에 저장된 현재 편집 날짜의 내용 비교
   const currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
   if (!currentTableElem) {
     currentEditingDate = newDate;
@@ -179,12 +197,10 @@ function handleDateDropdownChange(e) {
   let savedRecord = fetchedRecords.find(rec => rec.date === currentEditingDate);
   let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
   if (currentTableHTML !== savedTableHTML) {
-    // 세 가지 옵션: 1) 변경사항 저장 후 진행, 2) 저장 없이 진행, 3) 취소
     let choice = prompt(
       `(${currentEditingDate}) 날짜의 내용에서 변경된 부분이 있습니다.\n아래 옵션 중 선택해주세요:\n1: 변경사항 저장 후 진행\n2: 저장 없이 진행\n3: 취소`
     );
     if (choice === "1") {
-      // 저장 후 진행
       submitData(currentEditingDate, function() {
         currentEditingDate = newDate;
         updateUIForSelectedDate(newDate);
@@ -192,9 +208,7 @@ function handleDateDropdownChange(e) {
       return;
     } else if (choice === "2") {
       // 저장 없이 진행
-      // 아무것도 하지 않고 진행
     } else {
-      // 취소 – 기존 날짜로 복원
       select.value = currentEditingDate;
       return;
     }
@@ -278,7 +292,6 @@ function createTrafficDropdown() {
  * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
  ************************************************************/
 function initDropDownEvents(td) {
-  // (0열) 전략과제
   const strategySelect = td.querySelector(".strategy-dropdown");
   const strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
@@ -300,7 +313,6 @@ function initDropDownEvents(td) {
     });
   }
   
-  // (1열) 세부항목
   const detailSelect = td.querySelector(".detail-dropdown");
   const detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
@@ -320,7 +332,6 @@ function initDropDownEvents(td) {
     });
   }
   
-  // (6열) 신호등
   const statusSelect = td.querySelector(".status-dropdown");
   const statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
@@ -439,20 +450,20 @@ function fetchStoredData(callback) {
     });
 }
 
-// 편집 영역과 조회 영역을 요구사항에 맞게 업데이트
+// 편집 영역과 조회 영역을 업데이트하는 함수
 function updateUIForSelectedDate(selectedDate) {
   const latest = getUpcomingThursday();
   const currentHeader = document.getElementById("currentHeader");
   const currentContainer = document.getElementById("currentTableContainer");
   const pastContainer = document.getElementById("pastDataContainer");
   
-  // 편집 영역 헤더 – 최신이면 "(이번주)", 아니면 "(과거)"
+  // 편집 영역 헤더: 최신이면 (이번주), 아니면 (과거)
   let headerText = (selectedDate === latest)
                    ? `(이번주) ${selectedDate} 주간현황`
                    : `(과거) ${selectedDate} 주간현황`;
   currentHeader.textContent = headerText;
   
-  // 편집 영역 업데이트
+  // 편집 영역 업데이트 (현재 영역은 tbody 내부만 갱신)
   const editableTable = currentContainer.querySelector(".myTable");
   if (editableTable) {
     const editableTbody = editableTable.querySelector("tbody");
@@ -461,7 +472,6 @@ function updateUIForSelectedDate(selectedDate) {
       editableTbody.innerHTML = record.tableHTML;
       initTable(editableTable);
     } else {
-      // 만약 최신 목요일이면 “아직 작성되지 않았음” 메시지와 빈 표 표시
       if (selectedDate === latest) {
         currentHeader.textContent = `(이번주) ${selectedDate} 주간현황 : 아직 작성되지 않았음`;
       }
@@ -469,11 +479,10 @@ function updateUIForSelectedDate(selectedDate) {
     }
   }
   
-  // 조회 영역 업데이트
+  // 조회 영역 업데이트 – 각 기록을 표 형태로 출력
   pastContainer.innerHTML = "";
   let datesToShow = [];
   if (selectedDate === latest) {
-    // 최신 날짜 선택 시 – 만약 최신 기록이 있다면 최신+전주+전전주 (존재하는 것만)
     const recLatest = fetchedRecords.find(rec => rec.date === latest);
     if (recLatest) {
       datesToShow.push(latest);
@@ -487,7 +496,6 @@ function updateUIForSelectedDate(selectedDate) {
       datesToShow.push(prev2);
     }
   } else {
-    // 과거 날짜 선택 시 – 최신부터 선택된 날짜까지 모두 표시 (존재하는 것만)
     datesToShow = fetchedRecords
                   .map(r => r.date)
                   .filter(d => d <= latest && d >= selectedDate);
@@ -505,11 +513,9 @@ function updateUIForSelectedDate(selectedDate) {
       const section = document.createElement("div");
       section.style.marginBottom = "20px";
       const header = document.createElement("div");
-      // 헤더 텍스트 – 최신이면 (이번주), 나머지는 (과거)
       header.textContent = (date === latest)
                            ? `(이번주) ${date} 주간현황`
                            : `(과거) ${date} 주간현황`;
-      // 드롭다운에서 선택된 날짜와 일치하는 헤더는 옅은 노랑 배경, 파란색 bold, italic
       if (date === selectedDate) {
         header.style.backgroundColor = "#ffffe0";
         header.style.color = "blue";
@@ -518,10 +524,12 @@ function updateUIForSelectedDate(selectedDate) {
       }
       section.appendChild(header);
       if (record) {
-        const wrapper = document.createElement("div");
-        wrapper.innerHTML = record.tableHTML;
-        makeTableStatic(wrapper);
-        section.appendChild(wrapper);
+        // 새 table 요소 생성 – TABLE_TEMPLATE + 저장된 tbody 내용을 포함
+        const table = document.createElement("table");
+        table.className = "myTable";
+        table.innerHTML = TABLE_TEMPLATE + "<tbody>" + record.tableHTML + "</tbody>";
+        makeTableStatic(table);
+        section.appendChild(table);
       } else {
         const msg = document.createElement("div");
         msg.textContent = "기록 없음";
@@ -532,7 +540,7 @@ function updateUIForSelectedDate(selectedDate) {
   }
 }
 
-// 읽기 전용으로 만들기 – 조회 영역 내의 드롭다운과 편집 기능 비활성화
+// 조회 영역의 테이블을 읽기 전용으로 만들기
 function makeTableStatic(wrapper) {
   const selects = wrapper.querySelectorAll("select");
   selects.forEach(sel => sel.disabled = true);
@@ -545,7 +553,6 @@ function makeTableStatic(wrapper) {
 
 /************************************************************
  * 7) 데이터 제출 (Submit 버튼)
- *     - 제출 시 서버에 저장 전/후 내용 비교 후 안내
  ************************************************************/
 function submitData(date, callback) {
   const tbodyElem = document.querySelector("#currentTableContainer .myTable tbody");
@@ -595,7 +602,6 @@ function initSubmitButton() {
     let savedRecord = fetchedRecords.find(rec => rec.date === selectedDate);
     let savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
     if (!savedRecord) {
-      // 기록이 없으면 신규 저장
       submitData(selectedDate, () => {
         alert(`(${selectedDate}) 진행현황을 신규 저장했습니다.`);
         updateUIForSelectedDate(selectedDate);
@@ -637,7 +643,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addRowBtn");
   if (addBtn) addBtn.addEventListener("click", addNewRow);
   initSubmitButton();
-  // 기본 편집 날짜: 드롭다운 첫번째(최신 목요일)
   currentEditingDate = document.querySelector(".date-dropdown") ? document.querySelector(".date-dropdown").value : getUpcomingThursday();
   fetchStoredData();
 });
