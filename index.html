@@ -4,18 +4,48 @@
   <meta charset="UTF-8">
   <title>팀 진행현황</title>
   <style>
-    /* 표 스타일 기본 */
+    /* 기본 폰트 및 레이아웃 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    /* 헤더: 날짜 드롭다운과 팀 진행현황 텍스트 */
+    #headerArea {
+      margin: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #dateSelectorContainer select {
+      font-size: 1em;
+    }
+    h2 {
+      font-size: 1em;
+      margin: 0;
+    }
+    /* 버튼 영역 */
+    .button-area {
+      text-align: center;
+      margin: 20px;
+    }
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    /* 테이블 스타일 (기존 열별 크기 유지) */
     table {
       border-collapse: collapse;
-      margin: 20px auto;
+      margin: 10px auto;
       width: 98%;
       text-align: center;
       table-layout: fixed;
     }
     th, td {
       border: 1px solid #ccc;
-      vertical-align: middle;
       padding: 4px;
+      vertical-align: middle;
       position: relative;
     }
     th {
@@ -29,13 +59,12 @@
     }
     .status-image {
       display: block;
-      margin: 0 auto;      
+      margin: 0 auto;
       height: 1.2em;
       width: auto;
       object-fit: contain;
       cursor: pointer;
     }
-    /* 각 열의 폭 지정 */
     colgroup col:nth-child(1) { width: 150px; }
     colgroup col:nth-child(2) { width: 250px; }
     colgroup col:nth-child(3) { width: 200px; }
@@ -49,52 +78,42 @@
     colgroup col:nth-child(11) { width: 440px; }
     colgroup col:nth-child(12) { width: 140px; }
     colgroup col:nth-child(13) { width: 280px; }
-    .hidden {
-      display: none !important;
+    /* 수평선 */
+    hr {
+      border: none;
+      border-top: 2px solid #ccc;
+      margin: 20px 0;
     }
-    select.dropdown-select {
-      width: 100px;
-      cursor: pointer;
-    }
-    .dropdown-text {
-      cursor: pointer;
-      display: inline-block;
-      font-weight: bold;
-      margin: 0 auto;
-    }
-    .button-area {
-      text-align: center;
+    /* 데이터 표시 영역 */
+    #currentDataContainer, #pastDataContainer {
       margin: 20px;
     }
-    button {
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-    /* 날짜 선택 드롭다운 영역 */
-    #dateSelectorContainer {
-      margin: 10px 20px;
+    .data-section-header {
+      font-weight: bold;
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
-  <!-- 헤더: 날짜 드롭다운과 타이틀 -->
+  <!-- 헤더 -->
   <div id="headerArea">
-    <h2 style="display:inline-block;">팀 진행현황</h2>
-    <div id="dateSelectorContainer" style="display:inline-block; margin-left:20px;"></div>
+    <div id="dateSelectorContainer"></div>
+    <h2>팀 진행현황</h2>
   </div>
-
-  <!-- Submit 버튼 및 행 추가 버튼 -->
+  <!-- 버튼 영역 -->
   <div class="button-area">
     <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
-
-  <!-- iframe 영역: 로컬 PC의 데이터를 불러와 보여줌 -->
-  <div id="iframeContainer" style="margin:20px; text-align:center;">
-    <iframe id="dataFrame" width="98%" height="400" frameborder="0"></iframe>
+  <!-- 현재 데이터 영역 -->
+  <div id="currentDataContainer">
+    <div id="currentHeader" class="data-section-header"></div>
+    <div id="currentTableContainer"></div>
   </div>
-
-  <!-- 기존의 표 -->
+  <hr>
+  <!-- 과거 데이터 영역 -->
+  <div id="pastDataContainer"></div>
+  <!-- 편집용 기본 표 (현재 데이터 편집용) -->
   <table class="myTable">
     <colgroup>
       <col><col><col><col><col><col><col><col><col><col><col><col><col>
@@ -135,7 +154,6 @@
       <!-- 추가 행 가능 -->
     </tbody>
   </table>
-
   <script src="script.js"></script>
 </body>
 </html>
