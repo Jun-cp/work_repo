@@ -427,7 +427,7 @@ function submitData(date, callback) {
     return;
   }
   const tableData = tbodyElem.innerHTML;
-  const payload = { folder: folderName, date: date, tableData: tableData };
+  const payload = { folder: folderName, date: date, tableData: tableData, token: token };
   fetch(`${LOCAL_SERVER_URL}/submit`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
