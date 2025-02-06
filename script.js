@@ -29,6 +29,7 @@ const STRATEGY_TO_DETAIL_OPTIONS = {
   G: ["AX 컨설팅 방법론 표준화/확산", "AI 신기술 분석/내부 역량 강화/기술지원", "B2B 대상 레퍼런스 아키텍처 발굴/확산"],
   H: ["Lead 내 담당 업무"]
 };
+
 // index.html에 사용한 테이블 구조 (colgroup + thead)
 const TABLE_TEMPLATE = `
 <colgroup>
@@ -302,63 +303,100 @@ function createTrafficDropdown() {
 }
 
 /************************************************************
- * 4) 드롭다운 이벤트 초기화 (UI 동작 개선) - 발췌
+ * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
  ************************************************************/
 function initDropDownEvents(td) {
-  // (0열) 전략
+  // 0열: 전략
   const strategySelect = td.querySelector(".strategy-dropdown");
   const strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
     strategySelect.addEventListener("change", () => {
       const val = strategySelect.value;
       const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
-
-      // ... 중략 ...
+      
+      // 만약 '(선택)'이면 detail 비활성화
+      const row = strategySelect.closest("tr");
+      if (row) {
+        const detailTd = row.querySelectorAll("td")[1]; // 1열 = 세부 과제
+        const detailSelect = detailTd.querySelector(".detail-dropdown");
+        if (val === "") {
+          if (detailSelect) {
+            detailSelect.disabled = true;
+            detailSelect.style.display = "none";
+          }
+        } else {
+          // '(선택)' 제거
+          for (let i=0; i<strategySelect.options.length; i++) {
+            if (strategySelect.options[i].value === "") {
+              strategySelect.remove(i);
+              break;
+            }
+          }
+          strategySpan.textContent = displayText;
+          strategySelect.style.display = "none";
+          strategySpan.style.display = "inline-block";
+        }
+      }
+      handleStrategyChange(td, val);
     });
-
+    // 이미 선택된 span을 다시 클릭하면 → 즉시 드롭다운 펼치기
     strategySpan.addEventListener("click", () => {
       strategySpan.style.display = "none";
       strategySelect.style.display = "inline-block";
       strategySelect.focus();
-
       
+      // 마우스 이벤트 디스패치 -> 즉시 펼치기
+      const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      strategySelect.dispatchEvent(event);
     });
   }
-
-  // (1열) 세부 과제
+  
+  // 1열: 세부 과제
   const detailSelect = td.querySelector(".detail-dropdown");
   const detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
     detailSelect.addEventListener("change", () => {
-      // ...
+      const val = detailSelect.value;
+      if (val) {
+        detailSpan.textContent = val;
+        detailSelect.style.display = "none";
+        detailSpan.style.display = "inline-block";
+      }
     });
     detailSpan.addEventListener("click", () => {
       if (detailSelect.disabled) return;
       detailSpan.style.display = "none";
       detailSelect.style.display = "inline-block";
       detailSelect.focus();
-
       
+      // 즉시 펼치기
+      const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      detailSelect.dispatchEvent(event);
     });
   }
-
-  // (6열) 원활도(신호등)
+  
+  // 6열: 원활도(신호등)
   const statusSelect = td.querySelector(".status-dropdown");
   const statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
     statusSelect.addEventListener("change", () => {
-      // ...
+      const colorVal = statusSelect.value;
+      if (IMAGE_URLS[colorVal]) {
+        statusImage.src = IMAGE_URLS[colorVal];
+        statusSelect.style.display = "none";
+        statusImage.style.display = "inline-block";
+      }
     });
     statusImage.addEventListener("click", () => {
+      // 이미지 클릭 시 → 바로 드롭다운 펼침
       statusImage.style.display = "none";
       statusSelect.style.display = "inline-block";
       statusSelect.focus();
-
-      
+      const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      statusSelect.dispatchEvent(event);
     });
   }
 }
-
 
 function handleStrategyChange(strategyTd, val) {
   // val에 따라 세부 과제 dropdown 채우기
