@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <title>팀 진행현황</title>
   <style>
-    /* 기본 폰트 및 레이아웃 */
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    /* 헤더: 날짜 드롭다운과 "팀 진행현황" 텍스트 (같은 글자 크기) */
     #headerArea {
       margin: 20px;
       display: flex;
@@ -15,10 +13,8 @@
     }
     #dateSelectorContainer select { font-size: 1em; }
     h2 { font-size: 1em; margin: 0; }
-    /* 버튼 영역 – 수정사항 6: 왼쪽 정렬 */
     .button-area { text-align: left; margin: 20px; }
     button { padding: 6px 12px; cursor: pointer; margin: 0 5px; }
-    /* 테이블 스타일 – 기존 열별 크기 유지 */
     table {
       border-collapse: collapse;
       margin: 10px auto;
@@ -32,7 +28,7 @@
       vertical-align: middle;
       position: relative;
     }
-    /* 수정사항 1: 편집 영역 테이블 셀의 최소 높이 지정 */
+    /* 행 최소 높이 */
     .myTable tbody tr td { min-height: 30px; }
     th { background: #f8f8f8; }
     td.editable { cursor: text; }
@@ -42,24 +38,23 @@
       height: 1.2em; width: auto; object-fit: contain;
       cursor: pointer;
     }
-    colgroup col:nth-child(1) { width: 150px; }
-    colgroup col:nth-child(2) { width: 250px; }
-    colgroup col:nth-child(3) { width: 200px; }
-    colgroup col:nth-child(4) { width: 280px; }
+    /* 14열 (0~13) */
+    colgroup col:nth-child(1) { width: 60px; }   /* 삭제 버튼 열 */
+    colgroup col:nth-child(2) { width: 150px; }  /* 전략(원래 0열) */
+    colgroup col:nth-child(3) { width: 250px; }  /* 세부 과제(원래 1열) */
+    colgroup col:nth-child(4) { width: 200px; }
     colgroup col:nth-child(5) { width: 280px; }
-    colgroup col:nth-child(6) { width: 140px; }
+    colgroup col:nth-child(6) { width: 280px; }
     colgroup col:nth-child(7) { width: 140px; }
-    colgroup col:nth-child(8) { width: 400px; }
-    colgroup col:nth-child(9) { width: 200px; }
-    colgroup col:nth-child(10) { width: 300px; }
-    colgroup col:nth-child(11) { width: 440px; }
-    colgroup col:nth-child(12) { width: 140px; }
-    colgroup col:nth-child(13) { width: 280px; }
-    /* 수평선 */
+    colgroup col:nth-child(8) { width: 140px; }  /* 원활도(원래 6열) */
+    colgroup col:nth-child(9) { width: 400px; }
+    colgroup col:nth-child(10){ width: 200px; }
+    colgroup col:nth-child(11){ width: 300px; }
+    colgroup col:nth-child(12){ width: 440px; }
+    colgroup col:nth-child(13){ width: 140px; }
+    colgroup col:nth-child(14){ width: 280px; }
     hr { border: none; border-top: 2px solid #ccc; margin: 20px 0; }
-    /* 수정사항 4: 편집 영역과 수평선 사이에 빈 줄 2줄 추가 */
     #currentDataContainer + hr { margin-top: 20px; }
-    /* 데이터 표시 영역 */
     #currentDataContainer, #pastDataContainer { margin: 20px; }
     .data-section-header { font-weight: bold; margin: 10px 0; }
   </style>
@@ -76,16 +71,18 @@
     <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
+
   <!-- 현재 데이터 편집영역 -->
   <div id="currentDataContainer">
     <div id="currentHeader" class="data-section-header"></div>
     <div id="currentTableContainer">
       <table class="myTable">
         <colgroup>
-          <col><col><col><col><col><col><col><col><col><col><col><col><col>
+          <col><col><col><col><col><col><col><col><col><col><col><col><col><col>
         </colgroup>
         <thead>
           <tr>
+            <th>삭제</th>
             <th>담당 전략과제</th>
             <th>세부 과제</th>
             <th>프로젝트/업무명</th>
@@ -102,33 +99,46 @@
           </tr>
         </thead>
         <tbody>
+          <!-- 기본 한 행 예시 -->
           <tr>
+            <!-- 0열: 삭제 버튼 -->
             <td></td>
+            <!-- 1열: 전략과제 드롭다운 -->
             <td></td>
-            <td class="editable" contenteditable="true"></td>
-            <td class="editable" contenteditable="true"></td>
-            <td class="editable" contenteditable="true"></td>
-            <td class="editable" contenteditable="true"></td>
+            <!-- 2열: 세부 과제 드롭다운 -->
             <td></td>
+            <!-- 3열~5열(프로젝트, 개요, 로드맵 등) -->
             <td class="editable" contenteditable="true"></td>
             <td class="editable" contenteditable="true"></td>
             <td class="editable" contenteditable="true"></td>
+            <!-- 6열: 진척률 -->
             <td class="editable" contenteditable="true"></td>
+            <!-- 7열: 원활도 (신호등) -->
+            <td></td>
+            <!-- 8열: 현 주요 사항 -->
             <td class="editable" contenteditable="true"></td>
+            <!-- 9열: 추진 결과 -->
+            <td class="editable" contenteditable="true"></td>
+            <!-- 10열: 담당자(업무) -->
+            <td class="editable" contenteditable="true"></td>
+            <!-- 11열: Issue/대응 -->
+            <td class="editable" contenteditable="true"></td>
+            <!-- 12열: 컨플루언스 -->
+            <td class="editable" contenteditable="true"></td>
+            <!-- 13열: (상무님 코멘트) -->
             <td class="editable" contenteditable="true"></td>
           </tr>
-          <!-- 추가 행 가능 -->
         </tbody>
       </table>
     </div>
   </div>
   
-  <!-- 수정사항 4: 편집 영역과 수평선 사이에 빈 줄 2줄 -->
   <br><br>
   <hr>
-   
   
-  <!-- 과거 데이터 영역 (히스토리) -->
+  <br>
+  <div id="pastDataHeader" style="text-align: center; font-weight: bold;">&lt;저장된 주간현황 내역&gt;</div>
+  <br>
   <div id="pastDataContainer"></div>
 
   <script src="script.js"></script>
