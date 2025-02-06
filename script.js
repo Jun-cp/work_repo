@@ -320,93 +320,73 @@ function createTrafficDropdown() {
 }
 
 /************************************************************
- * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
+ * 4) 드롭다운 이벤트 초기화 (UI 동작 개선) - 발췌
  ************************************************************/
 function initDropDownEvents(td) {
-  // --- 0열 (전략과제) ---
-  var strategySelect = td.querySelector(".strategy-dropdown");
-  var strategySpan = td.querySelector(".dropdown-text");
+  // (0열) 전략
+  const strategySelect = td.querySelector(".strategy-dropdown");
+  const strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
-    strategySelect.addEventListener("change", function() {
-      var val = strategySelect.value;
-      var displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
-      // detail dropdown 비활성화 여부
-      var detailSelect = td.parentNode.querySelector(".detail-dropdown");
-      if (val === "") {
-        if (detailSelect) {
-          detailSelect.disabled = true;
-          detailSelect.style.display = "none";
-        }
-      } else {
-        // "(선택)" 제거
-        for (var i = 0; i < strategySelect.options.length; i++) {
-          if (strategySelect.options[i].value === "") {
-            strategySelect.remove(i);
-            break;
-          }
-        }
-        strategySpan.textContent = displayText;
-        strategySelect.style.display = "none";
-        strategySpan.style.display = "inline-block";
-      }
-      handleStrategyChange(td, val);
+    strategySelect.addEventListener("change", () => {
+      const val = strategySelect.value;
+      const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
+
+      // ... 중략 ...
     });
-    // click 이벤트
-    strategySpan.addEventListener("click", function() {
-      var detailSelect = td.parentNode.querySelector(".detail-dropdown");
-      if (detailSelect) {
-        detailSelect.disabled = true;
-        detailSelect.style.display = "none";
-      }
+
+    strategySpan.addEventListener("click", () => {
       strategySpan.style.display = "none";
       strategySelect.style.display = "inline-block";
       strategySelect.focus();
-      var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
-      strategySelect.dispatchEvent(event);
+
+      // 여러 이벤트를 순차 디스패치
+      ['mousedown','mouseup','click'].forEach(evtType => {
+        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
+        strategySelect.dispatchEvent(evt);
+      });
     });
   }
-  
-  // --- 1열 (세부 과제) ---
-  var detailSelect = td.querySelector(".detail-dropdown");
-  var detailSpan = td.querySelector(".dropdown-text");
+
+  // (1열) 세부 과제
+  const detailSelect = td.querySelector(".detail-dropdown");
+  const detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
-    detailSelect.addEventListener("change", function() {
-      var val = detailSelect.value;
-      if (val) {
-        detailSpan.textContent = val;
-        detailSelect.style.display = "none";
-        detailSpan.style.display = "inline-block";
-      }
+    detailSelect.addEventListener("change", () => {
+      // ...
     });
-    detailSpan.addEventListener("click", function() {
+    detailSpan.addEventListener("click", () => {
       if (detailSelect.disabled) return;
       detailSpan.style.display = "none";
       detailSelect.style.display = "inline-block";
       detailSelect.focus();
-      var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
-      detailSelect.dispatchEvent(event);
+
+      ['mousedown','mouseup','click'].forEach(evtType => {
+        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
+        detailSelect.dispatchEvent(evt);
+      });
     });
   }
-  
-  // --- 6열 (신호등) ---
-  var statusSelect = td.querySelector(".status-dropdown");
-  var statusImage = td.querySelector(".status-image");
+
+  // (6열) 원활도(신호등)
+  const statusSelect = td.querySelector(".status-dropdown");
+  const statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
-    statusSelect.addEventListener("change", function() {
-      var colorVal = statusSelect.value;
-      if (IMAGE_URLS[colorVal]) {
-        statusImage.src = IMAGE_URLS[colorVal];
-        statusSelect.style.display = "none";
-        statusImage.style.display = "inline-block";
-      }
+    statusSelect.addEventListener("change", () => {
+      // ...
     });
-    statusImage.addEventListener("click", function() {
+    statusImage.addEventListener("click", () => {
       statusImage.style.display = "none";
-      statusSelect.value = "";
       statusSelect.style.display = "inline-block";
+      statusSelect.focus();
+
+      ['mousedown','mouseup','click'].forEach(evtType => {
+        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
+        statusSelect.dispatchEvent(evt);
+      });
     });
   }
 }
+
 
 function handleStrategyChange(strategyTd, strategyVal) {
   var row = strategyTd.closest("tr");
