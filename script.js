@@ -20,16 +20,15 @@ const AUTO_COMPLETE_LIST = [
 ];
 
 const STRATEGY_TO_DETAIL_OPTIONS = {
-  A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
-  B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"],
-  C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
+  A: ["핵심&전략고객 대상 컨설팅/제안", "고객발굴/사업화를 위한 사전컨설팅", "AX전략이행/사업추진을 위한 이슈조정/해소"],
+  B: ["AI 서비스 Delivery 방안 확보", "KT Custom LLM 활용한 고객 레퍼런스 확보", "AI Agent 서비스 발굴/확보"],
+  C: ["글로벌 확장을 위한 레퍼런스 확보", "사업 협력 파트너 확보", "파트너 CoWork 사업 레퍼런스 확보"],
   D: ["Lead 내 담당 업무"],
-  E: ["컨설팅/제안 지원(핵심&전략고객)", "그룹AX협력과제 발굴/이행지원", "MS/AX유관조직 가교역할"],
-  F: ["AX컨설팅수행(핵심&전략고객)", "PoC기획/개발/프로토타이핑(핵심&전략고객)", "AIMSP협력모델 구축"],
-  G: ["AX컨설팅방법론 표준화/확산", "AI신기술분석/내부역량강화/기술지원", "Ref.아키텍처 발굴/확산"],
+  E: ["핵심&전략고객 대상 컨설팅/제안", "그룹AX협력과제 발굴/이행지원", "MS 및 AX유관조직 가교역할"],
+  F: ["핵심&전략고객 대상 AX컨 설팅 수행", "핵심&전략고객 대상 PoC기획/개발/프로토타이핑", "AI MSP 사업을 위한 협력모델 구축"],
+  G: ["AX 컨설팅 방법론 표준화/확산", "AI 신기술 분석/내부 역량 강화/기술지원", "B2B 대상 레퍼런스 아키텍처 발굴/확산"],
   H: ["Lead 내 담당 업무"]
 };
-
 // index.html에 사용한 테이블 구조 (colgroup + thead)
 const TABLE_TEMPLATE = `
 <colgroup>
@@ -230,14 +229,14 @@ function createStrategyDropdown() {
   select.className = "dropdown-select strategy-dropdown";
   const opts = [
     { val: "", text: "(선택)" },
-    { val: "A", text: "1_AX사업..." },
-    { val: "B", text: "1_MS파트너..." },
-    { val: "C", text: "1_C..." },
-    { val: "D", text: "1_D..." },
-    { val: "E", text: "2_E..." },
-    { val: "F", text: "2_F..." },
-    { val: "G", text: "2_G..." },
-    { val: "H", text: "2_Lead..." }
+    { val: "A", text: "1_AX사업 수주 지원 및 컨설팅" },
+    { val: "B", text: "1_MS파트너십 기반 고객 경험 혁신서비스 발굴" },
+    { val: "C", text: "1_AX사업 경쟁력 강화를 위한 파트너 발굴" },
+    { val: "D", text: "1_Lead 내 담당 업무" },
+    { val: "E", text: "2_AX사업 수주 지원 및 컨설팅" },
+    { val: "F", text: "2_AX전문 컨설팅 및 프로토타이핑 수행" },
+    { val: "G", text: "2_고객 기반 표준화된 오퍼링 제공" },
+    { val: "H", text: "2_Lead 내 담당 업무" }
   ];
   opts.forEach(o => {
     const op = document.createElement("option");
