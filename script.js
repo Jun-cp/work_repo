@@ -48,7 +48,7 @@ const TABLE_TEMPLATE = `
     <th>추진 결과 / 산출물</th>
     <th>담당자 (업무)</th>
     <th>Issue / 대응 방안</th>
-    <th>컨플루언스 (히스토리)</th>
+    <th>컨플루언스\n(히스토리)</th>
     <th>(상무님 코멘터리)</th>
   </tr>
 </thead>
