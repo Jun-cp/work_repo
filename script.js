@@ -354,10 +354,7 @@ function initDropDownEvents(td) {
       statusSelect.style.display = "inline-block";
       statusSelect.focus();
 
-      ['mousedown','mouseup','click'].forEach(evtType => {
-        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
-        statusSelect.dispatchEvent(evt);
-      });
+      
     });
   }
 }
