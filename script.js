@@ -30,36 +30,37 @@ var STRATEGY_TO_DETAIL_OPTIONS = {
   H: ["Lead 내 담당 업무"]
 };
 
-// index.html에 사용한 테이블 구조 (colgroup + thead)
+// 테이블 구조 (colgroup + thead) – index.html에서 이미 정의되므로 여기선 사용 안 해도 됨
+// 하지만 과거 기록 표에 쓰기 위해 백틱 문자열로 저장
 var TABLE_TEMPLATE =
   "<colgroup>" +
-  "<col><col><col><col><col><col><col><col><col><col><col><col><col>" +
+    "<col><col><col><col><col><col><col><col><col><col><col><col><col><col>" +
   "</colgroup>" +
   "<thead>" +
-  "<tr>" +
-    "<th>담당 전략과제</th>" +
-    "<th>세부 과제</th>" +
-    "<th>프로젝트/업무명</th>" +
-    "<th>개요</th>" +
-    "<th>주요 로드맵</th>" +
-    "<th>진척률</th>" +
-    "<th>원활도</th>" +
-    "<th>현 주요 사항</th>" +
-    "<th>추진 결과 / 산출물</th>" +
-    "<th>담당자 (업무)</th>" +
-    "<th>Issue / 대응 방안</th>" +
-    "<th>컨플루언스 (히스토리)</th>" +
-    "<th>(상무님 코멘터리)</th>" +
-  "</tr>" +
+    "<tr>" +
+      "<th>삭제</th>" +
+      "<th>담당 전략과제</th>" +
+      "<th>세부 과제</th>" +
+      "<th>프로젝트/업무명</th>" +
+      "<th>개요</th>" +
+      "<th>주요 로드맵</th>" +
+      "<th>진척률</th>" +
+      "<th>원활도</th>" +
+      "<th>현 주요 사항</th>" +
+      "<th>추진 결과 / 산출물</th>" +
+      "<th>담당자 (업무)</th>" +
+      "<th>Issue / 대응 방안</th>" +
+      "<th>컨플루언스 (히스토리)</th>" +
+      "<th>(상무님 코멘터리)</th>" +
+    "</tr>" +
   "</thead>";
 
-// 현재 편집 대상 날짜 (기본적으로 최신 목요일)
+// 편집 대상 날짜
 var currentEditingDate = "";
-// 서버에서 불러온 기록들을 저장할 전역 변수 (배열)
 var fetchedRecords = [];
 
 /************************************************************
- * 날짜 관련 헬퍼 함수
+ * 날짜 헬퍼
  ************************************************************/
 function getUpcomingThursdayDate() {
   var today = new Date();
@@ -95,7 +96,7 @@ function getPreviousThursday(dateStr, weeksAgo) {
 }
 
 /************************************************************
- * 1) 폴더 초기화 및 부모 도메인 검사
+ * 폴더 초기화
  ************************************************************/
 function initializeFolder() {
   var ref = document.referrer;
@@ -121,7 +122,7 @@ function initializeFolder() {
 }
 
 /************************************************************
- * 2) 날짜 드롭다운 및 현재 날짜 계산
+ * 날짜 드롭다운
  ************************************************************/
 function createDateDropdown() {
   var container = document.getElementById("dateSelectorContainer");
@@ -155,36 +156,32 @@ function updateDateDropdownWithAllDates() {
   var select = document.querySelector(".date-dropdown");
   if (!select) return;
   select.innerHTML = "";
-  // ES5 방식: var uniqueDates = Array.from(new Set(dates)); → 구형 브라우저 대비
-  var dates = [];
+  var datesArr = [];
   for (var i = 0; i < fetchedRecords.length; i++) {
-    dates.push(fetchedRecords[i].date);
+    datesArr.push(fetchedRecords[i].date);
   }
   var latest = getUpcomingThursday();
-  if (dates.indexOf(latest) === -1) {
-    dates.push(latest);
+  if (datesArr.indexOf(latest) === -1) {
+    datesArr.push(latest);
   }
   // 중복 제거
   var setObj = {};
-  var uniqueArr = [];
-  for (var j = 0; j < dates.length; j++) {
-    if (!setObj[dates[j]]) {
-      setObj[dates[j]] = true;
-      uniqueArr.push(dates[j]);
+  var uniqueDates = [];
+  for (var k = 0; k < datesArr.length; k++) {
+    if (!setObj[datesArr[k]]) {
+      setObj[datesArr[k]] = true;
+      uniqueDates.push(datesArr[k]);
     }
   }
-  // 정렬 (오름차순)
-  uniqueArr.sort(function(a, b) {
-    return a.localeCompare(b);
-  });
-  for (var k = 0; k < uniqueArr.length; k++) {
-    var date = uniqueArr[k];
+  // 정렬
+  uniqueDates.sort(function(a,b) { return a.localeCompare(b); });
+  for (var idx = 0; idx < uniqueDates.length; idx++) {
     var op = document.createElement("option");
-    op.value = date;
-    op.textContent = date;
+    op.value = uniqueDates[idx];
+    op.textContent = uniqueDates[idx];
     select.appendChild(op);
   }
-  if (uniqueArr.indexOf(currentEditingDate) !== -1) {
+  if (uniqueDates.indexOf(currentEditingDate) !== -1) {
     select.value = currentEditingDate;
   } else {
     currentEditingDate = latest;
@@ -218,7 +215,6 @@ function handleDateDropdownChange(e) {
     }
   }
   var savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
-  
   if (currentTableHTML !== savedTableHTML) {
     var choice = prompt(
       "(" + currentEditingDate + ") 날짜의 내용에서 변경된 부분이 있습니다.\n" +
@@ -242,13 +238,32 @@ function handleDateDropdownChange(e) {
 }
 
 /************************************************************
- * 3) 드롭다운/신호등 생성 함수
+ * 드롭다운/신호등 생성 함수
  ************************************************************/
+function createDeleteButtonTd() {
+  // 0열에 들어갈 '행 삭제' 버튼
+  var td = document.createElement("td");
+  var btn = document.createElement("button");
+  btn.textContent = "삭제";
+  btn.style.backgroundColor = "#f99";
+  btn.style.border = "1px solid #f00";
+  btn.style.color = "#333";
+  btn.addEventListener("click", function(e) {
+    // 행 삭제
+    var tr = btn.closest("tr");
+    if (tr) {
+      tr.parentNode.removeChild(tr);
+    }
+  });
+  td.appendChild(btn);
+  return td;
+}
+
 function createStrategyDropdown() {
   var container = document.createElement("div");
   var select = document.createElement("select");
   select.className = "dropdown-select strategy-dropdown";
-  // 옵션 구성 – 기본값 "(선택)" 포함
+  // 옵션 (기본값 + A,B,C...)
   var opts = [
     { val: "", text: "(선택)" },
     { val: "A", text: "1_AX사업..." },
@@ -269,28 +284,25 @@ function createStrategyDropdown() {
   }
   var span = document.createElement("span");
   span.className = "dropdown-text";
-  // 처음에는 select 보이고, span은 감춤
   select.style.display = "inline-block";
   span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
-  return { container: container };
+  return container;
 }
 
 function createDetailDropdown() {
   var container = document.createElement("div");
   var select = document.createElement("select");
   select.className = "dropdown-select detail-dropdown";
-  // 기본값 "Select"는 나중에 strategy 선택에 따라 제거할 예정
+  select.disabled = true;
   var span = document.createElement("span");
   span.className = "dropdown-text";
-  // 초기 상태: detail dropdown은 비활성화
   select.style.display = "inline-block";
-  select.disabled = true;
   span.style.display = "none";
   container.appendChild(select);
   container.appendChild(span);
-  return { container: container };
+  return container;
 }
 
 function createTrafficDropdown() {
@@ -304,10 +316,9 @@ function createTrafficDropdown() {
     { val: "green", text: "Green" }
   ];
   for (var i = 0; i < opts.length; i++) {
-    var o = opts[i];
     var op = document.createElement("option");
-    op.value = o.val;
-    op.textContent = o.text;
+    op.value = opts[i].val;
+    op.textContent = opts[i].text;
     select.appendChild(op);
   }
   var img = document.createElement("img");
@@ -316,106 +327,120 @@ function createTrafficDropdown() {
   img.style.display = "none";
   container.appendChild(select);
   container.appendChild(img);
-  return { container: container };
+  return container;
 }
 
 /************************************************************
- * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
+ * 드롭다운 이벤트 초기화
  ************************************************************/
-function initDropDownEvents(td) {
-  // --- 0열 (전략과제) ---
-  var strategySelect = td.querySelector(".strategy-dropdown");
-  var strategySpan = td.querySelector(".dropdown-text");
-  if (strategySelect && strategySpan) {
-    strategySelect.addEventListener("change", function() {
-      var val = strategySelect.value;
-      var displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
-      // detail dropdown 비활성화 여부
-      var detailSelect = td.parentNode.querySelector(".detail-dropdown");
-      if (val === "") {
-        if (detailSelect) {
+function initDropDownEvents(td, colIndex) {
+  // colIndex: 1 => 전략, 2 => 세부, 7 => 원활도(신호등)
+  if (colIndex === 1) {
+    // 전략
+    var strategyContainer = td.querySelector(".strategy-dropdown");
+    var strategySpan = td.querySelector(".dropdown-text");
+    if (strategyContainer && strategySpan) {
+      strategyContainer.addEventListener("change", function() {
+        var val = strategyContainer.value;
+        var displayText = strategyContainer.options[strategyContainer.selectedIndex].textContent;
+        var row = td.closest("tr");
+        if (!row) return;
+        var detailTd = row.querySelectorAll("td")[2];  // 2열 = 세부 과제
+        var detailSelect = detailTd.querySelector(".detail-dropdown");
+        var detailSpan = detailTd.querySelector(".dropdown-text");
+        
+        if (val === "") {
+          // (선택)일 경우 detail 비활성화
           detailSelect.disabled = true;
           detailSelect.style.display = "none";
+        } else {
+          // (선택) 제거
+          for (var i = 0; i < strategyContainer.options.length; i++) {
+            if (strategyContainer.options[i].value === "") {
+              strategyContainer.remove(i);
+              break;
+            }
+          }
+          strategySpan.textContent = displayText;
+          strategyContainer.style.display = "none";
+          strategySpan.style.display = "inline-block";
         }
-      } else {
-        // "(선택)" 제거
-        for (var i = 0; i < strategySelect.options.length; i++) {
-          if (strategySelect.options[i].value === "") {
-            strategySelect.remove(i);
-            break;
+        handleStrategyChange(row, val);
+      });
+      // span 클릭 → 즉시 드롭다운 열림
+      strategySpan.addEventListener("click", function() {
+        var row = td.closest("tr");
+        if (row) {
+          // 세부 과제(2열) 시각적 효과(회색+취소선)
+          var detailTd = row.querySelectorAll("td")[2];
+          var detailSpan = detailTd.querySelector(".dropdown-text");
+          if (detailSpan) {
+            detailSpan.style.color = "gray";
+            detailSpan.style.textDecoration = "line-through";
           }
         }
-        strategySpan.textContent = displayText;
-        strategySelect.style.display = "none";
-        strategySpan.style.display = "inline-block";
-      }
-      handleStrategyChange(td, val);
-    });
-    // click 이벤트
-    strategySpan.addEventListener("click", function() {
-      var detailSelect = td.parentNode.querySelector(".detail-dropdown");
-      if (detailSelect) {
-        detailSelect.disabled = true;
-        detailSelect.style.display = "none";
-      }
-      strategySpan.style.display = "none";
-      strategySelect.style.display = "inline-block";
-      strategySelect.focus();
-      var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
-      strategySelect.dispatchEvent(event);
-    });
+        strategySpan.style.display = "none";
+        strategyContainer.style.display = "inline-block";
+        strategyContainer.focus();
+        var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+        strategyContainer.dispatchEvent(event);
+      });
+    }
   }
-  
-  // --- 1열 (세부 과제) ---
-  var detailSelect = td.querySelector(".detail-dropdown");
-  var detailSpan = td.querySelector(".dropdown-text");
-  if (detailSelect && detailSpan) {
-    detailSelect.addEventListener("change", function() {
-      var val = detailSelect.value;
-      if (val) {
-        detailSpan.textContent = val;
-        detailSelect.style.display = "none";
-        detailSpan.style.display = "inline-block";
-      }
-    });
-    detailSpan.addEventListener("click", function() {
-      if (detailSelect.disabled) return;
-      detailSpan.style.display = "none";
-      detailSelect.style.display = "inline-block";
-      detailSelect.focus();
-      var event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
-      detailSelect.dispatchEvent(event);
-    });
+  else if (colIndex === 2) {
+    // 세부 과제
+    var detailContainer = td.querySelector(".detail-dropdown");
+    var detailSpan = td.querySelector(".dropdown-text");
+    if (detailContainer && detailSpan) {
+      detailContainer.addEventListener("change", function() {
+        var val = detailContainer.value;
+        if (val) {
+          detailSpan.textContent = val;
+          detailContainer.style.display = "none";
+          detailSpan.style.display = "inline-block";
+        }
+      });
+      detailSpan.addEventListener("click", function() {
+        if (detailContainer.disabled) return;
+        detailSpan.style.display = "none";
+        detailContainer.style.display = "inline-block";
+        detailContainer.focus();
+        var evt = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+        detailContainer.dispatchEvent(evt);
+      });
+    }
   }
-  
-  // --- 6열 (신호등) ---
-  var statusSelect = td.querySelector(".status-dropdown");
-  var statusImage = td.querySelector(".status-image");
-  if (statusSelect && statusImage) {
-    statusSelect.addEventListener("change", function() {
-      var colorVal = statusSelect.value;
-      if (IMAGE_URLS[colorVal]) {
-        statusImage.src = IMAGE_URLS[colorVal];
-        statusSelect.style.display = "none";
-        statusImage.style.display = "inline-block";
-      }
-    });
-    statusImage.addEventListener("click", function() {
-      statusImage.style.display = "none";
-      statusSelect.value = "";
-      statusSelect.style.display = "inline-block";
-    });
+  else if (colIndex === 7) {
+    // 신호등
+    var statusSelect = td.querySelector(".status-dropdown");
+    var statusImage = td.querySelector(".status-image");
+    if (statusSelect && statusImage) {
+      statusSelect.addEventListener("change", function() {
+        var colorVal = statusSelect.value;
+        if (IMAGE_URLS[colorVal]) {
+          statusImage.src = IMAGE_URLS[colorVal];
+          statusSelect.style.display = "none";
+          statusImage.style.display = "inline-block";
+        }
+      });
+      statusImage.addEventListener("click", function() {
+        // 이미지 클릭 → 드롭다운 즉시 열기
+        statusImage.style.display = "none";
+        statusSelect.style.display = "inline-block";
+        statusSelect.focus();
+        var evt2 = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+        statusSelect.dispatchEvent(evt2);
+      });
+    }
   }
 }
 
-function handleStrategyChange(strategyTd, strategyVal) {
-  var row = strategyTd.closest("tr");
-  if (!row) return;
-  var tds = row.querySelectorAll("td");
-  if (tds.length < 2) return;
-  var detailTd = tds[1];
+function handleStrategyChange(row, strategyVal) {
+  // row에서 2열 detail-dropdown 업데이트
+  var detailTd = row.querySelectorAll("td")[2];
   var detailSelect = detailTd.querySelector(".detail-dropdown");
   var detailSpan = detailTd.querySelector(".dropdown-text");
+  if (!detailSelect || !detailSpan) return;
   if (!strategyVal) {
     detailSelect.innerHTML = "";
     detailSelect.disabled = true;
@@ -427,10 +452,9 @@ function handleStrategyChange(strategyTd, strategyVal) {
   detailSelect.innerHTML = "";
   var newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
   for (var i = 0; i < newOptions.length; i++) {
-    var opVal = newOptions[i];
     var op = document.createElement("option");
-    op.value = opVal;
-    op.textContent = opVal;
+    op.value = newOptions[i];
+    op.textContent = newOptions[i];
     detailSelect.appendChild(op);
   }
   detailSelect.style.display = "inline-block";
@@ -439,7 +463,7 @@ function handleStrategyChange(strategyTd, strategyVal) {
 }
 
 /************************************************************
- * 5) 표 초기화 및 행 추가 (편집용 표)
+ * 표 초기화, 행 추가
  ************************************************************/
 function initTable(table) {
   if (!table) return;
@@ -447,20 +471,43 @@ function initTable(table) {
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
     var tds = row.querySelectorAll("td");
-    if (tds[0] && !tds[0].querySelector(".strategy-dropdown")) {
-      var sObj = createStrategyDropdown();
-      tds[0].appendChild(sObj.container);
+    
+    // 0열: 삭제 버튼
+    if (tds[0] && !tds[0].querySelector("button")) {
+      // 만약 아무것도 없다면 삭제 버튼 td를 다시 만든다
+      tds[0].innerHTML = "";
+      var delBtn = document.createElement("button");
+      delBtn.textContent = "삭제";
+      delBtn.style.backgroundColor = "#f99";
+      delBtn.style.border = "1px solid #f00";
+      delBtn.style.color = "#333";
+      delBtn.addEventListener("click", function(e) {
+        var tr = delBtn.closest("tr");
+        if (tr) {
+          tr.parentNode.removeChild(tr);
+        }
+      });
+      tds[0].appendChild(delBtn);
     }
-    if (tds[1] && !tds[1].querySelector(".detail-dropdown")) {
-      var dObj = createDetailDropdown();
-      tds[1].appendChild(dObj.container);
+    
+    // 1열(전략), 2열(세부), 7열(신호등) → 드롭다운 없으면 생성
+    if (tds[1] && !tds[1].querySelector(".strategy-dropdown")) {
+      tds[1].appendChild(createStrategyDropdown());
     }
-    if (tds[6] && !tds[6].querySelector(".status-dropdown")) {
-      var tObj = createTrafficDropdown();
-      tds[6].appendChild(tObj.container);
+    if (tds[2] && !tds[2].querySelector(".detail-dropdown")) {
+      tds[2].appendChild(createDetailDropdown());
     }
+    if (tds[7] && !tds[7].querySelector(".status-dropdown")) {
+      tds[7].appendChild(createTrafficDropdown());
+    }
+    
+    // 나머지 컬럼은 editable
+    // 이벤트 초기화
     for (var c = 0; c < tds.length; c++) {
-      initDropDownEvents(tds[c]);
+      // 0열=삭제, 1=전략, 2=세부, 7=신호등 → 특별 처리
+      if (c === 1 || c === 2 || c === 7) {
+        initDropDownEvents(tds[c], c);
+      }
     }
   }
 }
@@ -470,10 +517,40 @@ function addNewRow() {
   if (!table) return;
   var tbody = table.querySelector("tbody");
   if (!tbody) return;
+  
+  // 총 14열
   var tr = document.createElement("tr");
-  for (var i = 0; i < 8; i++) {
+  for (var col = 0; col < 14; col++) {
     var td = document.createElement("td");
-    if (i !== 0 && i !== 1 && i !== 6) {
+    if (col === 0) {
+      // 삭제 버튼 (나중에 initTable에서도 생성하지만, 여기서도 바로 넣어줌)
+      var delBtn = document.createElement("button");
+      delBtn.textContent = "삭제";
+      delBtn.style.backgroundColor = "#f99";
+      delBtn.style.border = "1px solid #f00";
+      delBtn.style.color = "#333";
+      delBtn.addEventListener("click", function(e) {
+        var trr = delBtn.closest("tr");
+        if (trr) {
+          trr.parentNode.removeChild(trr);
+        }
+      });
+      td.appendChild(delBtn);
+    }
+    else if (col === 1) {
+      // 전략
+      td.appendChild(createStrategyDropdown());
+    }
+    else if (col === 2) {
+      // 세부
+      td.appendChild(createDetailDropdown());
+    }
+    else if (col === 7) {
+      // 원활도(신호등)
+      td.appendChild(createTrafficDropdown());
+    }
+    else {
+      // 그 외 컬럼은 editable
       td.classList.add("editable");
       td.contentEditable = "true";
     }
@@ -484,17 +561,14 @@ function addNewRow() {
 }
 
 /************************************************************
- * 6) 서버 저장 데이터 불러오기 및 UI 업데이트
+ * 서버 저장 데이터 불러오기/갱신
  ************************************************************/
 function fetchStoredData(callback) {
   fetch(LOCAL_SERVER_URL + "/listData?folder=" + folderName + "&token=" + token)
-    .then(function(resp) {
-      return resp.json();
-    })
+    .then(function(resp) { return resp.json(); })
     .then(function(records) {
-      console.log("Fetched records:", records);
       if (!Array.isArray(records)) {
-         records = [];
+        records = [];
       }
       fetchedRecords = records;
       if (callback) { callback(); }
@@ -511,13 +585,13 @@ function updateUIForSelectedDate(selectedDate) {
   var currentContainer = document.getElementById("currentTableContainer");
   var pastContainer = document.getElementById("pastDataContainer");
   
-  // 편집 영역 헤더
+  // 헤더
   var headerText = (selectedDate === latest)
                    ? "(이번주) " + selectedDate + " 주간현황"
                    : "(과거) " + selectedDate + " 주간현황";
   currentHeader.textContent = headerText;
   
-  // 편집 영역 업데이트
+  // 편집 영역 테이블
   var editableTable = currentContainer.querySelector(".myTable");
   if (editableTable) {
     var editableTbody = editableTable.querySelector("tbody");
@@ -539,10 +613,10 @@ function updateUIForSelectedDate(selectedDate) {
     }
   }
   
-  // 조회 영역 업데이트
+  // 과거 기록 영역
   pastContainer.innerHTML = "";
   var pastHeader = document.createElement("div");
-  pastHeader.style.textAlign = "left";
+  pastHeader.style.textAlign = "center";
   pastHeader.style.fontWeight = "bold";
   pastHeader.textContent = "<저장된 주간현황 내역>";
   pastContainer.appendChild(document.createElement("br"));
@@ -551,39 +625,34 @@ function updateUIForSelectedDate(selectedDate) {
   
   var datesToShow = [];
   if (selectedDate === latest) {
-    // find record of latest
+    // 최신 + 전주 + 전전주
     var recLatest = null;
-    for (var x = 0; x < fetchedRecords.length; x++) {
-      if (fetchedRecords[x].date === latest) {
-        recLatest = fetchedRecords[x];
+    for (var r = 0; r < fetchedRecords.length; r++) {
+      if (fetchedRecords[r].date === latest) {
+        recLatest = fetchedRecords[r];
         break;
       }
     }
     if (recLatest) {
       datesToShow.push(latest);
     }
-    var prev1 = getPreviousThursday(latest, 1);
-    var prev2 = getPreviousThursday(latest, 2);
-    var foundPrev1 = false;
-    var foundPrev2 = false;
-    for (var y = 0; y < fetchedRecords.length; y++) {
-      if (fetchedRecords[y].date === prev1) foundPrev1 = true;
-      if (fetchedRecords[y].date === prev2) foundPrev2 = true;
+    var p1 = getPreviousThursday(latest, 1);
+    var p2 = getPreviousThursday(latest, 2);
+    var found1 = false, found2 = false;
+    for (var x = 0; x < fetchedRecords.length; x++) {
+      if (fetchedRecords[x].date === p1) found1 = true;
+      if (fetchedRecords[x].date === p2) found2 = true;
     }
-    if (foundPrev1) {
-      datesToShow.push(prev1);
-    }
-    if (foundPrev2) {
-      datesToShow.push(prev2);
-    }
+    if (found1) datesToShow.push(p1);
+    if (found2) datesToShow.push(p2);
   } else {
-    // dates from selectedDate up to latest
-    var recordDates = [];
-    for (var d = 0; d < fetchedRecords.length; d++) {
-      recordDates.push(fetchedRecords[d].date);
+    // selectedDate ~ latest
+    var allDates = [];
+    for (var dd = 0; dd < fetchedRecords.length; dd++) {
+      allDates.push(fetchedRecords[dd].date);
     }
-    for (var dd = 0; dd < recordDates.length; dd++) {
-      var dt = recordDates[dd];
+    for (var d2 = 0; d2 < allDates.length; d2++) {
+      var dt = allDates[d2];
       if (dt <= latest && dt >= selectedDate) {
         if (datesToShow.indexOf(dt) === -1) {
           datesToShow.push(dt);
@@ -593,45 +662,42 @@ function updateUIForSelectedDate(selectedDate) {
     if (datesToShow.indexOf(latest) === -1) {
       datesToShow.push(latest);
     }
-    // 내림차순 정렬
-    datesToShow.sort(function(a, b) {
-      return b.localeCompare(a);
-    });
+    // 내림차순
+    datesToShow.sort(function(a,b) { return b.localeCompare(a); });
   }
-  
   if (datesToShow.length === 0) {
     pastContainer.appendChild(document.createTextNode("(과거 주간현황 기록 없음)"));
   } else {
     for (var t = 0; t < datesToShow.length; t++) {
-      var dateVal = datesToShow[t];
-      var rec = null;
-      for (var r = 0; r < fetchedRecords.length; r++) {
-        if (fetchedRecords[r].date === dateVal) {
-          rec = fetchedRecords[r];
+      var dtVal = datesToShow[t];
+      var rec2 = null;
+      for (var u = 0; u < fetchedRecords.length; u++) {
+        if (fetchedRecords[u].date === dtVal) {
+          rec2 = fetchedRecords[u];
           break;
         }
       }
       var section = document.createElement("div");
       section.style.marginBottom = "20px";
-      var header = document.createElement("div");
-      if (dateVal === latest) {
-        header.textContent = "(이번주) " + dateVal + " 주간현황";
+      var hdr = document.createElement("div");
+      if (dtVal === latest) {
+        hdr.textContent = "(이번주) " + dtVal + " 주간현황";
       } else {
-        header.textContent = "(과거) " + dateVal + " 주간현황";
+        hdr.textContent = "(과거) " + dtVal + " 주간현황";
       }
-      if (dateVal === selectedDate) {
-        header.style.backgroundColor = "#ffffe0";
-        header.style.color = "blue";
-        header.style.fontWeight = "bold";
-        header.style.fontStyle = "italic";
+      if (dtVal === selectedDate) {
+        hdr.style.backgroundColor = "#ffffe0";
+        hdr.style.color = "blue";
+        hdr.style.fontWeight = "bold";
+        hdr.style.fontStyle = "italic";
       }
-      section.appendChild(header);
-      if (rec) {
-        var table = document.createElement("table");
-        table.className = "myTable";
-        table.innerHTML = TABLE_TEMPLATE + "<tbody>" + rec.tableHTML + "</tbody>";
-        makeTableStatic(table);
-        section.appendChild(table);
+      section.appendChild(hdr);
+      if (rec2) {
+        var tableEl = document.createElement("table");
+        tableEl.className = "myTable";
+        tableEl.innerHTML = TABLE_TEMPLATE + "<tbody>" + rec2.tableHTML + "</tbody>";
+        makeTableStatic(tableEl);
+        section.appendChild(tableEl);
       } else {
         var msg = document.createElement("div");
         msg.textContent = "기록 없음";
@@ -643,6 +709,7 @@ function updateUIForSelectedDate(selectedDate) {
 }
 
 function makeTableStatic(wrapper) {
+  // 조회 영역은 드롭다운 비활성화, 편집 불가
   var selects = wrapper.querySelectorAll("select");
   for (var i = 0; i < selects.length; i++) {
     selects[i].disabled = true;
@@ -652,10 +719,15 @@ function makeTableStatic(wrapper) {
     tds[j].removeAttribute("contenteditable");
     tds[j].style.backgroundColor = "#f0f0f0";
   }
+  // 삭제 버튼도 없애거나 비활성화할 수도 있음(옵션)
+  var delButtons = wrapper.querySelectorAll("td button");
+  for (var b = 0; b < delButtons.length; b++) {
+    delButtons[b].disabled = true;
+  }
 }
 
 /************************************************************
- * 7) 데이터 제출 (Submit 버튼)
+ * 데이터 제출 (Submit)
  ************************************************************/
 function submitData(date, callback) {
   var tbodyElem = document.querySelector("#currentTableContainer .myTable tbody");
@@ -670,9 +742,7 @@ function submitData(date, callback) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
-    .then(function(resp) {
-      return resp.json();
-    })
+    .then(function(resp) { return resp.json(); })
     .then(function(data) {
       if (data.error) {
         alert("전송 오류: " + data.error);
@@ -720,8 +790,7 @@ function initSubmitButton() {
     } else {
       if (currentTableHTML !== savedTableHTML) {
         var choice = prompt(
-          "현재 작성한 내용을 저장하시겠습니까? 기존 저장 내용과 다른 부분이 있습니다.\n" +
-          "1: 저장하기\n2: 취소 및 다시 확인하기"
+          "현재 작성한 내용을 저장하시겠습니까? 기존 저장 내용과 다른 부분이 있습니다.\n1: 저장하기\n2: 취소 및 다시 확인하기"
         );
         if (choice === "1") {
           submitData(selectedDate, function() {
@@ -741,7 +810,7 @@ function initSubmitButton() {
 }
 
 /************************************************************
- * 8) DOMContentLoaded – 초기화
+ * DOMContentLoaded – 초기화
  ************************************************************/
 document.addEventListener("DOMContentLoaded", function() {
   if (!initializeFolder()) {
