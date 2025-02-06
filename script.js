@@ -66,9 +66,9 @@ function getUpcomingThursdayDate() {
   const today = new Date();
   let diff;
   if (today.getDay() <= 4) {
-    diff = 4 - today.getDay();    // 오늘이 월화수라면 이번주 목요일까지
+    diff = 4 - today.getDay();    
   } else {
-    diff = 11 - today.getDay();   // 금토일이면 다음주 목요일
+    diff = 11 - today.getDay();   
   }
   const thursday = new Date(today);
   thursday.setDate(today.getDate() + diff);
@@ -157,8 +157,8 @@ function updateDateDropdownWithAllDates() {
   if (!dates.includes(latest)) {
     dates.push(latest);
   }
-  dates = Array.from(new Set(dates));  // 중복 제거
-  dates.sort((a, b) => a.localeCompare(b)); // 오름차순
+  dates = Array.from(new Set(dates));
+  dates.sort((a, b) => a.localeCompare(b));
   
   dates.forEach(date => {
     const op = document.createElement("option");
@@ -187,23 +187,19 @@ function handleDateDropdownChange(e) {
   }
   const currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
   if (!currentTableElem) {
-    // 편집 테이블이 없으면 그냥 날짜만 바꾼다
     currentEditingDate = newDate;
     updateUIForSelectedDate(newDate);
     return;
   }
-  // 변경사항 비교
   const currentTableHTML = currentTableElem.innerHTML.trim();
   const savedRecord = fetchedRecords.find(r => r.date === currentEditingDate);
   const savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
   
   if (currentTableHTML !== savedTableHTML) {
-    // 변경사항 있음
     const choice = prompt(
       `(${currentEditingDate}) 날짜의 내용에서 변경된 부분이 있습니다.\n아래 옵션 중 선택해주세요:\n1: 변경사항 저장 후 진행\n2: 저장 없이 진행\n3: 취소`
     );
     if (choice === "1") {
-      // 저장 후 진행
       submitData(currentEditingDate, () => {
         currentEditingDate = newDate;
         updateUIForSelectedDate(newDate);
@@ -212,7 +208,6 @@ function handleDateDropdownChange(e) {
     } else if (choice === "2") {
       // 저장 없이 진행
     } else {
-      // 취소
       select.value = currentEditingDate;
       return;
     }
@@ -231,7 +226,7 @@ function createStrategyDropdown() {
   const opts = [
     { val: "", text: "(선택)" },
     { val: "A", text: "1_AX사업 수주 지원 및 컨설팅" },
-    { val: "B", text: "1_MS파트너십 기반 고객 경험 혁신서비스 발굴" },
+    { val: "B", text: "1_MS파트너..." },
     { val: "C", text: "1_AX사업 경쟁력 강화를 위한 파트너 발굴" },
     { val: "D", text: "1_Lead 내 담당 업무" },
     { val: "E", text: "2_AX사업 수주 지원 및 컨설팅" },
@@ -248,7 +243,6 @@ function createStrategyDropdown() {
   
   const span = document.createElement("span");
   span.className = "dropdown-text";
-  // 처음엔 select 보임, span 숨김
   select.style.display = "inline-block";
   span.style.display = "none";
   
@@ -261,7 +255,6 @@ function createDetailDropdown() {
   const container = document.createElement("div");
   const select = document.createElement("select");
   select.className = "dropdown-select detail-dropdown";
-  // 기본값 'Select'는 전략과제 선택 후 추가
   select.disabled = true;
   
   const span = document.createElement("span");
@@ -306,7 +299,7 @@ function createTrafficDropdown() {
  * 4) 드롭다운 이벤트 초기화 (UI 동작 개선)
  ************************************************************/
 function initDropDownEvents(td) {
-  // 0열: 전략
+  // ------------------- (0열) 전략 -------------------
   const strategySelect = td.querySelector(".strategy-dropdown");
   const strategySpan = td.querySelector(".dropdown-text");
   if (strategySelect && strategySpan) {
@@ -325,33 +318,50 @@ function initDropDownEvents(td) {
             detailSelect.style.display = "none";
           }
         } else {
-          // '(선택)' 제거
+          // 수정사항 2) 먼저 span 업데이트 후 '(선택)' 제거
+          strategySpan.textContent = displayText;
+          strategySelect.style.display = "none";
+          strategySpan.style.display = "inline-block";
+          
+          // (선택)을 제거하는 로직은 span 업데이트가 끝난 뒤에!
           for (let i=0; i<strategySelect.options.length; i++) {
             if (strategySelect.options[i].value === "") {
               strategySelect.remove(i);
               break;
             }
           }
-          strategySpan.textContent = displayText;
-          strategySelect.style.display = "none";
-          strategySpan.style.display = "inline-block";
         }
       }
       handleStrategyChange(td, val);
     });
-    // 이미 선택된 span을 다시 클릭하면 → 즉시 드롭다운 펼치기
+    
+    // 이미 선택된 span을 다시 클릭하면
     strategySpan.addEventListener("click", () => {
+      // -------- (수정사항 1) 1열 텍스트 비가시화 --------
+      // 0열이 재선택되면 1열 텍스트를 공란 처리
+      const row = strategySpan.closest("tr");
+      if (row) {
+        const detailTd = row.querySelectorAll("td")[1];
+        if (detailTd) {
+          const detailSpan = detailTd.querySelector(".dropdown-text");
+          if (detailSpan) {
+            detailSpan.textContent = "";      // 내용 지우기
+            detailSpan.style.display = "none"; 
+          }
+        }
+      }
+      // 이제 0열 드롭다운 표시
       strategySpan.style.display = "none";
       strategySelect.style.display = "inline-block";
       strategySelect.focus();
       
-      // 마우스 이벤트 디스패치 -> 즉시 펼치기
+      // 드롭다운 즉시 펼치기 시도
       const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
       strategySelect.dispatchEvent(event);
     });
   }
   
-  // 1열: 세부 과제
+  // ------------------- (1열) 세부 과제 -------------------
   const detailSelect = td.querySelector(".detail-dropdown");
   const detailSpan = td.querySelector(".dropdown-text");
   if (detailSelect && detailSpan) {
@@ -363,6 +373,7 @@ function initDropDownEvents(td) {
         detailSpan.style.display = "inline-block";
       }
     });
+    
     detailSpan.addEventListener("click", () => {
       if (detailSelect.disabled) return;
       detailSpan.style.display = "none";
@@ -375,7 +386,7 @@ function initDropDownEvents(td) {
     });
   }
   
-  // 6열: 원활도(신호등)
+  // ------------------- (6열) 원활도(신호등) -------------------
   const statusSelect = td.querySelector(".status-dropdown");
   const statusImage = td.querySelector(".status-image");
   if (statusSelect && statusImage) {
@@ -388,7 +399,6 @@ function initDropDownEvents(td) {
       }
     });
     statusImage.addEventListener("click", () => {
-      // 이미지 클릭 시 → 바로 드롭다운 펼침
       statusImage.style.display = "none";
       statusSelect.style.display = "inline-block";
       statusSelect.focus();
@@ -398,8 +408,8 @@ function initDropDownEvents(td) {
   }
 }
 
+// 전략값에 따라 세부 드롭다운 채우기
 function handleStrategyChange(strategyTd, val) {
-  // val에 따라 세부 과제 dropdown 채우기
   const row = strategyTd.closest("tr");
   if (!row) return;
   const tds = row.querySelectorAll("td");
@@ -409,7 +419,6 @@ function handleStrategyChange(strategyTd, val) {
   const detailSpan = detailTd.querySelector(".dropdown-text");
   
   if (!val) {
-    // (선택)인 경우 detail 초기화
     detailSelect.innerHTML = "";
     detailSelect.disabled = true;
     detailSpan.textContent = "";
