@@ -321,11 +321,7 @@ function initDropDownEvents(td) {
       strategySelect.style.display = "inline-block";
       strategySelect.focus();
 
-      // 여러 이벤트를 순차 디스패치
-      ['mousedown','mouseup','click'].forEach(evtType => {
-        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
-        strategySelect.dispatchEvent(evt);
-      });
+      
     });
   }
 
@@ -342,10 +338,7 @@ function initDropDownEvents(td) {
       detailSelect.style.display = "inline-block";
       detailSelect.focus();
 
-      ['mousedown','mouseup','click'].forEach(evtType => {
-        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
-        detailSelect.dispatchEvent(evt);
-      });
+      
     });
   }
 
@@ -361,10 +354,7 @@ function initDropDownEvents(td) {
       statusSelect.style.display = "inline-block";
       statusSelect.focus();
 
-      ['mousedown','mouseup','click'].forEach(evtType => {
-        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
-        statusSelect.dispatchEvent(evt);
-      });
+      
     });
   }
 }
