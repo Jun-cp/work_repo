@@ -1,488 +1,751 @@
-  // 이미지용 (Red/Yellow/Green)
-const IMAGE_URLS = {
-    red: "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
-    yellow: "https://github.com/Jun-cp/work_repo/blob/main/traffic_yellow.jpg?raw=true",
-    green: "https://github.com/Jun-cp/work_repo/blob/main/traffic_green.jpg?raw=true"
-  };
+/************************************************************
+ * 0. 전역 변수 / 상수
+ ************************************************************/
+var folderName = "";
+var token = "";
+var LOCAL_SERVER_URL = "https://jun_cp.inviteu.org"; // 서버 주소
+
+var IMAGE_URLS = {
+  red: "https://github.com/Jun-cp/work_repo/blob/main/traffic_red.jpg?raw=true",
+  yellow: "https://github.com/Jun-cp/work_repo/blob/main/traffic_yellow.jpg?raw=true",
+  green: "https://github.com/Jun-cp/work_repo/blob/main/traffic_green.jpg?raw=true"
+};
+
+var AUTO_COMPLETE_LIST = [
+  "산림청 LLM PoC", "국회 빅데이터 구축사업", "Copilot Agent 개발", "JTS LLM사업",
+  "우리은행 GenAI 사업", "신한은행 GenAI 사업", "GPUaaS", "비씨카드",
+  "업무 관리 프로세스", "고려대 산학 (MoM)", "신한은행 AI Branch 컨설팅/PoC 지원",
+  "KPI 작성", "Lead 행사 추진", "구매/회계 업무", "IBM Agent Consulting",
+  "agent agent", "Agent test"
+];
+
+var STRATEGY_TO_DETAIL_OPTIONS = {
+  A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
+  B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"],
+  C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
+  D: ["Lead 내 담당 업무"],
+  E: ["컨설팅/제안 지원(핵심&전략고객)", "그룹AX협력과제 발굴/이행지원", "MS/AX유관조직 가교역할"],
+  F: ["AX컨설팅수행(핵심&전략고객)", "PoC기획/개발/프로토타이핑(핵심&전략고객)", "AIMSP협력모델 구축"],
+  G: ["AX컨설팅방법론 표준화/확산", "AI신기술분석/내부역량강화/기술지원", "Ref.아키텍처 발굴/확산"],
+  H: ["Lead 내 담당 업무"]
+};
+
+// index.html에 사용한 테이블 구조 (colgroup + thead)
+var TABLE_TEMPLATE =
+  "<colgroup>" +
+  "<col><col><col><col><col><col><col><col><col><col><col><col><col>" +
+  "</colgroup>" +
+  "<thead>" +
+  "<tr>" +
+    "<th>담당 전략과제</th>" +
+    "<th>세부 과제</th>" +
+    "<th>프로젝트/업무명</th>" +
+    "<th>개요</th>" +
+    "<th>주요 로드맵</th>" +
+    "<th>진척률</th>" +
+    "<th>원활도</th>" +
+    "<th>현 주요 사항</th>" +
+    "<th>추진 결과 / 산출물</th>" +
+    "<th>담당자 (업무)</th>" +
+    "<th>Issue / 대응 방안</th>" +
+    "<th>컨플루언스 (히스토리)</th>" +
+    "<th>(상무님 코멘터리)</th>" +
+  "</tr>" +
+  "</thead>";
+
+// 현재 편집 대상 날짜 (기본적으로 최신 목요일)
+var currentEditingDate = "";
+// 서버에서 불러온 기록들을 저장할 전역 변수 (배열)
+var fetchedRecords = [];
 
 /************************************************************
- * 0. 전역/상수 설정
+ * 날짜 관련 헬퍼 함수
  ************************************************************/
-// 2열 자동완성 후보
-const AUTO_COMPLETE_LIST = [
-    "산림청 LLM PoC",
-    "국회 빅데이터 구축사업",
-    "Copilot Agent 개발",
-    "JTS LLM사업",
-    "우리은행 GenAI 사업",
-    "신한은행 GenAI 사업",
-    "GPUaaS",
-    "비씨카드",
-    "업무 관리 프로세스",
-    "고려대 산학 (MoM)",
-    "신한은행 AI Branch 컨설팅/PoC 지원",
-    "KPI 작성",
-    "Lead 행사 추진",
-    "구매/회계 업무",
-    "IBM Agent Consulting",
-    "agent agent",
-    "Agent test"
+function getUpcomingThursdayDate() {
+  var today = new Date();
+  var diff;
+  if (today.getDay() <= 4) {
+    diff = 4 - today.getDay();
+  } else {
+    diff = 11 - today.getDay();
+  }
+  var thursday = new Date(today);
+  thursday.setDate(today.getDate() + diff);
+  return thursday;
+}
 
-    // ...
+function formatDate(date) {
+  var yy = String(date.getFullYear()).slice(2);
+  var mm = String(date.getMonth() + 1).padStart(2, "0");
+  var dd = String(date.getDate()).padStart(2, "0");
+  return yy + mm + dd;
+}
+
+function getUpcomingThursday() {
+  return formatDate(getUpcomingThursdayDate());
+}
+
+function getPreviousThursday(dateStr, weeksAgo) {
+  var year = 2000 + parseInt(dateStr.slice(0,2));
+  var month = parseInt(dateStr.slice(2,4)) - 1;
+  var day = parseInt(dateStr.slice(4,6));
+  var dateObj = new Date(year, month, day);
+  dateObj.setDate(dateObj.getDate() - 7 * weeksAgo);
+  return formatDate(dateObj);
+}
+
+/************************************************************
+ * 1) 폴더 초기화 및 부모 도메인 검사
+ ************************************************************/
+function initializeFolder() {
+  var ref = document.referrer;
+  if (ref.indexOf("atlassian.net") === -1) {
+    alert("Confluence(.atlassian.net)에서 접근하지 않아 동작이 제한됩니다.");
+    return false;
+  }
+  var params = new URLSearchParams(window.location.search);
+  var folder = params.get("folder");
+  var tokenParam = params.get("token");
+  if (!folder) {
+    alert("folder 파라미터가 없습니다. 올바른 접근이 아닙니다.");
+    return false;
+  }
+  if (!tokenParam) {
+    alert("token 파라미터가 없습니다. 올바른 접근이 아닙니다.");
+    return false;
+  }
+  folderName = folder;
+  token = tokenParam;
+  console.log("Folder initialized as:", folderName, "with token:", token);
+  return true;
+}
+
+/************************************************************
+ * 2) 날짜 드롭다운 및 현재 날짜 계산
+ ************************************************************/
+function createDateDropdown() {
+  var container = document.getElementById("dateSelectorContainer");
+  if (!container) return;
+  container.innerHTML = "";
+  var select = document.createElement("select");
+  select.className = "dropdown-select date-dropdown";
+  var latest = getUpcomingThursday();
+  var prev1 = getPreviousThursday(latest, 1);
+  var prev2 = getPreviousThursday(latest, 2);
+  var opts = [
+    { val: latest, text: latest },
+    { val: prev1, text: prev1 },
+    { val: prev2, text: prev2 },
+    { val: "more", text: "더보기" }
   ];
-  
-  
-  // 0열(A~F)에 따른 1열 옵션 매핑
-  // 예: A -> [A-1, A-2, A-3], C -> [C-1, C-2], ...
-const STRATEGY_TO_DETAIL_OPTIONS = {
-    A: ["컨설팅/제안(핵심&전략고객)", "사전컨설팅(for 고객발굴/사업화)", "이슈조정/해소(for AX전략이행/사업추진)"],
-    B: ["Delivery방안 확보", "고객Ref. 확보", "AIAgentSvc. 발굴/확보"], // 필요시 확장
-    C: ["글로벌Ref. 확보", "협력파트너 확보", "CoWork 사업 Ref. 확보"],
-    D: ["Lead 내 담당 업무"],
-    E: ["컨설팅/제안 지원(핵심&전략고객)", "그룹AX협력과제 발굴/이행지원", "MS/AX유관조직 가교역할"],
-    F: ["AX컨설팅수행(핵심&전략고객)", "PoC기획/개발/프로토타이핑(핵심&전략고객)", "AIMSP협력모델 구축"], // 필요시 확장
-    G: ["AX컨설팅방법론 표준화/확산", "AI신기술분석/내부역량강화/기술지원", "Ref.아키텍처 발굴/확산"],
-    H: ["Lead 내 담당 업무"]  // 필요시 확장
-  };
-  
-  /************************************************************
-   * 1. 드롭다운 생성 함수
-   ************************************************************/
-  /** (0열) 전략과제 드롭다운 */
-function createStrategyDropdown() {
-    const container = document.createElement('div');
-    const select = document.createElement('select');
-    select.className = 'dropdown-select strategy-dropdown';
-
-    const opts = [
-      { val:'', text:'(선택)' },
-      { val:'A', text:'1_AX사업...' },
-      { val:'B', text:'1_MS파트너...' },
-      { val:'C', text:'1_C...' },
-      { val:'D', text:'1_D...' },
-      { val:'E', text:'2_E...' },
-      { val:'F', text:'2_F...' },
-      { val:'G', text:'2_G...' },
-      { val:'H', text:'2_Lead...' }
-    ];
-    opts.forEach(o => {
-      const op = document.createElement('option');
-      op.value = o.val;
-      op.textContent = o.text;
-      select.appendChild(op);
-    });
-
-    const span = document.createElement('span');
-    span.className = 'dropdown-text hidden';
-
-    container.appendChild(select);
-    container.appendChild(span);
-    return { container };
+  for (var i = 0; i < opts.length; i++) {
+    var o = opts[i];
+    var op = document.createElement("option");
+    op.value = o.val;
+    op.textContent = o.text;
+    select.appendChild(op);
   }
+  container.appendChild(select);
+  select.addEventListener("change", function(e) {
+    handleDateDropdownChange(e);
+  });
+}
 
-  /** (1열) 세부항목 드롭다운 */
-  function createDetailDropdown() {
-    const container = document.createElement('div');
-    const select = document.createElement('select');
-    // 처음엔 숨겨둬야 한다면 'hidden' 클래스를 추가해도 됨
-    select.className = 'dropdown-select detail-dropdown hidden';
-
-    const span = document.createElement('span');
-    span.className = 'dropdown-text hidden';
-
-    container.appendChild(select);
-    container.appendChild(span);
-    return { container };
+function updateDateDropdownWithAllDates() {
+  var select = document.querySelector(".date-dropdown");
+  if (!select) return;
+  select.innerHTML = "";
+  // ES5 방식: var uniqueDates = Array.from(new Set(dates)); → 구형 브라우저 대비
+  var dates = [];
+  for (var i = 0; i < fetchedRecords.length; i++) {
+    dates.push(fetchedRecords[i].date);
   }
-
-  /** (6열) 신호등(이미지) 드롭다운 */
-  function createTrafficDropdown() {
-    const container = document.createElement('div');
-    const select = document.createElement('select');
-    select.className = 'dropdown-select status-dropdown';
-
-    const opts = [
-      { val:'', text:'Select' },
-      { val:'red', text:'Red' },
-      { val:'yellow', text:'Yellow' },
-      { val:'green', text:'Green' }
-    ];
-    opts.forEach(o => {
-      const op = document.createElement('option');
-      op.value = o.val;
-      op.textContent = o.text;
-      select.appendChild(op);
-    });
-
-    const img = document.createElement('img');
-    img.className = 'status-image hidden';  // CSS로 높이 고정
-    container.appendChild(select);
-    container.appendChild(img);
-
-    return { container };
+  var latest = getUpcomingThursday();
+  if (dates.indexOf(latest) === -1) {
+    dates.push(latest);
   }
-
-  /************************************************************
-   * 2. 드롭다운 이벤트
-   ************************************************************/
-  /** 각 TD 내부(전략/세부/신호등) 컴포넌트 초기화 */
-  function initDropDownEvents(td) {
-    // (0열) 전략과제
-    const strategySelect = td.querySelector('.strategy-dropdown');
-    const strategySpan   = td.querySelector('.dropdown-text');
-    if (strategySelect && strategySpan) {
-      strategySelect.addEventListener('change', () => {
-        const val = strategySelect.value;
-        const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
-        if (val) {
-          strategySpan.textContent = displayText;
-          strategySelect.classList.add('hidden');
-          strategySpan.classList.remove('hidden');
-        } else {
-          strategySpan.textContent = '';
-        }
-        // 세부항목 연동
-        handleStrategyChange(td, val);
-      });
-      strategySpan.addEventListener('click', () => {
-        strategySpan.classList.add('hidden');
-        strategySelect.classList.remove('hidden');
-      });
-    }
-
-    // (1열) 세부항목
-    const detailSelect = td.querySelector('.detail-dropdown');
-    const detailSpan   = td.querySelector('.dropdown-text');
-    if (detailSelect && detailSpan) {
-      detailSelect.addEventListener('change', () => {
-        const val = detailSelect.value;
-        if (val) {
-          detailSpan.textContent = val;
-          detailSelect.classList.add('hidden');
-          detailSpan.classList.remove('hidden');
-        } else {
-          detailSpan.textContent = '';
-        }
-      });
-      detailSpan.addEventListener('click', () => {
-        detailSpan.classList.add('hidden');
-        detailSelect.classList.remove('hidden');
-      });
-    }
-
-    // (6열) 신호등
-    const statusSelect = td.querySelector('.status-dropdown');
-    const statusImage  = td.querySelector('.status-image');
-    if (statusSelect && statusImage) {
-      statusSelect.addEventListener('change', () => {
-        const colorVal = statusSelect.value;
-        if (IMAGE_URLS[colorVal]) {
-          statusImage.src = IMAGE_URLS[colorVal];
-          statusSelect.classList.add('hidden');
-          statusImage.classList.remove('hidden');
-        } else {
-          statusImage.classList.add('hidden');
-        }
-      });
-      statusImage.addEventListener('click', () => {
-        statusImage.classList.add('hidden');
-        statusSelect.classList.remove('hidden');
-      });
+  // 중복 제거
+  var setObj = {};
+  var uniqueArr = [];
+  for (var j = 0; j < dates.length; j++) {
+    if (!setObj[dates[j]]) {
+      setObj[dates[j]] = true;
+      uniqueArr.push(dates[j]);
     }
   }
+  // 정렬 (오름차순)
+  uniqueArr.sort(function(a, b) {
+    return a.localeCompare(b);
+  });
+  for (var k = 0; k < uniqueArr.length; k++) {
+    var date = uniqueArr[k];
+    var op = document.createElement("option");
+    op.value = date;
+    op.textContent = date;
+    select.appendChild(op);
+  }
+  if (uniqueArr.indexOf(currentEditingDate) !== -1) {
+    select.value = currentEditingDate;
+  } else {
+    currentEditingDate = latest;
+    select.value = latest;
+  }
+}
 
-  /************************************************************
-   * 3. (0열)전략과제 => (1열)세부항목 연동
-   ************************************************************/
-  function handleStrategyChange(strategyTd, strategyVal) {
-    // strategyTd는 (0열)TD
-    const row = strategyTd.closest('tr');
-    if (!row) return;
-
-    const tds = row.querySelectorAll('td');
-    if (tds.length < 2) return; // 최소 2칸 (0,1)
-
-    // (1열) 세부항목 TD
-    const detailTd = tds[1];
-    const detailSelect = detailTd.querySelector('.detail-dropdown');
-    const detailSpan   = detailTd.querySelector('.dropdown-text');
-    if (!detailSelect || !detailSpan) return;
-
-    // 값이 없으면 => 1열 비우기+숨김
-    if (!strategyVal) {
-      detailSelect.innerHTML = '';
-      detailSelect.classList.add('hidden');
-      detailSpan.classList.add('hidden');
-      detailSpan.textContent = '';
+function handleDateDropdownChange(e) {
+  var select = e.target;
+  var newDate = select.value;
+  if (newDate === "more") {
+    updateDateDropdownWithAllDates();
+    return;
+  }
+  if (newDate === currentEditingDate) {
+    select.value = currentEditingDate;
+    return;
+  }
+  var currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
+  if (!currentTableElem) {
+    currentEditingDate = newDate;
+    updateUIForSelectedDate(newDate);
+    return;
+  }
+  var currentTableHTML = currentTableElem.innerHTML.trim();
+  var savedRecord = null;
+  for (var i = 0; i < fetchedRecords.length; i++) {
+    if (fetchedRecords[i].date === currentEditingDate) {
+      savedRecord = fetchedRecords[i];
+      break;
+    }
+  }
+  var savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
+  
+  if (currentTableHTML !== savedTableHTML) {
+    var choice = prompt(
+      "(" + currentEditingDate + ") 날짜의 내용에서 변경된 부분이 있습니다.\n" +
+      "아래 옵션 중 선택해주세요:\n1: 변경사항 저장 후 진행\n2: 저장 없이 진행\n3: 취소"
+    );
+    if (choice === "1") {
+      submitData(currentEditingDate, function() {
+        currentEditingDate = newDate;
+        updateUIForSelectedDate(newDate);
+      });
+      return;
+    } else if (choice === "2") {
+      // 저장 없이 진행
+    } else {
+      select.value = currentEditingDate;
       return;
     }
+  }
+  currentEditingDate = newDate;
+  updateUIForSelectedDate(newDate);
+}
 
-    // 새 옵션
-    detailSelect.innerHTML = '';
-    const blankOpt = document.createElement('option');
-    blankOpt.value = '';
-    blankOpt.textContent = 'Select';
-    detailSelect.appendChild(blankOpt);
+/************************************************************
+ * 3) 드롭다운/신호등 생성 함수
+ ************************************************************/
+function createStrategyDropdown() {
+  var container = document.createElement("div");
+  var select = document.createElement("select");
+  select.className = "dropdown-select strategy-dropdown";
+  // 옵션 구성 – 기본값 "(선택)" 포함
+  var opts = [
+    { val: "", text: "(선택)" },
+    { val: "A", text: "1_AX사업..." },
+    { val: "B", text: "1_MS파트너..." },
+    { val: "C", text: "1_C..." },
+    { val: "D", text: "1_D..." },
+    { val: "E", text: "2_E..." },
+    { val: "F", text: "2_F..." },
+    { val: "G", text: "2_G..." },
+    { val: "H", text: "2_Lead..." }
+  ];
+  for (var i = 0; i < opts.length; i++) {
+    var o = opts[i];
+    var op = document.createElement("option");
+    op.value = o.val;
+    op.textContent = o.text;
+    select.appendChild(op);
+  }
+  var span = document.createElement("span");
+  span.className = "dropdown-text";
+  // 처음에는 select 보이고, span은 감춤
+  select.style.display = "inline-block";
+  span.style.display = "none";
+  container.appendChild(select);
+  container.appendChild(span);
+  return { container: container };
+}
 
-    const newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
-    newOptions.forEach(val => {
-      const op = document.createElement('option');
-      op.value = val;
-      op.textContent = val;
-      detailSelect.appendChild(op);
+function createDetailDropdown() {
+  var container = document.createElement("div");
+  var select = document.createElement("select");
+  select.className = "dropdown-select detail-dropdown";
+  // 기본값 "Select"는 나중에 strategy 선택에 따라 제거할 예정
+  var span = document.createElement("span");
+  span.className = "dropdown-text";
+  // 초기 상태: detail dropdown은 비활성화
+  select.style.display = "inline-block";
+  select.disabled = true;
+  span.style.display = "none";
+  container.appendChild(select);
+  container.appendChild(span);
+  return { container: container };
+}
+
+function createTrafficDropdown() {
+  var container = document.createElement("div");
+  var select = document.createElement("select");
+  select.className = "dropdown-select status-dropdown";
+  var opts = [
+    { val: "", text: "Select" },
+    { val: "red", text: "Red" },
+    { val: "yellow", text: "Yellow" },
+    { val: "green", text: "Green" }
+  ];
+  for (var i = 0; i < opts.length; i++) {
+    var o = opts[i];
+    var op = document.createElement("option");
+    op.value = o.val;
+    op.textContent = o.text;
+    select.appendChild(op);
+  }
+  var img = document.createElement("img");
+  img.className = "status-image";
+  select.style.display = "inline-block";
+  img.style.display = "none";
+  container.appendChild(select);
+  container.appendChild(img);
+  return { container: container };
+}
+
+/************************************************************
+ * 4) 드롭다운 이벤트 초기화 (UI 동작 개선) - 발췌
+ ************************************************************/
+function initDropDownEvents(td) {
+  // (0열) 전략
+  const strategySelect = td.querySelector(".strategy-dropdown");
+  const strategySpan = td.querySelector(".dropdown-text");
+  if (strategySelect && strategySpan) {
+    strategySelect.addEventListener("change", () => {
+      const val = strategySelect.value;
+      const displayText = strategySelect.options[strategySelect.selectedIndex].textContent;
+
+      // ... 중략 ...
     });
 
-    detailSelect.value = '';
-    detailSelect.classList.remove('hidden');
-    detailSpan.classList.add('hidden');
-    detailSpan.textContent = '';
-  }
+    strategySpan.addEventListener("click", () => {
+      strategySpan.style.display = "none";
+      strategySelect.style.display = "inline-block";
+      strategySelect.focus();
 
-  /************************************************************
-   * 4. 표 초기화
-   ************************************************************/
-  function initTable(table) {
-    if (!table) return;
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const tds = row.querySelectorAll('td');
-
-      // 0열 => 전략과제
-      if (tds[0]) {
-        const col0 = tds[0];
-        if (!col0.querySelector('.strategy-dropdown')) {
-          const { container } = createStrategyDropdown();
-          col0.appendChild(container);
-        }
-      }
-
-      // 1열 => 세부항목
-      if (tds[1]) {
-        const col1 = tds[1];
-        if (!col1.querySelector('.detail-dropdown')) {
-          const { container } = createDetailDropdown();
-          col1.appendChild(container);
-        }
-      }
-
-      // 2열 => 자동완성 (단순 contenteditable, 나중에 autoComplete 붙임)
-
-      // 6열 => 신호등
-      if (tds[6]) {
-        const col6 = tds[6];
-        if (!col6.querySelector('.status-dropdown')) {
-          const { container } = createTrafficDropdown();
-          col6.appendChild(container);
-        }
-      }
-
-      // 각 TD별로 드롭다운 이벤트 초기화
-      tds.forEach(td => initDropDownEvents(td));
+      // 여러 이벤트를 순차 디스패치
+      ['mousedown','mouseup','click'].forEach(evtType => {
+        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
+        strategySelect.dispatchEvent(evt);
+      });
     });
   }
 
+  // (1열) 세부 과제
+  const detailSelect = td.querySelector(".detail-dropdown");
+  const detailSpan = td.querySelector(".dropdown-text");
+  if (detailSelect && detailSpan) {
+    detailSelect.addEventListener("change", () => {
+      // ...
+    });
+    detailSpan.addEventListener("click", () => {
+      if (detailSelect.disabled) return;
+      detailSpan.style.display = "none";
+      detailSelect.style.display = "inline-block";
+      detailSelect.focus();
 
-//   function attachAutoCompleteToCell(td) {
-//     if (!td) return;
-  
-//     let isComposing = false;  // IME 조합 상태
-//     // 만약 "한글 1글자 입력" 시에도 바로 검색/표시를 원한다면,
-//     // compositionupdate 단계에서 updateHints()를 호출해주면 됩니다.
-  
-//     // 자동완성 힌트 박스
-//     const hintBox = document.createElement('div');
-//     hintBox.className = 'autocomplete-hint hidden';
-//     td.appendChild(hintBox);
-  
-//     /************************************************************
-//      * 1) IME 조합 이벤트
-//      ************************************************************/
-//     td.addEventListener('compositionstart', () => {
-//       isComposing = true;
-//     });
-  
-//     // [추가] compositionupdate => 한글 초성/중성만 입력 중이라도
-//     //        실시간으로 반영하고 싶다면 여기서 updateHints()를 호출
-//     td.addEventListener('compositionupdate', () => {
-//       // 만약 "한 글자씩 바로 표시"를 원한다면:
-//       updateHints(); 
-//       // (이 부분은 사용자 취향/UX에 따라 on/off 가능)
-//     });
-  
-//     td.addEventListener('compositionend', () => {
-//       isComposing = false;
-//       updateHints(); // 조합 완료 시 최종 확정된 텍스트로 업데이트
-//     });
-  
-//     /************************************************************
-//      * 2) 일반 input 이벤트
-//      ************************************************************/
-//     td.addEventListener('input', () => {
-//       // IME 조합 중이 아닐 때만 updateHints
-//       if (!isComposing) {
-//         updateHints();
-//       }
-//     });
-  
-//     /************************************************************
-//      * 3) 백스페이스 처리
-//      ************************************************************/
-//     td.addEventListener('keyup', (e) => {
-//       // 백스페이스 / Delete 등 글자 제거 시에도 즉시 반영
-//       if ((e.key === 'Backspace' || e.key === 'Delete') && !isComposing) {
-//         // 0ms 지연(브라우저에서 textContent가 갱신된 후 실행)
-//         setTimeout(() => {
-//           updateHints();
-//         }, 0);
-//       }
-//     });
-  
-//     /************************************************************
-//      * 4) blur 시 hint 닫기
-//      ************************************************************/
-//     td.addEventListener('blur', () => {
-//       setTimeout(() => {
-//         hintBox.classList.add('hidden');
-//       }, 150);
-//     });
-  
-//     /************************************************************
-//      * 5) ESC 키로 hint 닫기
-//      ************************************************************/
-//     td.addEventListener('keydown', (e) => {
-//       if (e.key === 'Escape') {
-//         hintBox.classList.add('hidden');
-//       }
-//     });
-  
-//     /************************************************************
-//      * 6) updateHints() : 목록을 실시간 필터 + 표시
-//      ************************************************************/
-//     function updateHints() {
-//       const text = td.textContent.trim();
-//       if (!text) {
-//         // 완전히 빈 셀 => hint 숨김
-//         hintBox.innerHTML = '';
-//         hintBox.classList.add('hidden');
-//         return;
-//       }
-  
-//       // 대소문자 구분 없이 부분 검색
-//       const lowerText = text.toLowerCase();
-//       const matches = AUTO_COMPLETE_LIST.filter(item =>
-//         item.toLowerCase().includes(lowerText)
-//       );
-  
-//       if (matches.length === 0) {
-//         hintBox.innerHTML = '';
-//         hintBox.classList.add('hidden');
-//         return;
-//       }
-  
-//       // 목록 표시
-//       let html = '';
-//       matches.forEach(m => {
-//         html += `<div class="autocomplete-item">${m}</div>`;
-//       });
-//       hintBox.innerHTML = html;
-//       hintBox.classList.remove('hidden');
-  
-//       // 아이템 클릭 => td에 반영 + 다음 편집도 가능하게
-//       const itemEls = hintBox.querySelectorAll('.autocomplete-item');
-//       itemEls.forEach(itemEl => {
-//         itemEl.addEventListener('mousedown', (e) => {
-//           e.stopPropagation(); // blur 방지
-//           // 1) 셀 내용 삽입
-//           td.textContent = itemEl.textContent;
-//           // 2) 힌트 숨김
-//           hintBox.classList.add('hidden');
-//           // 3) 포커스 + 커서 위치 이동
-//           focusEndOfCell(td);
-  
-//           // 4) 인위적 input 이벤트 발생 => 이후 편집 시 곧바로 업데이트
-//           //    (이것이 없으면, 한 번 선택 후 textContent 변경 시
-//           //     브라우저가 input 이벤트를 못 감지하는 경우가 생길 수 있음)
-//           td.dispatchEvent(new Event('input', { bubbles: true }));
-//         });
-//       });
-//     }
-  
-//     /************************************************************
-//      * 7) focusEndOfCell() : 셀 맨 뒤로 커서 이동
-//      ************************************************************/
-//     function focusEndOfCell(cell) {
-//       // focus() 후, caret 맨 뒤로 보내기
-//       cell.focus();
-//       const selection = window.getSelection();
-//       if (!selection) return;
-  
-//       const range = document.createRange();
-//       range.selectNodeContents(cell);
-//       range.collapse(false); // 맨 뒤로
-//       selection.removeAllRanges();
-//       selection.addRange(range);
-//     }
-//   }
-  
-  
-  /************************************************************
-   * 6. 새 행 추가 (버튼)
-   ************************************************************/
-  function addNewRow() {
-    const table = document.querySelector('.myTable');
-    if (!table) return;
-    const tbody = table.querySelector('tbody');
-    if (!tbody) return;
-
-    // 새 tr 생성(여기선 8칸 예시)
-    const tr = document.createElement('tr');
-    for (let i=0; i<8; i++) {
-      const td = document.createElement('td');
-      // 0열(전략), 1열(세부항목), 6열(신호등)에만 드롭다운. 
-      // 2열(자동완성) 포함 나머지는 editable
-      if ([0,1,6].includes(i)) {
-        // 나중에 initTable()에서 드롭다운 삽입
-      } else {
-        td.classList.add('editable');
-        td.contentEditable = "true";
-      }
-      tr.appendChild(td);
-    }
-    tbody.appendChild(tr);
-
-    // 새 행에도 initTable
-    initTable(table);
-
-    // 2열 => 자동완성
-    const tds = tr.querySelectorAll('td');
-    if (tds[2]) {
-      attachAutoCompleteForCol2(tds[2]);
-    }
+      ['mousedown','mouseup','click'].forEach(evtType => {
+        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
+        detailSelect.dispatchEvent(evt);
+      });
+    });
   }
 
-   /************************************************************
-   * 7. DOMContentLoaded
-   ************************************************************/
-   document.addEventListener('DOMContentLoaded', () => {
-    const table = document.querySelector('.myTable');
-    if (table) {
-      // 1) 기존 행 드롭다운 삽입
-      initTable(table);
-    //   // 2) 자동완성 -> 2열
-    //   const rows = table.querySelectorAll('tbody tr');
-    //   rows.forEach(row => {
-    //     const tds = row.querySelectorAll('td');
-    //     if (tds[2]) {
-    //       attachAutoCompleteToCell(tds[2]);
-    //     }
-    //   });
-    }
+  // (6열) 원활도(신호등)
+  const statusSelect = td.querySelector(".status-dropdown");
+  const statusImage = td.querySelector(".status-image");
+  if (statusSelect && statusImage) {
+    statusSelect.addEventListener("change", () => {
+      // ...
+    });
+    statusImage.addEventListener("click", () => {
+      statusImage.style.display = "none";
+      statusSelect.style.display = "inline-block";
+      statusSelect.focus();
 
-    // (4) 버튼 안 뜬다면, 아래 요소가 HTML에 없는지 확인
-    const addBtn = document.getElementById('addRowBtn');
-    if (addBtn) {
-      addBtn.addEventListener('click', addNewRow);
+      ['mousedown','mouseup','click'].forEach(evtType => {
+        const evt = new MouseEvent(evtType, { bubbles: true, cancelable: true, view: window });
+        statusSelect.dispatchEvent(evt);
+      });
+    });
+  }
+}
+
+
+function handleStrategyChange(strategyTd, strategyVal) {
+  var row = strategyTd.closest("tr");
+  if (!row) return;
+  var tds = row.querySelectorAll("td");
+  if (tds.length < 2) return;
+  var detailTd = tds[1];
+  var detailSelect = detailTd.querySelector(".detail-dropdown");
+  var detailSpan = detailTd.querySelector(".dropdown-text");
+  if (!strategyVal) {
+    detailSelect.innerHTML = "";
+    detailSelect.disabled = true;
+    detailSpan.textContent = "";
+    detailSpan.style.display = "none";
+    return;
+  }
+  detailSelect.disabled = false;
+  detailSelect.innerHTML = "";
+  var newOptions = STRATEGY_TO_DETAIL_OPTIONS[strategyVal] || [];
+  for (var i = 0; i < newOptions.length; i++) {
+    var opVal = newOptions[i];
+    var op = document.createElement("option");
+    op.value = opVal;
+    op.textContent = opVal;
+    detailSelect.appendChild(op);
+  }
+  detailSelect.style.display = "inline-block";
+  detailSpan.textContent = "";
+  detailSpan.style.display = "none";
+}
+
+/************************************************************
+ * 5) 표 초기화 및 행 추가 (편집용 표)
+ ************************************************************/
+function initTable(table) {
+  if (!table) return;
+  var rows = table.querySelectorAll("tbody tr");
+  for (var r = 0; r < rows.length; r++) {
+    var row = rows[r];
+    var tds = row.querySelectorAll("td");
+    if (tds[0] && !tds[0].querySelector(".strategy-dropdown")) {
+      var sObj = createStrategyDropdown();
+      tds[0].appendChild(sObj.container);
+    }
+    if (tds[1] && !tds[1].querySelector(".detail-dropdown")) {
+      var dObj = createDetailDropdown();
+      tds[1].appendChild(dObj.container);
+    }
+    if (tds[6] && !tds[6].querySelector(".status-dropdown")) {
+      var tObj = createTrafficDropdown();
+      tds[6].appendChild(tObj.container);
+    }
+    for (var c = 0; c < tds.length; c++) {
+      initDropDownEvents(tds[c]);
+    }
+  }
+}
+
+function addNewRow() {
+  var table = document.querySelector(".myTable");
+  if (!table) return;
+  var tbody = table.querySelector("tbody");
+  if (!tbody) return;
+  var tr = document.createElement("tr");
+  for (var i = 0; i < 8; i++) {
+    var td = document.createElement("td");
+    if (i !== 0 && i !== 1 && i !== 6) {
+      td.classList.add("editable");
+      td.contentEditable = "true";
+    }
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+  initTable(table);
+}
+
+/************************************************************
+ * 6) 서버 저장 데이터 불러오기 및 UI 업데이트
+ ************************************************************/
+function fetchStoredData(callback) {
+  fetch(LOCAL_SERVER_URL + "/listData?folder=" + folderName + "&token=" + token)
+    .then(function(resp) {
+      return resp.json();
+    })
+    .then(function(records) {
+      console.log("Fetched records:", records);
+      if (!Array.isArray(records)) {
+         records = [];
+      }
+      fetchedRecords = records;
+      if (callback) { callback(); }
+      updateUIForSelectedDate(currentEditingDate);
+    })
+    .catch(function(err) {
+      console.error("데이터 로드 오류:", err);
+    });
+}
+
+function updateUIForSelectedDate(selectedDate) {
+  var latest = getUpcomingThursday();
+  var currentHeader = document.getElementById("currentHeader");
+  var currentContainer = document.getElementById("currentTableContainer");
+  var pastContainer = document.getElementById("pastDataContainer");
+  
+  // 편집 영역 헤더
+  var headerText = (selectedDate === latest)
+                   ? "(이번주) " + selectedDate + " 주간현황"
+                   : "(과거) " + selectedDate + " 주간현황";
+  currentHeader.textContent = headerText;
+  
+  // 편집 영역 업데이트
+  var editableTable = currentContainer.querySelector(".myTable");
+  if (editableTable) {
+    var editableTbody = editableTable.querySelector("tbody");
+    var record = null;
+    for (var i = 0; i < fetchedRecords.length; i++) {
+      if (fetchedRecords[i].date === selectedDate) {
+        record = fetchedRecords[i];
+        break;
+      }
+    }
+    if (record) {
+      editableTbody.innerHTML = record.tableHTML;
+      initTable(editableTable);
     } else {
-      console.log("addRowBtn 버튼이 HTML에 없습니다. 버튼이 안 보일 수 있습니다.");
+      if (selectedDate === latest) {
+        currentHeader.textContent = "(이번주) " + selectedDate + " 주간현황 : 아직 작성되지 않았음";
+      }
+      editableTbody.innerHTML = "";
     }
+  }
+  
+  // 조회 영역 업데이트
+  pastContainer.innerHTML = "";
+  var pastHeader = document.createElement("div");
+  pastHeader.style.textAlign = "left";
+  pastHeader.style.fontWeight = "bold";
+  pastHeader.textContent = "<저장된 주간현황 내역>";
+  pastContainer.appendChild(document.createElement("br"));
+  pastContainer.appendChild(pastHeader);
+  pastContainer.appendChild(document.createElement("br"));
+  
+  var datesToShow = [];
+  if (selectedDate === latest) {
+    // find record of latest
+    var recLatest = null;
+    for (var x = 0; x < fetchedRecords.length; x++) {
+      if (fetchedRecords[x].date === latest) {
+        recLatest = fetchedRecords[x];
+        break;
+      }
+    }
+    if (recLatest) {
+      datesToShow.push(latest);
+    }
+    var prev1 = getPreviousThursday(latest, 1);
+    var prev2 = getPreviousThursday(latest, 2);
+    var foundPrev1 = false;
+    var foundPrev2 = false;
+    for (var y = 0; y < fetchedRecords.length; y++) {
+      if (fetchedRecords[y].date === prev1) foundPrev1 = true;
+      if (fetchedRecords[y].date === prev2) foundPrev2 = true;
+    }
+    if (foundPrev1) {
+      datesToShow.push(prev1);
+    }
+    if (foundPrev2) {
+      datesToShow.push(prev2);
+    }
+  } else {
+    // dates from selectedDate up to latest
+    var recordDates = [];
+    for (var d = 0; d < fetchedRecords.length; d++) {
+      recordDates.push(fetchedRecords[d].date);
+    }
+    for (var dd = 0; dd < recordDates.length; dd++) {
+      var dt = recordDates[dd];
+      if (dt <= latest && dt >= selectedDate) {
+        if (datesToShow.indexOf(dt) === -1) {
+          datesToShow.push(dt);
+        }
+      }
+    }
+    if (datesToShow.indexOf(latest) === -1) {
+      datesToShow.push(latest);
+    }
+    // 내림차순 정렬
+    datesToShow.sort(function(a, b) {
+      return b.localeCompare(a);
+    });
+  }
+  
+  if (datesToShow.length === 0) {
+    pastContainer.appendChild(document.createTextNode("(과거 주간현황 기록 없음)"));
+  } else {
+    for (var t = 0; t < datesToShow.length; t++) {
+      var dateVal = datesToShow[t];
+      var rec = null;
+      for (var r = 0; r < fetchedRecords.length; r++) {
+        if (fetchedRecords[r].date === dateVal) {
+          rec = fetchedRecords[r];
+          break;
+        }
+      }
+      var section = document.createElement("div");
+      section.style.marginBottom = "20px";
+      var header = document.createElement("div");
+      if (dateVal === latest) {
+        header.textContent = "(이번주) " + dateVal + " 주간현황";
+      } else {
+        header.textContent = "(과거) " + dateVal + " 주간현황";
+      }
+      if (dateVal === selectedDate) {
+        header.style.backgroundColor = "#ffffe0";
+        header.style.color = "blue";
+        header.style.fontWeight = "bold";
+        header.style.fontStyle = "italic";
+      }
+      section.appendChild(header);
+      if (rec) {
+        var table = document.createElement("table");
+        table.className = "myTable";
+        table.innerHTML = TABLE_TEMPLATE + "<tbody>" + rec.tableHTML + "</tbody>";
+        makeTableStatic(table);
+        section.appendChild(table);
+      } else {
+        var msg = document.createElement("div");
+        msg.textContent = "기록 없음";
+        section.appendChild(msg);
+      }
+      pastContainer.appendChild(section);
+    }
+  }
+}
+
+function makeTableStatic(wrapper) {
+  var selects = wrapper.querySelectorAll("select");
+  for (var i = 0; i < selects.length; i++) {
+    selects[i].disabled = true;
+  }
+  var tds = wrapper.querySelectorAll("td.editable");
+  for (var j = 0; j < tds.length; j++) {
+    tds[j].removeAttribute("contenteditable");
+    tds[j].style.backgroundColor = "#f0f0f0";
+  }
+}
+
+/************************************************************
+ * 7) 데이터 제출 (Submit 버튼)
+ ************************************************************/
+function submitData(date, callback) {
+  var tbodyElem = document.querySelector("#currentTableContainer .myTable tbody");
+  if (!tbodyElem) {
+    alert("표 데이터가 없습니다.");
+    return;
+  }
+  var tableData = tbodyElem.innerHTML;
+  var payload = { folder: folderName, date: date, tableData: tableData, token: token };
+  fetch(LOCAL_SERVER_URL + "/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+    .then(function(resp) {
+      return resp.json();
+    })
+    .then(function(data) {
+      if (data.error) {
+        alert("전송 오류: " + data.error);
+      } else {
+        if (callback) { callback(); }
+        fetchStoredData();
+      }
+    })
+    .catch(function(err) {
+      console.error("전송 오류:", err);
+      alert("전송에 실패했습니다.");
+    });
+}
+
+function initSubmitButton() {
+  var submitBtn = document.getElementById("submitBtn");
+  if (!submitBtn) return;
+  submitBtn.addEventListener("click", function() {
+    if (!folderName) {
+      alert("folder 파라미터가 유효하지 않습니다.");
+      return;
+    }
+    var dateSelect = document.querySelector(".date-dropdown");
+    if (!dateSelect || !dateSelect.value) {
+      alert("날짜를 선택해주세요.");
+      return;
+    }
+    var selectedDate = dateSelect.value;
+    var currentTableElem = document.querySelector("#currentTableContainer .myTable tbody");
+    if (!currentTableElem) return;
+    var currentTableHTML = currentTableElem.innerHTML.trim();
+    var savedRecord = null;
+    for (var i = 0; i < fetchedRecords.length; i++) {
+      if (fetchedRecords[i].date === selectedDate) {
+        savedRecord = fetchedRecords[i];
+        break;
+      }
+    }
+    var savedTableHTML = savedRecord ? savedRecord.tableHTML.trim() : "";
+    if (!savedRecord) {
+      submitData(selectedDate, function() {
+        alert("(" + selectedDate + ") 진행현황을 신규 저장했습니다.");
+        updateUIForSelectedDate(selectedDate);
+      });
+    } else {
+      if (currentTableHTML !== savedTableHTML) {
+        var choice = prompt(
+          "현재 작성한 내용을 저장하시겠습니까? 기존 저장 내용과 다른 부분이 있습니다.\n" +
+          "1: 저장하기\n2: 취소 및 다시 확인하기"
+        );
+        if (choice === "1") {
+          submitData(selectedDate, function() {
+            alert("(" + selectedDate + ") 진행현황을 저장했습니다.");
+            updateUIForSelectedDate(selectedDate);
+          });
+        } else {
+          return;
+        }
+      } else {
+        alert("(" + selectedDate + ") 진행현황을 저장했습니다.");
+        updateUIForSelectedDate(selectedDate);
+      }
+    }
+    currentEditingDate = selectedDate;
   });
+}
+
+/************************************************************
+ * 8) DOMContentLoaded – 초기화
+ ************************************************************/
+document.addEventListener("DOMContentLoaded", function() {
+  if (!initializeFolder()) {
+    var submitBtn = document.getElementById("submitBtn");
+    if (submitBtn) submitBtn.disabled = true;
+    return;
+  }
+  createDateDropdown();
+  var editingTable = document.querySelector("#currentTableContainer .myTable");
+  if (editingTable) {
+    initTable(editingTable);
+  }
+  var addBtn = document.getElementById("addRowBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", function() {
+      addNewRow();
+    });
+  }
+  initSubmitButton();
+  var defaultSelect = document.querySelector(".date-dropdown");
+  if (defaultSelect && defaultSelect.value) {
+    currentEditingDate = defaultSelect.value;
+  } else {
+    currentEditingDate = getUpcomingThursday();
+  }
+  fetchStoredData();
+});

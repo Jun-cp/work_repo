@@ -2,45 +2,46 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <title>팀 진행현황</title>
   <style>
-    /* 표 스타일 기본 */
+    /* 기본 폰트 및 레이아웃 */
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    /* 헤더: 날짜 드롭다운과 "팀 진행현황" 텍스트 (같은 글자 크기) */
+    #headerArea {
+      margin: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #dateSelectorContainer select { font-size: 1em; }
+    h2 { font-size: 1em; margin: 0; }
+    /* 버튼 영역 – 수정사항 6: 왼쪽 정렬 */
+    .button-area { text-align: left; margin: 20px; }
+    button { padding: 6px 12px; cursor: pointer; margin: 0 5px; }
+    /* 테이블 스타일 – 기존 열별 크기 유지 */
     table {
       border-collapse: collapse;
-      margin: 20px auto;
+      margin: 10px auto;
       width: 98%;
-      text-align: center; /* 수평 중앙 정렬 */
+      text-align: center;
       table-layout: fixed;
     }
     th, td {
       border: 1px solid #ccc;
-      vertical-align: middle;
       padding: 4px;
-      position: relative; /* 자동완성 제안 박스 등 배치를 위해 */
+      vertical-align: middle;
+      position: relative;
     }
-    th {
-      background: #f8f8f8;
-    }
-
-    /* 편집 가능한 셀 (3열 등) */
-    td.editable {
-      cursor: text;
-    }
-    td.editable:focus {
-      outline: 2px solid #007bff;
-    }
-
-    /* 이미지 드롭다운 (5열) */
+    /* 수정사항 1: 편집 영역 테이블 셀의 최소 높이 지정 */
+    .myTable tbody tr td { min-height: 30px; }
+    th { background: #f8f8f8; }
+    td.editable { cursor: text; }
+    td.editable:focus { outline: 2px solid #007bff; }
     .status-image {
-      display: block;
-      margin: 0 auto;      
-      height: 1.2em;  /* 텍스트 한 줄 높이 정도 */
-      width: auto;    /* 가로는 비율 맞춰 자동 */
-      object-fit: contain;
+      display: block; margin: 0 auto;
+      height: 1.2em; width: auto; object-fit: contain;
       cursor: pointer;
     }
-    
-    /* 각 열의 폭을 지정 (index 0~12) */
-    /* 150, 250, 200, 280, 280, 140, 140, 400, 200, 300, 440, 140, 280 px */
     colgroup col:nth-child(1) { width: 150px; }
     colgroup col:nth-child(2) { width: 250px; }
     colgroup col:nth-child(3) { width: 200px; }
@@ -54,125 +55,81 @@
     colgroup col:nth-child(11) { width: 440px; }
     colgroup col:nth-child(12) { width: 140px; }
     colgroup col:nth-child(13) { width: 280px; }
-
-    /* 드롭다운/이미지/텍스트 토글 hidden 처리 */
-    .hidden {
-      display: none !important;
-    }
-
-    select.dropdown-select {
-      width: 100px;
-      cursor: pointer;
-    }
-    .dropdown-text {
-      cursor: pointer;
-      display: inline-block;
-      font-weight: bold;
-      margin: 0 auto;
-    }
-
-    /* 자동완성 힌트 박스 */
-    .autocomplete-hint {
-      position: absolute;
-      top: calc(100% + 2px); /* 셀 아래 약간 떨어져서 표시 */
-      left: 0;
-      background: rgba(255, 255, 204, 0.9); /* 옅은 노랑 배경 */
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      color: #333;
-      min-width: 100px;   /* 박스 최소너비 */
-      max-width: 400px;   /* 박스 최대너비 */
-      white-space: nowrap; /* 한 줄 표시 (자동으로 가로폭 늘어날 수 있음) */
-      z-index: 999;
-      pointer-events: auto; /* 클릭 가능 */
-    }
-
-    /* 목록 아이템 */
-    .autocomplete-item {
-      padding: 4px 6px;
-      border-bottom: 1px solid #ccc;
-      cursor: pointer;
-    }
-    /* 마지막 아이템은 구분선 제거 (선택사항) */
-    .autocomplete-item:last-child {
-      border-bottom: none;
-    }
-    .autocomplete-item:hover {
-      background: #fffaaf; /* hover 시 강조 */
-    }
-
-    .button-area {
-      text-align: center;
-      margin: 20px;
-    }
-    button {
-      padding: 6px 12px;
-      cursor: pointer;
-    }
+    /* 수평선 */
+    hr { border: none; border-top: 2px solid #ccc; margin: 20px 0; }
+    /* 수정사항 4: 편집 영역과 수평선 사이에 빈 줄 2줄 추가 */
+    #currentDataContainer + hr { margin-top: 20px; }
+    /* 데이터 표시 영역 */
+    #currentDataContainer, #pastDataContainer { margin: 20px; }
+    .data-section-header { font-weight: bold; margin: 10px 0; }
   </style>
 </head>
 <body>
-  <h2 style="text-align:left;">250124 팀 진행현황</h2>
-
+  <!-- 헤더 영역 -->
+  <div id="headerArea">
+    <!-- 날짜 드롭다운 (왼쪽) -->
+    <div id="dateSelectorContainer"></div>
+    <h2>팀 진행현황</h2>
+  </div>
+  <!-- 버튼 영역 -->
   <div class="button-area">
+    <button id="submitBtn">Submit</button>
     <button id="addRowBtn">행 추가</button>
   </div>
-
-  <!-- 샘플 테이블 하나 -->
-  <table class="myTable">
-    <colgroup>
-      <col><col><col><col><col><col><col><col><col><col><col><col><col>
-    </colgroup>
-    <thead>
-      <tr>
-        <th>담당 전략과제</th>
-        <th>세부 과제</th>
-        <th>프로젝트/업무명</th>
-        <th>개요</th>
-        <th>주요 로드맵</th>
-        <th>진척률</th>
-        <th>원활도</th>
-        <th>현 주요 사항</th>
-        <th>추진 결과 / 산출물</th>
-        <th>담당자 (업무)</th>
-        <th>Issue / 대응 방안</th>
-        <th>컨플루언스 (히스토리)</th>
-        <th>(상무님 코멘터리)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <!-- 0열 : 담당 전략과제, 드롭다운 -->
-        <td></td>
-        <!-- 1열 : 세부과제, 동적(0열 대응) 텍스트 드롭다운 -->
-        <td></td>
-        <!-- 2열 : 업무명 -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 3열 : 개요 -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 4열 : 주요 로드맵 -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 5열 : 진척률 % -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 6열 : 원활도, 이미지 드롭다운 from 4열 -->
-        <td></td>
-        <!-- 7열 : 현 주요사항  -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 8열 : 추진 결과 / 산출물 -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 9열 : 담당자(업무) -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 10열 : Issue/대응 방안 -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 11열 : 컨플(히스토리) -->
-        <td class="editable" contenteditable="true"></td>
-        <!-- 12열 : 상무님 코멘터리 -->
-        <td class="editable" contenteditable="true"></td>
-      </tr>
-      <!-- 더 많은 row 가능 -->
-    </tbody>
-  </table>
+  <!-- 현재 데이터 편집영역 -->
+  <div id="currentDataContainer">
+    <div id="currentHeader" class="data-section-header"></div>
+    <div id="currentTableContainer">
+      <table class="myTable">
+        <colgroup>
+          <col><col><col><col><col><col><col><col><col><col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>담당 전략과제</th>
+            <th>세부 과제</th>
+            <th>프로젝트/업무명</th>
+            <th>개요</th>
+            <th>주요 로드맵</th>
+            <th>진척률</th>
+            <th>원활도</th>
+            <th>현 주요 사항</th>
+            <th>추진 결과 / 산출물</th>
+            <th>담당자 (업무)</th>
+            <th>Issue / 대응 방안</th>
+            <th>컨플루언스 (히스토리)</th>
+            <th>(상무님 코멘터리)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+            <td class="editable" contenteditable="true"></td>
+          </tr>
+          <!-- 추가 행 가능 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- 수정사항 4: 편집 영역과 수평선 사이에 빈 줄 2줄 -->
+  <br><br>
+  <hr>
+   
+  
+  <!-- 과거 데이터 영역 (히스토리) -->
+  <div id="pastDataContainer"></div>
 
   <script src="script.js"></script>
 </body>
